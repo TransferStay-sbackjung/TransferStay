@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="user")
+@Table(name="users")
 public class UserDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,4 +57,10 @@ public class UserDomain {
 
     @Column(length = 50)
     private String role;
+
+    public UserDomain(String userId, String email, String provider) {
+        this.userUuid = userId;
+        this.email = email;
+        this.oauthProvider = provider;
+    }
 }
