@@ -42,6 +42,7 @@ public class AssignmentPost {
   private Long userId;
 
   /**
+
   * 추후 user 테이블 생성하면 변경하기
 
   @ManyToOne(fetch = FetchType.LAZY)
