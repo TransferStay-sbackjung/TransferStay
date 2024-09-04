@@ -21,6 +21,8 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "accommodation")
+
+
 public class Accommodation {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
