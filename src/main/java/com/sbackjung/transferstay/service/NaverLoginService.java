@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,30 +24,40 @@ public class NaverLoginService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(request);
         String oauthClientName =
                 request.getClientRegistration().getClientName();
-        System.out.println(oauthClientName);
-        try{
-            System.out.println(new ObjectMapper().writeValueAsString(
-                    oAuth2User.getAttributes()
-            ));
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        // 출력테스트용
+//        System.out.println(oauthClientName);
+//        try{
+//            System.out.println(new ObjectMapper().writeValueAsString(
+//                    oAuth2User.getAttributes()
+//            ));
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
 
         UserDomain user = null;
-        String userId = null;
+        String oAuthId = null;
 
         if(oauthClientName.equals("naver")){
             Map<String,String> responseMap = (Map<String, String>) oAuth2User.getAttributes().get(
                     "response");
             //총 36의 길이
-            userId = "naver_" + responseMap.get("id").substring(0,30);
+            oAuthId = "naver_" + responseMap.get("id").substring(0,30);
             String email = responseMap.get("email");
-            user = new UserDomain(userId,email,"naver");
+            Optional<UserDomain> byEmail = userRepository.findByEmail(email);
+            // 해당 이메일이 존재한다면,
+            if(byEmail.isPresent()){
+                System.out.println("email is exist");
+                return new CustomOAuth2User(oAuthId);
+            }else{
+                System.out.println("user not exist! create User and save DB " +
+                        "before add token");
+                user = new UserDomain(oAuthId,email,"naver");
+                userRepository.save(user);
+            }
+
         }
 
-        userRepository.save(user);
-
-        return new CustomOAuth2User(userId);
+        return new CustomOAuth2User(oAuthId);
     }
 
 }

@@ -1,7 +1,9 @@
 package com.sbackjung.transferstay.handler;
 
+import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.dto.CustomOAuth2User;
 import com.sbackjung.transferstay.jwt.JwtUtils;
+import com.sbackjung.transferstay.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,12 +13,14 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(
@@ -26,10 +30,20 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     ) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-        String userId = oAuth2User.getName();
-        String token = jwtUtils.createJwtToken(userId,"user",3600L);
-        System.out.println("Authentication success, redirecting to /auth/oauth-response/" + token);
+        String oAuthId = oAuth2User.getName();
+        String token = jwtUtils.createJwtToken(oAuthId,"user",3600L);
 
-        response.sendRedirect("http://localhost:8080/auth/oauth-response");
+        // 생성된 토큰 저장
+        Optional<UserDomain> user = userRepository.findByOauthId(oAuthId);
+        if(user.isEmpty()){
+            // 에외 처리 추가
+            System.out.println("user not found");
+        }
+        user.get().setAccessToken(token);
+        userRepository.save(user.get());
+
+        //헤더에 추가
+        response.addHeader("Authorization","Bearer "+token);
+        response.sendRedirect("http://localhost:8080/auth/login-success-naver");
     }
 }

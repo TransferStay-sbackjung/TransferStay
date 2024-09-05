@@ -27,12 +27,12 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/","/login/oauth2/**",
-                                "/h2-console/**","/auth/oauth-response").permitAll()
+                                "/h2-console/**","/auth/login-success-naver").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint.baseUri(
-                                "/login/oauth2/naver"))
+                                "/login/oauth2/authorization/naver"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri(
                                 "/login/oauth2/code/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
