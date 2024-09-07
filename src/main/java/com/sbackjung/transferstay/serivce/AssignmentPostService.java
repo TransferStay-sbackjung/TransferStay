@@ -56,6 +56,27 @@ public class AssignmentPostService {
     return assignmentPostRepository.findAll(pageable).map(this::toResponse);
   }
 
+  @Transactional
+  public AssignmentPostResponse updateAssignmentPost(Long postId, AssignmentPostRequest request) {
+    AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
+        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+
+    assignmentPost.update(
+        request.getTitle(),
+        request.getPrice(),
+        request.getDescription(),
+        request.isAuction()
+    );
+    assignmentPost.updateAccommodation(
+        request.getLocation(),
+        request.getCheckInDate(),
+        request.getCheckOutDate(),
+        request.getReservationPlatform()
+    );
+
+    return toResponse(assignmentPost);
+  }
+
   private AssignmentPostResponse toResponse(AssignmentPost assignmentPost) {
     Accommodation accommodation = assignmentPost.getAccommodation();
     return AssignmentPostResponse.builder()
