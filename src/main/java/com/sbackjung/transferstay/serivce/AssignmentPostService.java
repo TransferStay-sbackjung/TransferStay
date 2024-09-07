@@ -94,4 +94,15 @@ public class AssignmentPostService {
         .checkOutDate(accommodation.getCkeckOutDate())
         .build();
   }
+
+  @Transactional
+  public void deleteAssignmentPost(Long postId) {
+    // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가
+
+    AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
+        .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+    assignmentPostRepository.deleteById(postId);
+
+  }
+
 }
