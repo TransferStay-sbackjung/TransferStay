@@ -6,13 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.Date;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
@@ -21,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "accommodation")
-
+@DynamicUpdate
 
 public class Accommodation {
   @Id
@@ -35,10 +36,15 @@ public class Accommodation {
   private String reservationPlatform;
 
   @Column(name = "check_in_date")
-  private Date checkInDate;
+  private LocalDateTime checkInDate;
 
   @Column(name = "ckeck_out_date")
-  private Date ckeckOutDate;
+  private LocalDateTime ckeckOutDate;
 
-
+  public void update(String location, LocalDateTime checkInDate, LocalDateTime checkOutDate, String reservationPlatform) {
+    this.location = location;
+    this.checkInDate = checkInDate;
+    this.ckeckOutDate = checkOutDate;
+    this.reservationPlatform = reservationPlatform;
+  }
 }

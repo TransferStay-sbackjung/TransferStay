@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 //import org.springframework.data.annotation.Id;
 import jakarta.persistence.Id;
@@ -32,6 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "assignment_post")
+@DynamicUpdate
 public class AssignmentPost {
 
   @Id
@@ -58,6 +61,9 @@ public class AssignmentPost {
   private Accommodation accommodation;
 
   @Column(nullable = false)
+  private String title;
+
+  @Column(nullable = false)
   private String description;
 
   @Column(nullable = false)
@@ -73,4 +79,15 @@ public class AssignmentPost {
   @LastModifiedDate
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  public void update(String title, BigDecimal price, String description, boolean isAuction) {
+    this.title = title;
+    this.price = price;
+    this.description = description;
+    this.isAuction = isAuction;
+  }
+
+  public void updateAccommodation(String location, LocalDateTime checkInDate, LocalDateTime checkOutDate, String reservationPlatform) {
+    this.accommodation.update(location, checkInDate, checkOutDate, reservationPlatform);
+  }
 }
