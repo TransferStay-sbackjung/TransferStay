@@ -8,6 +8,8 @@ import com.sbackjung.transferstay.repository.AccommodationRepository;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,7 +44,17 @@ public class AssignmentPostService {
 
     return toResponse(savedPost);
   }
+  @Transactional
+  public AssignmentPostResponse getAssignmentPost(Long id) {
+    AssignmentPost post = assignmentPostRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+    return toResponse(post);
+  }
 
+  @Transactional
+  public Page<AssignmentPostResponse> getAllAssignmentPosts(Pageable pageable) {
+    return assignmentPostRepository.findAll(pageable).map(this::toResponse);
+  }
 
   private AssignmentPostResponse toResponse(AssignmentPost assignmentPost) {
     Accommodation accommodation = assignmentPost.getAccommodation();
