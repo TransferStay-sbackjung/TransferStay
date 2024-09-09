@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -51,11 +52,11 @@ public class UserDomain {
     private String refreshToken;
 
     @CreatedDate
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
-    private Timestamp deletedAt;
+    private LocalDateTime deletedAt;
 
     @Column(length = 50)
     private String role;
