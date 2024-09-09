@@ -26,12 +26,20 @@ repositories {
 dependencies {
     // 스프링 웹
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    // 스프링 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // oauth2
+    implementation 'org.springframework.security:spring-security-oauth2-client'
     // 스프링 데이터 JPA 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     // mysql
     implementation 'mysql:mysql-connector-java:8.0.29'
     // dotenv
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    // JWT 의존성
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     // 롬복
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
