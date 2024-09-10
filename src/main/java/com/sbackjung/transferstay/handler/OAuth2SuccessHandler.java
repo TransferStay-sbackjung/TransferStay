@@ -44,6 +44,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //헤더에 추가
         response.addHeader("Authorization","Bearer "+token);
-        response.sendRedirect("http://localhost:8080/auth/login-success-naver");
+
+        // 클라이언트 이름을 파라미터로 받아옴
+        String clientName = request.getParameter("clientName");
+
+        if ("naver".equals(clientName)) {
+            response.sendRedirect("http://localhost:8080/auth/login-success-naver");
+        } else if ("kakao".equals(clientName)) {
+            response.sendRedirect("http://localhost:8080/auth/login-success-kakao");
+        }
     }
 }
