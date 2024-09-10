@@ -60,7 +60,12 @@ public class SocialLoginService extends DefaultOAuth2UserService {
 
       // 카카오 사용자 정보에서 id와 이메일 추출
       Map<String, Object> kakaoAccountMap = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
-      oAuthId = "kakao_" + oAuth2User.getAttributes().get("id").toString();
+      String id = oAuth2User.getAttributes().get("id").toString();
+      if (id.length() > 30) {
+        oAuthId = "naver_" + id.substring(0, 30);
+      } else {
+        oAuthId = "naver_" + id;
+      }
       String email = (String) kakaoAccountMap.get("email");
 
       Optional<UserDomain> byEmail = userRepository.findByEmail(email);
