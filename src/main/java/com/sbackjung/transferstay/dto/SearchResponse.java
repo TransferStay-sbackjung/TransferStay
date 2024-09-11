@@ -12,6 +12,5 @@ public class SearchResponse {
     public static class getSearchResponse{
         private Long id;
         private String title;
-        private double price;
     }
 }
