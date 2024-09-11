@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/likes")
 @RequiredArgsConstructor
 public class LikeAccommodationController {
+
   private final LikeAccommodationService likeAccommodationService;
 
   @PostMapping("/{postId}")
