@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -60,9 +61,6 @@ public class AssignmentPost {
   @Column(nullable = false)
   private String description;
 
-  @Column(nullable = false)
-  private BigDecimal price;
-
   @Column(name = "is_auction", nullable = false)
   private boolean isAuction;
 
@@ -73,4 +71,29 @@ public class AssignmentPost {
   @LastModifiedDate
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
+
+  @Column(name="title")
+  private String title;
+
+  @Column(name = "location_depth1")
+  private String locationDepth1;
+
+  @Column(name = "location_depth2")
+  private String locationDepth2;
+
+  @Column(name = "reservation_platform")
+  private String reservationPlatform;
+
+  @Column(name = "check_in_date")
+  private LocalDate checkInDate;
+
+  @Column(name = "ckeck_out_date")
+  private LocalDate checkOutDate;
+
+  @Column(name = "personnel")
+  private int personnel;
+
+  @Column(name = "price")
+  private double price;
+
 }
