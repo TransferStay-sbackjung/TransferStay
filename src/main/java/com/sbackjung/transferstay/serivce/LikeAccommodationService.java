@@ -16,14 +16,14 @@ public class LikeAccommodationService {
   private final LikeAccommodationRepository likeAccommodationRepository;
   private final AssignmentPostRepository assignmentPostRepository;
 
-  // 찜하기 추가
   public void addLike(Long userId, Long postId) {
     AssignmentPost post = assignmentPostRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
 
-    Optional<LikeAccommodation> existingLike = likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId);
+    Optional<LikeAccommodation> existingLike = likeAccommodationRepository.findByUserIdAndAssignmentPostId(
+        userId, postId);
     if (existingLike.isEmpty()) {
-      // 빌더 패턴을 사용하여 LikeAccommodation 객체 생성
+
       LikeAccommodation newLike = LikeAccommodation.builder()
           .userId(userId)
           .assignmentPost(post)
@@ -34,10 +34,11 @@ public class LikeAccommodationService {
     }
   }
 
-  // 찜하기 삭제
+
   @Transactional
   public void removeLike(Long userId, Long postId) {
-    Optional<LikeAccommodation> existingLike = likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId);
+    Optional<LikeAccommodation> existingLike = likeAccommodationRepository.findByUserIdAndAssignmentPostId(
+        userId, postId);
     if (existingLike.isPresent()) {
       likeAccommodationRepository.deleteByUserIdAndAssignmentPostId(userId, postId);
     } else {
@@ -45,7 +46,6 @@ public class LikeAccommodationService {
     }
   }
 
-  // 찜 여부 확인
   public boolean isPostLikedByUser(Long userId, Long postId) {
     return likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId).isPresent();
   }

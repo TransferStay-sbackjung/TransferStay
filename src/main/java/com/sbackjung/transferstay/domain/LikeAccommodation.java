@@ -21,16 +21,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class LikeAccommodation {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long likeId;
 
   /**
    * // User와의 Many-to-One 관계
+   *
    * @ManyToOne(fetch = FetchType.LAZY)
-   * @JoinColumn(name = "user_id", nullable = false)
-   * private User user;
-   * // todo : 유저
+   * @JoinColumn(name = "user_id", nullable = false) private User user; // todo : 유저
    */
 
   @Column(name = "user_id", nullable = false)
@@ -40,7 +40,5 @@ public class LikeAccommodation {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", nullable = false)
   private AssignmentPost assignmentPost;
-
-
 
 }
