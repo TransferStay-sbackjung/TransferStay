@@ -1,10 +1,9 @@
 package com.sbackjung.transferstay.serivce;
 
-import com.sbackjung.transferstay.domain.Accommodation;
 import com.sbackjung.transferstay.domain.AssignmentPost;
-import com.sbackjung.transferstay.dto.AssignmentPostRequest;
-import com.sbackjung.transferstay.dto.AssignmentPostResponse;
-import com.sbackjung.transferstay.repository.AccommodationRepository;
+import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
+import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
+import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,92 +16,93 @@ import org.springframework.stereotype.Service;
 public class AssignmentPostService {
 
   private final AssignmentPostRepository assignmentPostRepository;
-  private final AccommodationRepository accommodationRepository;
 
   @Transactional
-  public AssignmentPostResponse createAssignmentPost(AssignmentPostRequest request, Long userId) {
-
-    // Accommodation 엔티티 생성 및 저장
-    Accommodation accommodation = Accommodation.builder()
-        .location(request.getLocation())
-        .reservationPlatform(request.getReservationPlatform())
-        .checkInDate(request.getCheckInDate())
-        .ckeckOutDate(request.getCheckOutDate())
-        .build();
-    Accommodation savedAccommodation = accommodationRepository.save(accommodation);
-
-    // AssignmentPost 엔티티 생성 및 저장
+  public AssignmentPostResponseDto createAssignmentPost(AssignmentPostRequestDto request, Long userId) {
     AssignmentPost assignmentPost = AssignmentPost.builder()
         .userId(userId)
         .title(request.getTitle())
         .price(request.getPrice())
         .description(request.getDescription())
-        .isAuction(request.isAuction())
-        .accommodation(savedAccommodation)  // Accommodation 연결
+        .isAuction(request.getIsAuction())
+        .locationDepth1(request.getLocationDepth1())
+        .locationDepth2(request.getLocationDepth2())
+        .reservationPlatform(request.getReservationPlatform())
+        .checkInDate(request.getCheckInDate())
+        .ckeckOutDate(request.getCheckOutDate())
+        .reservationCode(request.getReservationCode())
+        .reservationName(request.getReservationName())
+        .reservationPhone(request.getReservationPhone())
+        .status(request.getStatus() != null ? request.getStatus() : "거래 중") // 상태값이 없으면 '거래 중'으로 설정
         .build();
-    AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
 
+    AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
     return toResponse(savedPost);
   }
+
   @Transactional
-  public AssignmentPostResponse getAssignmentPost(Long id) {
+  public AssignmentPostResponseDto getAssignmentPost(Long id) {
     AssignmentPost post = assignmentPostRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Assignment post not found"));
     return toResponse(post);
   }
 
   @Transactional
-  public Page<AssignmentPostResponse> getAllAssignmentPosts(Pageable pageable) {
+  public Page<AssignmentPostResponseDto> getAllAssignmentPosts(Pageable pageable) {
     return assignmentPostRepository.findAll(pageable).map(this::toResponse);
   }
 
   @Transactional
-  public AssignmentPostResponse updateAssignmentPost(Long postId, AssignmentPostRequest request) {
+  public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Assignment post not found"));
 
-    assignmentPost.update(
-        request.getTitle(),
-        request.getPrice(),
-        request.getDescription(),
-        request.isAuction()
-    );
-    assignmentPost.updateAccommodation(
-        request.getLocation(),
-        request.getCheckInDate(),
-        request.getCheckOutDate(),
-        request.getReservationPlatform()
-    );
+    // 필드 업데이트
+    assignmentPost.update(AssignmentPostUpdateRequestDto.builder()
+        .title(request.getTitle())
+        .price(request.getPrice())
+        .description(request.getDescription())
+        .isAuction(request.getIsAuction())
+        .locationDepth1(request.getLocationDepth1())
+        .locationDepth2(request.getLocationDepth2())
+        .reservationPlatform(request.getReservationPlatform())
+        .checkInDate(request.getCheckInDate())
+        .checkOutDate(request.getCheckOutDate())
+        .reservationCode(request.getReservationCode())
+        .reservationName(request.getReservationName())
+        .reservationPhone(request.getReservationPhone())
+        .status(request.getStatus() != null ? request.getStatus() : assignmentPost.getStatus()) // 상태값이 없으면 기존 값 유지
+        .build());
 
     return toResponse(assignmentPost);
   }
 
-  private AssignmentPostResponse toResponse(AssignmentPost assignmentPost) {
-    Accommodation accommodation = assignmentPost.getAccommodation();
-    return AssignmentPostResponse.builder()
+  private AssignmentPostResponseDto toResponse(AssignmentPost assignmentPost) {
+    return AssignmentPostResponseDto.builder()
         .id(assignmentPost.getId())
         .title(assignmentPost.getTitle())
         .price(assignmentPost.getPrice())
         .description(assignmentPost.getDescription())
         .isAuction(assignmentPost.isAuction())
+        .locationDepth1(assignmentPost.getLocationDepth1())
+        .locationDepth2(assignmentPost.getLocationDepth2())
+        .reservationPlatform(assignmentPost.getReservationPlatform())
+        .checkInDate(assignmentPost.getCheckInDate())
+        .checkOutDate(assignmentPost.getCkeckOutDate())
+        .reservationCode(assignmentPost.getReservationCode())
+        .reservationName(assignmentPost.getReservationName())
+        .reservationPhone(assignmentPost.getReservationPhone())
+        .status(assignmentPost.getStatus())
         .createdAt(assignmentPost.getCreatedAt())
         .updatedAt(assignmentPost.getUpdatedAt())
-        // accommdation
-        .location(accommodation.getLocation())
-        .reservationPlatform(accommodation.getReservationPlatform())
-        .checkInDate(accommodation.getCheckInDate())
-        .checkOutDate(accommodation.getCkeckOutDate())
         .build();
   }
 
   @Transactional
   public void deleteAssignmentPost(Long postId) {
     // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가
-
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
     assignmentPostRepository.deleteById(postId);
-
   }
-
 }

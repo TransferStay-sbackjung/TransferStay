@@ -1,16 +1,13 @@
 package com.sbackjung.transferstay.domain;
 
+import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -21,8 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
-//import org.springframework.data.annotation.Id;
-import jakarta.persistence.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -55,10 +50,6 @@ public class AssignmentPost {
   private User user;
 
   **/
-  // 숙소 정보
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "accommodation_id", nullable = false)
-  private Accommodation accommodation;
 
   @Column(nullable = false)
   private String title;
@@ -67,10 +58,37 @@ public class AssignmentPost {
   private String description;
 
   @Column(nullable = false)
-  private BigDecimal price;
+  private Long price;
 
   @Column(name = "is_auction", nullable = false)
   private boolean isAuction;
+
+  @Column(name = "location_depth1")
+  private String locationDepth1;
+
+  @Column(name = "location_depth2")
+  private String locationDepth2;
+
+  @Column(name = "reservation_platform")
+  private String reservationPlatform;
+
+  @Column(name = "check_in_date")
+  private LocalDate checkInDate;
+
+  @Column(name = "ckeck_out_date")
+  private LocalDate ckeckOutDate;
+
+  @Column(name = "reservation_code")
+  private String reservationCode;
+
+  @Column(name = "reservation_name")
+  private String reservationName;
+
+  @Column(name = "reservation_phone")
+  private String reservationPhone;
+
+  @Column(name = "status")
+  private String status;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
@@ -80,14 +98,21 @@ public class AssignmentPost {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
-  public void update(String title, BigDecimal price, String description, boolean isAuction) {
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.isAuction = isAuction;
+  public void update(AssignmentPostUpdateRequestDto dto) {
+    this.title = dto.getTitle();
+    this.price = dto.getPrice();
+    this.description = dto.getDescription();
+    this.isAuction = dto.isAuction();
+    this.locationDepth1 = dto.getLocationDepth1();
+    this.locationDepth2 = dto.getLocationDepth2();
+    this.reservationPlatform = dto.getReservationPlatform();
+    this.checkInDate = dto.getCheckInDate();
+    this.ckeckOutDate = dto.getCheckOutDate();
+    this.reservationName = dto.getReservationName();
+    this.reservationPhone = dto.getReservationPhone();
+    this.reservationCode = dto.getReservationCode();
+    this.status = dto.getStatus();
   }
 
-  public void updateAccommodation(String location, LocalDateTime checkInDate, LocalDateTime checkOutDate, String reservationPlatform) {
-    this.accommodation.update(location, checkInDate, checkOutDate, reservationPlatform);
-  }
+
 }

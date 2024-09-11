@@ -1,7 +1,7 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.dto.AssignmentPostRequest;
-import com.sbackjung.transferstay.dto.AssignmentPostResponse;
+import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
+import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.serivce.AssignmentPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,37 +26,37 @@ public class AssignmentPostController {
   private final AssignmentPostService assignmentPostService;
 
   @PostMapping("/write")
-  public ResponseEntity<AssignmentPostResponse> createAssignmentPost(
-      @Valid @RequestBody AssignmentPostRequest request) {
+  public ResponseEntity<AssignmentPostResponseDto> createAssignmentPost(
+      @Valid @RequestBody AssignmentPostRequestDto request) {
     // TODO: 실제 인증 구현 시 현재 로그인한 사용자의 ID를 가져오도록 수정
     Long userId = 1L; // 임시 userId. 실제 구현 시 이 부분을 수정해야 함
-    AssignmentPostResponse response = assignmentPostService.createAssignmentPost(request, userId);
+    AssignmentPostResponseDto response = assignmentPostService.createAssignmentPost(request, userId);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{postId}")
-  public ResponseEntity<AssignmentPostResponse> getAssignmentPost(@PathVariable Long postId) {
-    AssignmentPostResponse response = assignmentPostService.getAssignmentPost(postId);
+  public ResponseEntity<AssignmentPostResponseDto> getAssignmentPost(@PathVariable Long postId) {
+    AssignmentPostResponseDto response = assignmentPostService.getAssignmentPost(postId);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/")
-  public ResponseEntity<Page<AssignmentPostResponse>> getAllAssignmentPosts(Pageable pageable) {
-    Page<AssignmentPostResponse> response = assignmentPostService.getAllAssignmentPosts(pageable);
+  public ResponseEntity<Page<AssignmentPostResponseDto>> getAllAssignmentPosts(Pageable pageable) {
+    Page<AssignmentPostResponseDto> response = assignmentPostService.getAllAssignmentPosts(pageable);
     return ResponseEntity.ok(response);
   }
 
   @PutMapping("/{postId}")
-  public ResponseEntity<AssignmentPostResponse> updateAssignmentPost(
+  public ResponseEntity<AssignmentPostResponseDto> updateAssignmentPost(
       @PathVariable Long postId,
-      @Valid @RequestBody AssignmentPostRequest request) {
-    AssignmentPostResponse updatedResponse = assignmentPostService.updateAssignmentPost(postId, request);
+      @Valid @RequestBody AssignmentPostRequestDto request) {
+    AssignmentPostResponseDto updatedResponse = assignmentPostService.updateAssignmentPost(postId, request);
     return ResponseEntity.ok(updatedResponse);
   }
 
   @DeleteMapping("/{postId}")
 
-  public ResponseEntity<AssignmentPostResponse> deleteAssignmentPost(@PathVariable Long postId) {
+  public ResponseEntity<AssignmentPostResponseDto> deleteAssignmentPost(@PathVariable Long postId) {
     //todo : 사용자 인증정보 추가
 
     assignmentPostService.deleteAssignmentPost(postId);
