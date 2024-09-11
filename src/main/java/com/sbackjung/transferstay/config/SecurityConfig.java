@@ -27,14 +27,15 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/","/login/oauth2/**",
-                                "/h2-console/**","/auth/login-success-naver").permitAll()
+                                "/h2-console/**","/auth/login-success-naver"
+                        ,"/auth/login-success-kakao").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint.baseUri(
-                                "/login/oauth2/authorization/naver"))
+                            "/login/oauth2/authorization/{registrationId}"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri(
-                                "/login/oauth2/code/*"))
+                            "/login/oauth2/code/{registrationId}"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 );
