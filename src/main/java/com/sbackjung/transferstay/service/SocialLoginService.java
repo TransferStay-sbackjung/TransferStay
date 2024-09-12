@@ -17,68 +17,58 @@ import java.util.Optional;
 public class SocialLoginService extends DefaultOAuth2UserService {
 
   private final UserRepository userRepository;
+  public static final String NAVER = "naver";
+  public static final String KAKAO = "kakao";
 
   @Override
   public OAuth2User loadUser(OAuth2UserRequest request) {
     OAuth2User oAuth2User = super.loadUser(request);
     String oauthClientName =
         request.getClientRegistration().getClientName();
-    // 출력테스트용
-//        System.out.println(oauthClientName);
-//        try{
-//            System.out.println(new ObjectMapper().writeValueAsString(
-//                    oAuth2User.getAttributes()
-//            ));
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
+    System.out.println(oauthClientName);
 
-    UserDomain user = null;
     String oAuthId = null;
-
-    // 네이버
-    if (oauthClientName.equals("naver")) {
+    CustomOAuth2User oAuthUser = null;
+    // 네이버 로그인 
+    if (oauthClientName.equals(NAVER)) {
       Map<String, String> responseMap = (Map<String, String>) oAuth2User.getAttributes().get(
           "response");
       //총 36의 길이
-      oAuthId = "naver_" + responseMap.get("id").substring(0, 30);
+      oAuthId = NAVER + "_" + responseMap.get("id").substring(0, 30);
       String email = responseMap.get("email");
-      Optional<UserDomain> byEmail = userRepository.findByEmail(email);
-      // 해당 이메일이 존재한다면,
-      if (byEmail.isPresent()) {
-        System.out.println("email is exist");
-        return new CustomOAuth2User(oAuthId);
-      } else {
-        System.out.println("user not exist! create User and save DB " +
-            "before add token");
-        user = new UserDomain(oAuthId, email, "naver");
-        userRepository.save(user);
-      }
+      oAuthUser = checkUserExistElseCreate(oAuthId,email,NAVER);
     }
-    // 카카오
-    else if (oauthClientName.equals("kakao")) {
-
+    // 카카오 로그인
+    else if (oauthClientName.equals(KAKAO)) {
       // 카카오 사용자 정보에서 id와 이메일 추출
       Map<String, Object> kakaoAccountMap = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
       String id = oAuth2User.getAttributes().get("id").toString();
+      System.out.println("id = " + id);
       if (id.length() > 30) {
-        oAuthId = "naver_" + id.substring(0, 30);
+        oAuthId = KAKAO + "_" + id.substring(0, 30);
       } else {
-        oAuthId = "naver_" + id;
+        oAuthId = KAKAO + "_" + id;
       }
       String email = (String) kakaoAccountMap.get("email");
-
-      Optional<UserDomain> byEmail = userRepository.findByEmail(email);
-      // 해당 이메일이 존재한다면,
-      if (byEmail.isPresent()) {
-        System.out.println("email is exist");
-        return new CustomOAuth2User(oAuthId);
-      } else {
-        System.out.println("user not exist! create User and save DB before add token");
-        user = new UserDomain(oAuthId, email, "kakao");
-        userRepository.save(user);
-      }
+      System.out.println("email = " + email);
+      oAuthUser = checkUserExistElseCreate(oAuthId,email,KAKAO);
     }
-    return new CustomOAuth2User(oAuthId);
+    return oAuthUser;
+  }
+
+  private CustomOAuth2User checkUserExistElseCreate(String oAuthId,String email,
+                                        String provider){
+    Optional<UserDomain> byEmail = userRepository.findByEmail(email);
+    // 해당 이메일이 존재한다면,
+    if (byEmail.isPresent()) {
+      // todo : 해당 부분 기존에 존재하는 계정으로 로그인하도록 설절
+      System.out.println("email is exist oauthid"+byEmail.get().getOauthId());
+      return new CustomOAuth2User(byEmail.get().getOauthId());
+    } else {
+      System.out.println("user not exist! create User and save DB before add token");
+      UserDomain user = new UserDomain(oAuthId, email, provider);
+      userRepository.save(user);
+      return new CustomOAuth2User(oAuthId);
+    }
   }
 }
