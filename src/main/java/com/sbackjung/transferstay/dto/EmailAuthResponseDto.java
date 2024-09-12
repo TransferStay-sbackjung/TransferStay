@@ -1,9 +1,11 @@
 package com.sbackjung.transferstay.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class EmailAuthResponseDto {
     private String to;
