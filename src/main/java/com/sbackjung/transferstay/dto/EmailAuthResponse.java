@@ -7,12 +7,12 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class EmailAuthResponseDto {
+public class EmailAuthResponse {
     private String to;
     private String code;
 
-    public static EmailAuthResponseDto from(EmailAuthDto dto){
-        return EmailAuthResponseDto.builder()
+    public static EmailAuthResponse from(EmailAuthDto dto){
+        return EmailAuthResponse.builder()
                 .to(dto.getTo())
                 .code(dto.getCode())
                 .build();

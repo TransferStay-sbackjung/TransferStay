@@ -2,15 +2,14 @@ package com.sbackjung.transferstay.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class EmailAuthRequestDto {
-    @NotNull
+@AllArgsConstructor
+public class AuthenticationResponse {
+    private boolean isAuth;
+    private String message;
     private String email;
+
 }
