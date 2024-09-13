@@ -1,8 +1,7 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.dto.EmailAuthDto;
-import com.sbackjung.transferstay.dto.EmailAuthRequestDto;
-import com.sbackjung.transferstay.dto.EmailAuthResponseDto;
+import com.sbackjung.transferstay.dto.EmailAuthRequest;
+import com.sbackjung.transferstay.dto.EmailAuthResponse;
 import com.sbackjung.transferstay.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,12 @@ public class EmailAuthController {
     private final EmailService emailService;
 
     @PostMapping("/auth")
-    public ResponseEntity<EmailAuthResponseDto> sendAuthEmail(
-           @RequestBody @Valid EmailAuthRequestDto request
+    public ResponseEntity<EmailAuthResponse> sendAuthEmail(
+           @RequestBody @Valid EmailAuthRequest request
     ){
         System.out.println(request.getEmail());
-        EmailAuthResponseDto response =
-                EmailAuthResponseDto.from(emailService.sendEmail(request.getEmail()));
+        EmailAuthResponse response =
+                EmailAuthResponse.from(emailService.sendEmail(request.getEmail()));
         return ResponseEntity.ok(response);
     }
 }
