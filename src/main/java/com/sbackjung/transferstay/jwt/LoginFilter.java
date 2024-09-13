@@ -3,16 +3,16 @@ package com.sbackjung.transferstay.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbackjung.transferstay.dto.AuthenticationResponse;
 import com.sbackjung.transferstay.dto.UserDetailsDto;
+import com.sbackjung.transferstay.repository.UserRepository;
+import com.sbackjung.transferstay.service.EmailLoginService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.websocket.OnClose;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final Long expiredMs = 10 * 60 * 60 * 1000L;
+    private final EmailLoginService emailLoginService;
 
     @Override
     public Authentication attemptAuthentication(
@@ -50,7 +50,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = requestMap.get("email");
         String password = requestMap.get("password");
         log.info("user email {} ",email);
-
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email,password,null);
         return authenticationManager.authenticate(authToken);

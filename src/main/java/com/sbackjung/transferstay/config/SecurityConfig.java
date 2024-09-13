@@ -4,6 +4,7 @@ import com.sbackjung.transferstay.handler.OAuth2SuccessHandler;
 import com.sbackjung.transferstay.jwt.JwtFilter;
 import com.sbackjung.transferstay.jwt.JwtUtils;
 import com.sbackjung.transferstay.jwt.LoginFilter;
+import com.sbackjung.transferstay.service.EmailLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ public class SecurityConfig {
 
     private final DefaultOAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final EmailLoginService emailLoginService;
 
     @Bean // auth Manager Bean으로 등록
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -35,7 +37,7 @@ public class SecurityConfig {
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         AuthenticationManager authManager =
                 authenticationManager(authenticationConfiguration);
-        LoginFilter loginFilter = new LoginFilter(authManager,jwtUtils);
+        LoginFilter loginFilter = new LoginFilter(authManager,jwtUtils,emailLoginService);
         loginFilter.setFilterProcessesUrl("/api/v1/login");
 
         http
