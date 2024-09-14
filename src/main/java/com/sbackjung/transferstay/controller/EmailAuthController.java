@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.dto.AuthCodeRequest;
+import com.sbackjung.transferstay.dto.AuthCodeResponse;
 import com.sbackjung.transferstay.dto.EmailAuthRequest;
 import com.sbackjung.transferstay.dto.EmailAuthResponse;
 import com.sbackjung.transferstay.service.EmailService;
@@ -23,7 +25,15 @@ public class EmailAuthController {
     ){
         System.out.println(request.getEmail());
         EmailAuthResponse response =
-                EmailAuthResponse.from(emailService.sendEmail(request.getEmail()));
+                EmailAuthResponse.from(emailService.sendAuthCodeEmail(request.getEmail()));
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<AuthCodeResponse> checkAuthCode(
+            @RequestBody @Valid AuthCodeRequest request
+    ){
+        AuthCodeResponse response = emailService.checkAuthCode(request.getEmail(), request.getAuthCode());
         return ResponseEntity.ok(response);
     }
 }
