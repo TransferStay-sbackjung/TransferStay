@@ -52,6 +52,8 @@ public class UserDomain {
 
     private LocalDateTime deletedAt;
 
+    private LocalDateTime agreementAt;
+
     @Column(length = 50)
     private String role;
 
