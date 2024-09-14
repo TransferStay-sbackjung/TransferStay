@@ -2,6 +2,7 @@ package com.sbackjung.transferstay.controller;
 
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
+import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
 import com.sbackjung.transferstay.serivce.AssignmentPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class AssignmentPostController {
   @PutMapping("/{postId}")
   public ResponseEntity<AssignmentPostResponseDto> updateAssignmentPost(
       @PathVariable Long postId,
-      @Valid @RequestBody AssignmentPostRequestDto request) {
+      @Valid @RequestBody AssignmentPostUpdateRequestDto request) {
     AssignmentPostResponseDto updatedResponse = assignmentPostService.updateAssignmentPost(postId, request);
     return ResponseEntity.ok(updatedResponse);
   }

@@ -1,5 +1,6 @@
 package com.sbackjung.transferstay.dto;
 
+import com.sbackjung.transferstay.Enum.PostStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -45,7 +46,6 @@ public class AssignmentPostRequestDto {
   @NotBlank(message = "예약자 전화번호를 입력해 주세요.")
   private final String reservationPhone;
 
-  // 상태 필드의 디폴트 값 설정 (거래 중)
-  private String status = "거래 중";
+  private PostStatus status;
 
 }

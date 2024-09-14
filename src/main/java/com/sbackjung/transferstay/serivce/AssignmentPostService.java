@@ -1,5 +1,6 @@
 package com.sbackjung.transferstay.serivce;
 
+import com.sbackjung.transferstay.Enum.PostStatus;
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
@@ -29,11 +30,11 @@ public class AssignmentPostService {
         .locationDepth2(request.getLocationDepth2())
         .reservationPlatform(request.getReservationPlatform())
         .checkInDate(request.getCheckInDate())
-        .ckeckOutDate(request.getCheckOutDate())
+        .checkOutDate(request.getCheckOutDate())
         .reservationCode(request.getReservationCode())
         .reservationName(request.getReservationName())
         .reservationPhone(request.getReservationPhone())
-        .status(request.getStatus() != null ? request.getStatus() : "거래 중") // 상태값이 없으면 '거래 중'으로 설정
+        .status(PostStatus.PROGRESS)
         .build();
 
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
@@ -53,27 +54,11 @@ public class AssignmentPostService {
   }
 
   @Transactional
-  public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostRequestDto request) {
+  public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostUpdateRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
         .orElseThrow(() -> new RuntimeException("Assignment post not found"));
 
-    // 필드 업데이트
-    assignmentPost.update(AssignmentPostUpdateRequestDto.builder()
-        .title(request.getTitle())
-        .price(request.getPrice())
-        .description(request.getDescription())
-        .isAuction(request.getIsAuction())
-        .locationDepth1(request.getLocationDepth1())
-        .locationDepth2(request.getLocationDepth2())
-        .reservationPlatform(request.getReservationPlatform())
-        .checkInDate(request.getCheckInDate())
-        .checkOutDate(request.getCheckOutDate())
-        .reservationCode(request.getReservationCode())
-        .reservationName(request.getReservationName())
-        .reservationPhone(request.getReservationPhone())
-        .status(request.getStatus() != null ? request.getStatus() : assignmentPost.getStatus()) // 상태값이 없으면 기존 값 유지
-        .build());
-
+    assignmentPost.update(request);
     return toResponse(assignmentPost);
   }
 
@@ -88,7 +73,7 @@ public class AssignmentPostService {
         .locationDepth2(assignmentPost.getLocationDepth2())
         .reservationPlatform(assignmentPost.getReservationPlatform())
         .checkInDate(assignmentPost.getCheckInDate())
-        .checkOutDate(assignmentPost.getCkeckOutDate())
+        .checkOutDate(assignmentPost.getCheckOutDate())
         .reservationCode(assignmentPost.getReservationCode())
         .reservationName(assignmentPost.getReservationName())
         .reservationPhone(assignmentPost.getReservationPhone())
@@ -103,6 +88,11 @@ public class AssignmentPostService {
     // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
         .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+
+    // 유저 일치 여부
+    // if (!assignmentPost.getUserId().equals(userId)) {
+    //            throw new IllegalArgumentException("You are not authorized to delete this post");
+
     assignmentPostRepository.deleteById(postId);
   }
 }

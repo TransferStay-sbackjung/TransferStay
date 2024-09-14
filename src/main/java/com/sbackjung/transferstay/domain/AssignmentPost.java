@@ -1,9 +1,12 @@
 package com.sbackjung.transferstay.domain;
 
+import com.sbackjung.transferstay.Enum.PostStatus;
 import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,22 +37,13 @@ public class AssignmentPost {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;  // post_id
+  private Long id;
 
 
   @Column(name = "user_id", nullable = false)
   // 임시고정 userId
   private Long userId;
 
-  /**
-
-  * 추후 user 테이블 생성하면 변경하기
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
-
-  **/
 
   @Column(nullable = false)
   private String title;
@@ -58,7 +52,7 @@ public class AssignmentPost {
   private String description;
 
   @Column(nullable = false)
-  private Long price;
+  private long price;
 
   @Column(name = "is_auction", nullable = false)
   private boolean isAuction;
@@ -75,8 +69,8 @@ public class AssignmentPost {
   @Column(name = "check_in_date")
   private LocalDate checkInDate;
 
-  @Column(name = "ckeck_out_date")
-  private LocalDate ckeckOutDate;
+  @Column(name = "check_out_date")
+  private LocalDate checkOutDate;
 
   @Column(name = "reservation_code")
   private String reservationCode;
@@ -87,8 +81,10 @@ public class AssignmentPost {
   @Column(name = "reservation_phone")
   private String reservationPhone;
 
-  @Column(name = "status")
-  private String status;
+  @Setter
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private PostStatus status;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)
@@ -99,19 +95,43 @@ public class AssignmentPost {
   private LocalDateTime updatedAt;
 
   public void update(AssignmentPostUpdateRequestDto dto) {
-    this.title = dto.getTitle();
-    this.price = dto.getPrice();
-    this.description = dto.getDescription();
+    if (dto.getTitle() != null) {
+      this.title = dto.getTitle();
+    }
+    if (dto.getPrice() != 0) {
+      this.price = dto.getPrice();
+    }
+    if (dto.getDescription() != null) {
+      this.description = dto.getDescription();
+    }
     this.isAuction = dto.isAuction();
-    this.locationDepth1 = dto.getLocationDepth1();
-    this.locationDepth2 = dto.getLocationDepth2();
-    this.reservationPlatform = dto.getReservationPlatform();
-    this.checkInDate = dto.getCheckInDate();
-    this.ckeckOutDate = dto.getCheckOutDate();
-    this.reservationName = dto.getReservationName();
-    this.reservationPhone = dto.getReservationPhone();
-    this.reservationCode = dto.getReservationCode();
-    this.status = dto.getStatus();
+    if (dto.getLocationDepth1() != null) {
+      this.locationDepth1 = dto.getLocationDepth1();
+    }
+    if (dto.getLocationDepth2() != null) {
+      this.locationDepth2 = dto.getLocationDepth2();
+    }
+    if (dto.getReservationPlatform() != null) {
+      this.reservationPlatform = dto.getReservationPlatform();
+    }
+    if (dto.getCheckInDate() != null) {
+      this.checkInDate = dto.getCheckInDate();
+    }
+    if (dto.getCheckOutDate() != null) {
+      this.checkOutDate = dto.getCheckOutDate();
+    }
+    if (dto.getReservationName() != null) {
+      this.reservationName = dto.getReservationName();
+    }
+    if (dto.getReservationPhone() != null) {
+      this.reservationPhone = dto.getReservationPhone();
+    }
+    if (dto.getReservationCode() != null) {
+      this.reservationCode = dto.getReservationCode();
+    }
+    if (dto.getStatus() != null) {
+      this.status = dto.getStatus();
+    }
   }
 
 }
