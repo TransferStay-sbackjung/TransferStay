@@ -46,6 +46,4 @@ public class AssignmentPostRequestDto {
   @NotBlank(message = "예약자 전화번호를 입력해 주세요.")
   private final String reservationPhone;
 
-  private PostStatus status;
-
 }

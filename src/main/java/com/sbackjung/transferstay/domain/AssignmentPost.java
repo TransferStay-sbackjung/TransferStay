@@ -94,6 +94,9 @@ public class AssignmentPost {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  public Long getSellerId() {
+    return this.userId;
+  }
   public void update(AssignmentPostUpdateRequestDto dto) {
     if (dto.getTitle() != null) {
       this.title = dto.getTitle();
