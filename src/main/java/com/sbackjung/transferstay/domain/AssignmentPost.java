@@ -114,5 +114,4 @@ public class AssignmentPost {
     this.status = dto.getStatus();
   }
 
-
 }
