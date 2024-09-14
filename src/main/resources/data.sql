@@ -1,4 +1,4 @@
-INSERT IGNORE INTO test_search (title, location_depth1, location_depth2, check_in_date, check_out_date, personnel) VALUES
+INSERT INTO test_search (title, location_depth1, location_depth2, check_in_date, check_out_date, personnel) VALUES
 ('제주도 풀빌라',          '제주도',   '서귀포',  '2024-10-01', '2024-10-03', 3),
 ('강릉 리조트',           '강원도',    '강릉',   '2024-09-20', '2024-09-22', 2),
 ('인천 영종도 인스파이어',   '인천',     '영종도',  '2024-09-05', '2024-09-06', 5),
