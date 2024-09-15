@@ -1,6 +1,8 @@
 package com.sbackjung.transferstay.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.dto.AuthenticationResponse;
 import com.sbackjung.transferstay.dto.UserDetailsDto;
 import jakarta.servlet.FilterChain;
@@ -46,7 +48,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                     Map.class);
         } catch (IOException e) {
             // todo: 로그인 에러 추가
-            throw new RuntimeException(e);
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST, "이메일과 패스워드를 옳바르게 입력해주세요.");
         }
 
         String email = requestMap.get("email");
@@ -97,9 +100,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //인증실패시 동작 부분
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("{\"success\": false, \"message\": \"" + "User Not Found" + "\"}");
-        response.setStatus(401);
+        throw new CustomException(
+                ErrorCode.UN_AUTHORIZE, "사용자 인증에 실패하였습니다.");
     }
 }

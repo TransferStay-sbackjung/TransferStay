@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.service;
 
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.dto.UserJoinForm;
 import com.sbackjung.transferstay.dto.UserJoinResponse;
@@ -34,10 +36,12 @@ public class UserService {
 
     public void checkEmailAndPassword(UserJoinForm form){
         if(userRepository.existsByEmail(form.getEmail())){
-            // todo : 해당 이메일은 이미 존재합니다
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST, "해당 이메일의 사용자가 이미 존재합니다.");
         }
         if(!form.getPassword().equals(form.getPasswordCheck())){
-            // todo : 비빌번호 확인이 일치하지않습니다
+            throw new CustomException(
+                    ErrorCode.BAD_REQUEST, "비밀번호와 확인 비밀번호가 일치하지않습니다.");
         }
     }
 }
