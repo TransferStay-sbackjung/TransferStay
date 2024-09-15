@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.time.LocalDate;
 import java.util.Date;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,17 +30,29 @@ public class Accommodation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "location")
-  private String location;
+  @Column(name="title")
+  private String title;
+
+  @Column(name = "location_depth1")
+  private String locationDepth1;
+
+  @Column(name = "location_depth2")
+  private String locationDepth2;
 
   @Column(name = "reservation_platform")
   private String reservationPlatform;
 
   @Column(name = "check_in_date")
-  private Date checkInDate;
+  private LocalDate checkInDate;
 
   @Column(name = "ckeck_out_date")
-  private Date ckeckOutDate;
+  private LocalDate checkOutDate;
+
+  @Column(name = "personnel")
+  private int personnel;
+
+  @Column(name = "price")
+  private double price;
 
 
 }
