@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.service;
 
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.dto.AuthCodeResponse;
 import com.sbackjung.transferstay.dto.CodeValidation;
 import com.sbackjung.transferstay.dto.EmailAuthDto;
@@ -58,27 +60,32 @@ public class EmailSendingService {
                     .build();
         }catch(MessagingException e){
             log.error("MessagingException occur : {}",e.getMessage());
-            throw new RuntimeException("이메일 전송실패",e);
+            throw new CustomException(ErrorCode.EMAIL_SENDING_ERROR,"이메일 전송에 " +
+                    "실패하였습니다.");
         } catch (UnsupportedEncodingException e) {
             log.error("UnsupportedEncodingException occur : {}",e.getMessage());
-            throw new RuntimeException(e);
+            throw new CustomException(ErrorCode.INVALID_ENCODING_ERROR,"인코딩 " +
+                    "방식을 확인해주세요.");
         }
     }
 
     public AuthCodeResponse checkAuthCode(String email, String authCode) {
         CodeValidation validation = authMap.get(authCode);
         if(validation == null){
-            // todo : 인증코드 존재 x 에러 반환
-            return null;
+            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+                    "해당 인증번호는 존재하지 않습니다.");
         }
         if(!validation.getAuthorEmail().equals(email)){
-            // todo : 인증코드 와 사용자 이메일 매치 x 에러 반환
-            return null;
+            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+                    "옳바르지않은 인증번호입니다.");
         }
         if(validation.getCreateAt().isBefore(LocalDateTime.now().minusMinutes(5))){
-            // todo : 인증시간 만료 에러 반환
-            return null;
+            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+                    "인증시간이 만료되었습니다.");
         }
+        // 인증만료시 해당 데이터 삭제
+        // todo : 추후에 일정 스케쥴마다 데이터를 삭제하는 로직이 필요할수도
+        authMap.remove(authCode);
         return AuthCodeResponse.builder()
                 .email(email)
                 .isAuth(true)
