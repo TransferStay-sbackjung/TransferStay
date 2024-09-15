@@ -14,4 +14,9 @@ public class LoginTestController {
   public String kakaoTestLogin() {
     return "redirection-success";
   }
+
+  @GetMapping("/test/token")
+  public String TokenTest() {
+    return "토큰인증";
+  }
 }

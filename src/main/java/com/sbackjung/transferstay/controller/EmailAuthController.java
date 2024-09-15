@@ -4,7 +4,7 @@ import com.sbackjung.transferstay.dto.AuthCodeRequest;
 import com.sbackjung.transferstay.dto.AuthCodeResponse;
 import com.sbackjung.transferstay.dto.EmailAuthRequest;
 import com.sbackjung.transferstay.dto.EmailAuthResponse;
-import com.sbackjung.transferstay.service.EmailService;
+import com.sbackjung.transferstay.service.EmailSendingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/email")
 @RequiredArgsConstructor
 public class EmailAuthController {
-    private final EmailService emailService;
+    private final EmailSendingService emailService;
 
     @PostMapping("/auth")
     public ResponseEntity<EmailAuthResponse> sendAuthEmail(

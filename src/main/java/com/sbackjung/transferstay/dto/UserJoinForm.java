@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmailAuthAndAgreementForm {
+public class UserJoinForm {
     @NotNull
     private String email;
     @NotNull
