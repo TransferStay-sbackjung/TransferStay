@@ -3,34 +3,35 @@ package com.sbackjung.transferstay.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sbackjung.transferstay.dto.AuthenticationResponse;
 import com.sbackjung.transferstay.dto.UserDetailsDto;
-import com.sbackjung.transferstay.repository.UserRepository;
-import com.sbackjung.transferstay.service.EmailLoginService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final Long expiredMs = 10 * 60 * 60 * 1000L;
-    private final EmailLoginService emailLoginService;
+
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
     public Authentication attemptAuthentication(
@@ -47,11 +48,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             // todo: 로그인 에러 추가
             throw new RuntimeException(e);
         }
+
         String email = requestMap.get("email");
         String password = requestMap.get("password");
         log.info("user email {} ",email);
+        log.info("user password {} ",password);
+
         UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(email,password,null);
+                new UsernamePasswordAuthenticationToken(email,password,
+                        Collections.emptyList());
+        System.out.println(authToken);
         return authenticationManager.authenticate(authToken);
     }
 
@@ -62,10 +68,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             FilterChain chain,
             Authentication authentication
     ) throws IOException {
-        UserDetailsDto user = (UserDetailsDto)authentication.getPrincipal();
+        UserDetailsDto user = (UserDetailsDto) authentication.getPrincipal();
 
-        String email = user.getEmail();
-
+        String email = user.getUsername();
+        log.info("email = {}",email);
         Collection<? extends GrantedAuthority> authorities =
                 authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator =
@@ -86,5 +92,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(response.getWriter(), authResponse);
+    }
+
+    //인증실패시 동작 부분
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write("{\"success\": false, \"message\": \"" + "User Not Found" + "\"}");
+        response.setStatus(401);
     }
 }

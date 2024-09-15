@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EmailService {
+public class EmailSendingService {
     private final JavaMailSender javaMailSender;
 
     private final Map<String, CodeValidation> authMap = new HashMap<>();

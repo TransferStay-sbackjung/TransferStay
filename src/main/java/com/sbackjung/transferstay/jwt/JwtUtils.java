@@ -20,7 +20,7 @@ public class JwtUtils {
                         "HmacSHA256");
     }
 
-    public String getUserEmail(String token){
+    public String getUserId(String token){
         return Jwts.parser().setSigningKey(secretKey)
                 .build().parseSignedClaims(token).getPayload()
                 .get("userId",String.class);

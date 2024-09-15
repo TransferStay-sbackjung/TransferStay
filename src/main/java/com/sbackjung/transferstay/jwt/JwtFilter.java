@@ -1,11 +1,13 @@
 package com.sbackjung.transferstay.jwt;
 
+import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.dto.UserDetailsDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
@@ -30,13 +33,19 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
         if(jwtUtils.isExpiredToken(token)){
             // todo : 에러 형식으로 전환
+            log.error("토큰 만료");
             throw new RuntimeException("token 만료");
         }
 
-        String email = jwtUtils.getUserEmail(token);
+        String email = jwtUtils.getUserId(token);   
         String role = jwtUtils.getRole(token);
 
-        UserDetailsDto userDetail = new UserDetailsDto(email,"",role);
+        UserDomain userDomain = new UserDomain();
+        userDomain.setEmail(email);
+        userDomain.setPassword("temp");
+        userDomain.setRole(role);
+
+        UserDetailsDto userDetail = new UserDetailsDto(userDomain);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetail,null,userDetail.getAuthorities()
