@@ -37,11 +37,11 @@ public class UserService {
     public void checkEmailAndPassword(UserJoinForm form){
         if(userRepository.existsByEmail(form.getEmail())){
             throw new CustomException(
-                    ErrorCode.EMAIL_EXITS, "해당 이메일의 사용자가 이미 존재합니다.");
+                    ErrorCode.BAD_REQUEST, "해당 이메일의 사용자가 이미 존재합니다.");
         }
         if(!form.getPassword().equals(form.getPasswordCheck())){
             throw new CustomException(
-                    ErrorCode.PASSWORD_NOT_MATCH, "비밀번호와 확인 비밀번호가 일치하지않습니다.");
+                    ErrorCode.BAD_REQUEST, "비밀번호와 확인 비밀번호가 일치하지않습니다.");
         }
     }
 }

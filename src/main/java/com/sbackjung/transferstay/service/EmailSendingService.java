@@ -60,11 +60,11 @@ public class EmailSendingService {
                     .build();
         }catch(MessagingException e){
             log.error("MessagingException occur : {}",e.getMessage());
-            throw new CustomException(ErrorCode.EMAIL_SENDING_ERROR,"이메일 전송에 " +
+            throw new CustomException(ErrorCode.INTER_SERVER_ERROR,"이메일 전송에 " +
                     "실패하였습니다.");
         } catch (UnsupportedEncodingException e) {
             log.error("UnsupportedEncodingException occur : {}",e.getMessage());
-            throw new CustomException(ErrorCode.INVALID_ENCODING_ERROR,"인코딩 " +
+            throw new CustomException(ErrorCode.BAD_REQUEST,"인코딩 " +
                     "방식을 확인해주세요.");
         }
     }
@@ -72,15 +72,15 @@ public class EmailSendingService {
     public AuthCodeResponse checkAuthCode(String email, String authCode) {
         CodeValidation validation = authMap.get(authCode);
         if(validation == null){
-            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+            throw new CustomException(ErrorCode.BAD_REQUEST,"이메일 전송에 " +
                     "해당 인증번호는 존재하지 않습니다.");
         }
         if(!validation.getAuthorEmail().equals(email)){
-            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+            throw new CustomException(ErrorCode.BAD_REQUEST,"이메일 전송에 " +
                     "옳바르지않은 인증번호입니다.");
         }
         if(validation.getCreateAt().isBefore(LocalDateTime.now().minusMinutes(5))){
-            throw new CustomException(ErrorCode.INVALID_EMAIL_VERIFY,"이메일 전송에 " +
+            throw new CustomException(ErrorCode.BAD_REQUEST,"이메일 전송에 " +
                     "인증시간이 만료되었습니다.");
         }
         // 인증만료시 해당 데이터 삭제
