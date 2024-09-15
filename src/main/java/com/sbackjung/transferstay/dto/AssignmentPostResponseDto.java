@@ -1,5 +1,6 @@
 package com.sbackjung.transferstay.dto;
 
+import com.sbackjung.transferstay.Enum.PostStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -29,5 +30,5 @@ public class AssignmentPostResponseDto {
   private final String reservationPhone;
 
   // 상태
-  private final String status;
+  private final PostStatus status;
 }
