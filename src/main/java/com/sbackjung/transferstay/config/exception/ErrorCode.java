@@ -9,6 +9,9 @@ public enum ErrorCode {
 
     // 400 Bad Request
     BAD_REQUEST(400, "잘못된 요청 정보입니다."),
+    // 401 UnAuthorize
+    UN_AUTHORIZE(401, "권한이 없는 사용자입니다."),
+    // 500 Server Error
     INTER_SERVER_ERROR(500,"서버 내부의 에러입니다.");
     private final int code;
     private final String message;
