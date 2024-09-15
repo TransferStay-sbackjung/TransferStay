@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.service;
 
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.dto.CustomOAuth2User;
 import com.sbackjung.transferstay.repository.UserRepository;
@@ -62,8 +64,11 @@ public class SocialLoginService extends DefaultOAuth2UserService {
     // 해당 이메일이 존재한다면,
     if (byEmail.isPresent()) {
       // todo : 해당 부분 기존에 존재하는 계정으로 로그인하도록 설절
+      // info : 에러를 반환하는것이 맞을까요, 다른 상태코드를 반환하는것이 맞을까요
       System.out.println("email is exist oauthid"+byEmail.get().getOauthId());
-      return new CustomOAuth2User(byEmail.get().getOauthId());
+      throw new CustomException(ErrorCode.BAD_REQUEST, "해당 이메일의 사용자는 이미 존재합니다" +
+              ".");
+      //return new CustomOAuth2User(byEmail.get().getOauthId());
     } else {
       System.out.println("user not exist! create User and save DB before add token");
       UserDomain user = new UserDomain(oAuthId, email, provider);
