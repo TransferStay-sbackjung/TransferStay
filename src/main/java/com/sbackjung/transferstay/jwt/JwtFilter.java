@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.jwt;
 
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.dto.UserDetailsDto;
 import jakarta.servlet.FilterChain;
@@ -26,6 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
         // 토큰 여부 형식 검증
         if(authorization == null || !authorization.startsWith("Bearer ")){
+            log.error("Bearer Token does not Exist.");
             filterChain.doFilter(request,response);
             return;
         }
@@ -33,8 +36,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
         if(jwtUtils.isExpiredToken(token)){
             // todo : 에러 형식으로 전환
-            log.error("토큰 만료");
-            throw new RuntimeException("token 만료");
+            log.error("Token Expire.");
+            throw new CustomException(
+                    ErrorCode.UN_AUTHORIZE, "만료된 토큰입니다.");
         }
 
         String email = jwtUtils.getUserId(token);   
