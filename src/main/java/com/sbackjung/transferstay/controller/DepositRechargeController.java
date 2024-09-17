@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.dto.CustomOAuth2User;
+import com.sbackjung.transferstay.service.DepositRechargeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +15,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/deposit")
-public class DepositController {
+public class DepositRechargeController {
 
-  private final
+  private final DepositRechargeService depositRechargeService;
 
   @PostMapping("/recharge")
   public ResponseEntity<String> rechargeDeposit(@RequestParam Long amount) {
     try {
       // 현재 인증된 사용자 정보 가져오기
-      UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      depositRechargeService.rechargeDeposit(userDetails, amount);
+      Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+      // 소셜 로그인 사용자인지 자체 회원가입 사용자인지 체크
+      // 소셜 로그인 일때
+      if (principal instanceof CustomOAuth2User) {
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) principal;
+        String oauthId = oAuth2User.getName();  // 소셜 로그인 사용자 ID 가져오기
+        depositRechargeService.rechargeDepositByOAuthId(oauthId, amount);
+      }
+      // 자체 로그인 일때
+      else if (principal instanceof UserDetails) {
+        UserDetails userDetails = (UserDetails) principal;
+        String email = userDetails.getUsername();  // 자체 회원가입 사용자의 이메일 가져오기
+        depositRechargeService.rechargeDepositByEmail(email, amount);
+      } else {
+        throw new IllegalArgumentException("인증된 사용자를 찾을 수 없습니다.");
+      }
+
       return ResponseEntity.ok("충전 성공");
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
@@ -30,3 +48,4 @@ public class DepositController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("충전 실패");
     }
   }
+}
