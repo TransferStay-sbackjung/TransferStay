@@ -3,7 +3,7 @@ package com.sbackjung.transferstay.controller;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
-import com.sbackjung.transferstay.serivce.AssignmentPostService;
+import com.sbackjung.transferstay.service.AssignmentPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

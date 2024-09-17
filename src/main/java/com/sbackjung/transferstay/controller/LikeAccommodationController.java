@@ -1,6 +1,6 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.serivce.LikeAccommodationService;
+import com.sbackjung.transferstay.service.LikeAccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

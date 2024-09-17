@@ -1,4 +1,4 @@
-package com.sbackjung.transferstay.serivce;
+package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.domain.LikeAccommodation;
