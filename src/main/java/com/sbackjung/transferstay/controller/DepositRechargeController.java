@@ -1,5 +1,7 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.dto.CustomOAuth2User;
 import com.sbackjung.transferstay.service.DepositRechargeService;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +40,17 @@ public class DepositRechargeController {
         String email = userDetails.getUsername();  // 자체 회원가입 사용자의 이메일 가져오기
         depositRechargeService.rechargeDepositByEmail(email, amount);
       } else {
-        throw new IllegalArgumentException("인증된 사용자를 찾을 수 없습니다.");
+        throw new CustomException(ErrorCode.UN_AUTHORIZE);
       }
 
-      return ResponseEntity.ok("충전 성공");
+      return ResponseEntity.status(HttpStatus.OK).body("충전이 완료되었습니다.");
+
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorCode().getCode()).body(e.getErrorCode().getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("충전 실패");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCode.DEPOSIT_RECHARGE_ERROR.getMessage());
     }
   }
 }
