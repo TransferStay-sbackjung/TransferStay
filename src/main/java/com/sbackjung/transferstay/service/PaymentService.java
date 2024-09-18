@@ -1,4 +1,4 @@
-package com.sbackjung.transferstay.serivce;
+package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.EscrowStatus;
 import com.sbackjung.transferstay.Enum.PostStatus;

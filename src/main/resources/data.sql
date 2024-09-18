@@ -1,6 +1,6 @@
-INSERT INTO users (user_id, amount, name) VALUES (1, 1000000, 'buyerUser');
-INSERT INTO users (user_id, amount, name) VALUES (2, 2000000, 'SellerUser');
-INSERT INTO users (user_id, amount, name) VALUES (3, 2500000, 'test1');
+--INSERT INTO users (user_id, amount, name) VALUES (1, 1000000, 'buyerUser');
+--INSERT INTO users (user_id, amount, name) VALUES (2, 2000000, 'SellerUser');
+--INSERT INTO users (user_id, amount, name) VALUES (3, 2500000, 'test1');
 
 INSERT INTO test_search (title, location_depth1, location_depth2, check_in_date, check_out_date, personnel) VALUES
 ('제주도 풀빌라',          '제주도',   '서귀포',  '2024-10-01', '2024-10-03', 3),
