@@ -34,7 +34,7 @@ public class AssignmentPostService {
         .reservationCode(request.getReservationCode())
         .reservationName(request.getReservationName())
         .reservationPhone(request.getReservationPhone())
-        .status(PostStatus.PROGRESS)
+        .status(PostStatus.ON_SALE)
         .build();
 
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);

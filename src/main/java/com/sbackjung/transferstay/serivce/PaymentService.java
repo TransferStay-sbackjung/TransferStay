@@ -44,10 +44,10 @@ public class PaymentService {
       escrowRepository.save(escrow);
 
       // 거래 상태 업데이트
-      assignmentPost.setStatus(PostStatus.PENDING);
+      assignmentPost.setStatus(PostStatus.TRANSACTION_IN_PROGRESS);
     } else {
       // 잔액이 부족한 경우
-      throw new IllegalArgumentException("Insufficient funds for payment");
+      throw new IllegalArgumentException("잔액 부족");
     }
   }
 
@@ -65,7 +65,7 @@ public class PaymentService {
 
     escrow.setStatus(EscrowStatus.COMPLETED);
 
-    assignmentPost.setStatus(PostStatus.COMPLETED);
+    assignmentPost.setStatus(PostStatus.TRANSACTION_COMPLETED);
 
   }
 }
