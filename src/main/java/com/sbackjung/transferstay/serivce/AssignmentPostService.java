@@ -34,7 +34,7 @@ public class AssignmentPostService {
         .reservationCode(request.getReservationCode())
         .reservationName(request.getReservationName())
         .reservationPhone(request.getReservationPhone())
-        .status(PostStatus.ON_SALE)
+        .status(PostStatus.ACTIVE)
         .build();
 
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
@@ -43,14 +43,15 @@ public class AssignmentPostService {
 
   @Transactional
   public AssignmentPostResponseDto getAssignmentPost(Long id) {
-    AssignmentPost post = assignmentPostRepository.findById(id)
+
+    AssignmentPost post = assignmentPostRepository.findByIdAndStatusNot(id, PostStatus.DELETED)
         .orElseThrow(() -> new RuntimeException("Assignment post not found"));
     return toResponse(post);
   }
 
   @Transactional
   public Page<AssignmentPostResponseDto> getAllAssignmentPosts(Pageable pageable) {
-    return assignmentPostRepository.findAll(pageable).map(this::toResponse);
+    return assignmentPostRepository.findByStatusNot(PostStatus.DELETED, pageable).map(this::toResponse);
   }
 
   @Transactional
@@ -92,7 +93,6 @@ public class AssignmentPostService {
     // 유저 일치 여부
     // if (!assignmentPost.getUserId().equals(userId)) {
     //            throw new IllegalArgumentException("You are not authorized to delete this post");
-
-    assignmentPostRepository.deleteById(postId);
+    assignmentPost.setStatus(PostStatus.DELETED);
   }
 }
