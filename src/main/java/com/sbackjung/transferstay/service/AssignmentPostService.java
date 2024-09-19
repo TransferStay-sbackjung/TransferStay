@@ -1,6 +1,8 @@
 package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.PostStatus;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
@@ -45,7 +47,7 @@ public class AssignmentPostService {
   public AssignmentPostResponseDto getAssignmentPost(Long id) {
 
     AssignmentPost post = assignmentPostRepository.findByIdAndStatusNot(id, PostStatus.DELETED)
-        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
     return toResponse(post);
   }
 
@@ -57,7 +59,7 @@ public class AssignmentPostService {
   @Transactional
   public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostUpdateRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
 
     assignmentPost.update(request);
     return toResponse(assignmentPost);
@@ -88,11 +90,12 @@ public class AssignmentPostService {
   public void deleteAssignmentPost(Long postId) {
     // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
 
     // 유저 일치 여부
     // if (!assignmentPost.getUserId().equals(userId)) {
-    //            throw new IllegalArgumentException("You are not authorized to delete this post");
+    //    throw new CustomException(ErrorCode.UN_AUTHORIZE, "이 게시글을 삭제할 권한이 없습니다.");
+
     assignmentPost.setStatus(PostStatus.DELETED);
   }
 }

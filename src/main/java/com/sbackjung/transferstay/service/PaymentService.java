@@ -2,6 +2,8 @@ package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.EscrowStatus;
 import com.sbackjung.transferstay.Enum.PostStatus;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.domain.Escrow;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
@@ -22,7 +24,7 @@ public class PaymentService {
   public void processPayment(Long assignmentId, Long userId) {
     // 1. 게시글 정보 조회
     AssignmentPost assignmentPost = assignmentPostRepository.findById(assignmentId)
-        .orElseThrow(() -> new IllegalArgumentException("Assignment not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."));
 
     // 임시 유저 잔액 설정 (실제 구현 시 UserRepository를 사용하여 유저 정보를 조회)
     long userBalance = 1000000L;
@@ -47,7 +49,7 @@ public class PaymentService {
       assignmentPost.setStatus(PostStatus.TRANSACTION_IN_PROGRESS);
     } else {
       // 잔액이 부족한 경우
-      throw new IllegalArgumentException("잔액 부족");
+      throw new CustomException(ErrorCode.BAD_REQUEST, "결제할 금액이 부족합니다.");
     }
   }
 
@@ -55,11 +57,12 @@ public class PaymentService {
   public void completePayment(Long assignmentId, Long userId) {
     // 게시글 정보 조회
     AssignmentPost assignmentPost = assignmentPostRepository.findById(assignmentId)
-        .orElseThrow(() -> new IllegalArgumentException("Assignment not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."));
 
     // 에스크로 상태 변경
     Escrow escrow = escrowRepository.findByAssignmentPostId(assignmentId)
-        .orElseThrow(() -> new IllegalArgumentException("Assignment not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 에스크로 정보를 찾을 수 없습니다."));
+
 
     // todo : transacton 로직 추가 (판매자에게 돈 입금, 구매자에게 돈 출금)
 
