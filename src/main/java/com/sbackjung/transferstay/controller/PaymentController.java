@@ -1,7 +1,6 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.serivce.AssignmentPostService;
-import com.sbackjung.transferstay.serivce.PaymentService;
+import com.sbackjung.transferstay.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
