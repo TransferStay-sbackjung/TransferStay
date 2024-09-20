@@ -12,10 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -87,7 +90,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = jwtUtils.createJwtToken(email,role,expiredMs);
 
         AuthenticationResponse authResponse = new AuthenticationResponse(true
-                , "인증이 완료되었습니다.", email);
+                , "Authentication Success.", email);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setHeader("Authorization", "Bearer " + token);
@@ -100,7 +103,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //인증실패시 동작 부분
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        throw new CustomException(
-                ErrorCode.UN_AUTHORIZE, "사용자 인증에 실패하였습니다.");
+        String message;
+
+        if (failed instanceof BadCredentialsException) {
+            message = "잘못된 정보입니다.";
+        } else if (failed instanceof UsernameNotFoundException) {
+            message = "유저 정보가 잘못되었습니다.";
+        } else if(failed instanceof InternalAuthenticationServiceException){
+            message = "유저 정보가 잘못되었습니다.";
+        } else {
+            message = "인증에 실패했습니다.";
+        }
+
+        sendErrorResponse(response, HttpStatus.UNAUTHORIZED, message);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status.value());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getWriter(), Collections.singletonMap("error", message));
     }
 }

@@ -5,6 +5,8 @@ import com.sbackjung.transferstay.jwt.JwtFilter;
 import com.sbackjung.transferstay.jwt.JwtUtils;
 import com.sbackjung.transferstay.jwt.LoginFilter;
 import com.sbackjung.transferstay.service.EmailLoginService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -43,7 +46,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/login/oauth2/**", "/h2-console/**", "/auth/login-success-naver", "/auth/login-success-kakao").permitAll()
+                        .requestMatchers("/", "/login/oauth2/**", "/h2" +
+                                "-console/**", "/auth/**").permitAll()
                         .requestMatchers("/email-login").permitAll()
                         .requestMatchers("/api/v1/user/join").permitAll()
                         .requestMatchers("/api/v1/email/**").permitAll()
@@ -53,6 +57,9 @@ public class SecurityConfig {
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/{registrationId}"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint()) // 인증 실패 시 JSON 응답
                 );
 
         http
@@ -60,6 +67,16 @@ public class SecurityConfig {
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException authException) -> {
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"Unauthorized\", " +
+                    "\"message\": \"" + "잘못된 토큰 형식입니다." + "\"}");
+        };
     }
 
     @Bean

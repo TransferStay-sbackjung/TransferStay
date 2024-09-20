@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 
-public class PaymentService {
+public class  PaymentService {
 
   private final AssignmentPostRepository assignmentPostRepository;
   private final EscrowRepository escrowRepository;

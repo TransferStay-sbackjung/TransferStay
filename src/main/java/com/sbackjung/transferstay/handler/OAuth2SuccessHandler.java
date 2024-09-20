@@ -21,6 +21,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
+    private final Long expiredMs = 10 * 60 * 60 * 1000L;
 
     @Override
     public void onAuthenticationSuccess(
@@ -32,7 +33,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String oAuthId = oAuth2User.getName();
         System.out.println("oAuthId = " + oAuthId);
-        String token = jwtUtils.createJwtToken(oAuthId,"user",3600L);
+        String token = jwtUtils.createJwtToken(oAuthId,"user",expiredMs);
         // 생성된 토큰 저장
         Optional<UserDomain> user = userRepository.findByOauthId(oAuthId);
         if(user.isEmpty()){
@@ -43,8 +44,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         user.get().setAccessToken(token);
         userRepository.save(user.get());
 
-        //헤더에 추가
+        //헤더에 추가 todo : 토큰 보여주도록
         response.addHeader("Authorization","Bearer "+token);
-        response.sendRedirect("http://localhost:8080/auth/login-success-kakao");
+        response.sendRedirect("http://localhost:8080/auth/"+token);
     }
 }

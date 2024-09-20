@@ -21,6 +21,11 @@ public class DbCheckController {
         checkDbConnection();
     }
 
+    @GetMapping("/")
+    public String mainCheck(){
+        return "main ";
+    }
+
     @GetMapping("/check-db")
     public void checkDbConnection(){
         try{
