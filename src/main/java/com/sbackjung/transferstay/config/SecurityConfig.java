@@ -75,7 +75,7 @@ public class SecurityConfig {
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"error\": \"Unauthorized\", " +
-                    "\"message\": \"" + "잘못된 토큰 형식입니다." + "\"}");
+                    "\"message\": \"" + "잘못된 토큰입니다. 혹은 예외처리를 추가해주세요." + "\"}");
         };
     }
 

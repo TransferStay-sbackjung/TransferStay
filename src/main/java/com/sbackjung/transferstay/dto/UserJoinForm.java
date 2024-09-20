@@ -1,5 +1,6 @@
 package com.sbackjung.transferstay.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 @NoArgsConstructor
 @Builder
 public class UserJoinForm {
-    @NotNull
+    @NotBlank
     private String email;
-    @NotNull
+    @NotBlank
     private String password;
-    @NotNull
+    @NotBlank
     private String passwordCheck;
-    @NotNull
+    @NotBlank
     private String phoneNumber;
 }
