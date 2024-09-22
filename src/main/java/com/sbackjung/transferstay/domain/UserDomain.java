@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -57,7 +58,8 @@ public class UserDomain {
     @Column(length = 50)
     private String role;
 
-    private Long amount;
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long amount = 0L; // 초기 잔액을 0으로 설정
 
     public UserDomain(String userId, String email, String provider) {
         this.oauthId = userId;

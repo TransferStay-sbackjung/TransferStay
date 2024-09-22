@@ -16,12 +16,4 @@ public interface UserRepository extends JpaRepository<UserDomain,Long> {
     Optional<UserDomain> findByOauthId(String oauthId);
     boolean existsByEmail(String email);
 
-    // 예치금 충전에서 동시성 문제 해결을 위해 사용
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT u FROM UserDomain u WHERE u.oauthId = :oauthId")
-    Optional<UserDomain> findByOauthIdWithLock(@Param("oauthId") String oauthId);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT u FROM UserDomain u WHERE u.email = :email")
-    Optional<UserDomain> findByEmailWithLock(@Param("email") String email);
 }

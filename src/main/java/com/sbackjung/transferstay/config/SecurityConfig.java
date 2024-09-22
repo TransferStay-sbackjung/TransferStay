@@ -5,6 +5,7 @@ import com.sbackjung.transferstay.jwt.JwtFilter;
 import com.sbackjung.transferstay.jwt.JwtUtils;
 import com.sbackjung.transferstay.jwt.LoginFilter;
 import com.sbackjung.transferstay.service.EmailLoginService;
+import com.sbackjung.transferstay.service.SocialLoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtils jwtUtils;
-    private final DefaultOAuth2UserService oAuth2UserService;
+    private final SocialLoginService socialLoginService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final EmailLoginService emailLoginService;
     private final PasswordEncoder passwordEncoder;
@@ -53,7 +54,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/{registrationId}"))
-                        .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
+                        .userInfoEndpoint(endpoint -> endpoint.userService(socialLoginService))
                         .successHandler(oAuth2SuccessHandler)
                 )
                 .exceptionHandling(exception -> exception
