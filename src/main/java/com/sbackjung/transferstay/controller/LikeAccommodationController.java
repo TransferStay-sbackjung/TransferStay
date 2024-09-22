@@ -1,7 +1,10 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.service.LikeAccommodationService;
+import com.sbackjung.transferstay.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +22,26 @@ public class LikeAccommodationController {
   private final LikeAccommodationService likeAccommodationService;
 
   @PostMapping("/{postId}/likes")
-  public ResponseEntity<String> addLike(@PathVariable Long postId, @RequestParam Long userId) {
+  public ResponseEntity<JsonResponse> addLike(@PathVariable Long postId) {
+    Long userId = UserIdHolder.getUserIdFromToken();
     likeAccommodationService.addLike(userId, postId);
-    return ResponseEntity.ok("게시물을 찜하였습니다.");
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "게시물을 찜하였습니다.", null);
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{postId}/likes")
-  public ResponseEntity<String> removeLike(@PathVariable Long postId, @RequestParam Long userId) {
+  public ResponseEntity<JsonResponse> removeLike(@PathVariable Long postId) {
+    Long userId = UserIdHolder.getUserIdFromToken();
     likeAccommodationService.removeLike(userId, postId);
-    return ResponseEntity.ok("찜하기가 취소되었습니다.");
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "찜하기가 취소되었습니다.", null);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{postId}/likes")
-  public ResponseEntity<Boolean> isLiked(@PathVariable Long postId, @RequestParam Long userId) {
+  public ResponseEntity<JsonResponse> isLiked(@PathVariable Long postId) {
+    Long userId = UserIdHolder.getUserIdFromToken();
     boolean isLiked = likeAccommodationService.isPostLikedByUser(userId, postId);
-    return ResponseEntity.ok(isLiked);
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "찜 여부 조회 완료.", isLiked);
+    return ResponseEntity.ok(response);
   }
 }
