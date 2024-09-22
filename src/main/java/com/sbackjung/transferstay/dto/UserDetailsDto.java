@@ -38,4 +38,8 @@ public class UserDetailsDto implements UserDetails {
     public String getUsername() {
         return this.userDomain.getEmail();
     }
+
+    public Long getUserId() {
+        return this.userDomain.getUserId();
+    }
 }

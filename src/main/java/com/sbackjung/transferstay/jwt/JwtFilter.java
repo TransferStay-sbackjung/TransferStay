@@ -42,6 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 값 추출 및 만료시간 검증
         String token = authorization.split(" ")[1];
+        Long userId;
         String email;
         String role;
 
@@ -51,7 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Expired token.");
                 return;
             }
-            email = jwtUtils.getUserId(token);
+            userId = jwtUtils.getUserId(token);
+            email = jwtUtils.getEmail(token);
             role = jwtUtils.getRole(token);
         } catch (ExpiredJwtException e) {
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Token expired.");
@@ -62,6 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         UserDomain userDomain = new UserDomain();
+        userDomain.setUserId(userId);
         userDomain.setEmail(email);
         userDomain.setPassword("temp");
         userDomain.setRole(role);

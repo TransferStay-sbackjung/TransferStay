@@ -77,6 +77,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         UserDetailsDto user = (UserDetailsDto) authentication.getPrincipal();
 
         String email = user.getUsername();
+        Long userId = user.getUserId();
+
         log.info("email = {}",email);
         Collection<? extends GrantedAuthority> authorities =
                 authentication.getAuthorities();
@@ -87,7 +89,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtils.createJwtToken(email,role,expiredMs);
+        String token = jwtUtils.createJwtToken(userId,email,role,expiredMs);
 
         AuthenticationResponse authResponse = new AuthenticationResponse(true
                 , "Authentication Success.", email);

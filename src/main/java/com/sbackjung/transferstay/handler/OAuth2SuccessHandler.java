@@ -33,14 +33,15 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String oAuthId = oAuth2User.getName();
         System.out.println("oAuthId = " + oAuthId);
-        String token = jwtUtils.createJwtToken(oAuthId,"user",expiredMs);
-        // 생성된 토큰 저장
+        // 저장된 유저를 찾아서, 생성된 인증 토큰을 저장
         Optional<UserDomain> user = userRepository.findByOauthId(oAuthId);
+        // 유저 발견 x
         if(user.isEmpty()){
-            // 에외 처리 추가
             System.out.println("user not found");
             throw new RuntimeException();
         }
+        Long userId = user.get().getUserId();
+        String token = jwtUtils.createJwtToken(userId,oAuthId,"user",expiredMs);
         user.get().setAccessToken(token);
         userRepository.save(user.get());
 
