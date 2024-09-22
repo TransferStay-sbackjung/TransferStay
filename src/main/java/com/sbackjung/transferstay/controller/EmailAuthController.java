@@ -1,12 +1,10 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.dto.AuthCodeRequest;
-import com.sbackjung.transferstay.dto.AuthCodeResponse;
-import com.sbackjung.transferstay.dto.EmailAuthRequest;
-import com.sbackjung.transferstay.dto.EmailAuthResponse;
+import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.service.EmailSendingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,20 +18,22 @@ public class EmailAuthController {
     private final EmailSendingService emailService;
 
     @PostMapping("/auth")
-    public ResponseEntity<EmailAuthResponse> sendAuthEmail(
+    public ResponseEntity<JsonResponse> sendAuthEmail(
            @RequestBody @Valid EmailAuthRequest request
     ){
         System.out.println(request.getEmail());
         EmailAuthResponse response =
                 EmailAuthResponse.from(emailService.sendAuthCodeEmail(request.getEmail()));
-        return ResponseEntity.ok(response);
+        JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "인증 이메일이 전송되었습니다.", response);
+        return ResponseEntity.ok(jsonResponse);
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<AuthCodeResponse> checkAuthCode(
+    public ResponseEntity<JsonResponse> checkAuthCode(
             @RequestBody @Valid AuthCodeRequest request
     ){
         AuthCodeResponse response = emailService.checkAuthCode(request.getEmail(), request.getAuthCode());
-        return ResponseEntity.ok(response);
+        JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "인증 코드가 확인되었습니다.", response);
+        return ResponseEntity.ok(jsonResponse);
     }
 }
