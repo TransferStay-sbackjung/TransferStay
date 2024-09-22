@@ -41,5 +41,4 @@ public class Auction {
 
     @Enumerated(EnumType.STRING)
     private AuctionStatus status;
-
 }

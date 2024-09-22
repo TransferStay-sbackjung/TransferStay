@@ -1,8 +1,8 @@
 package com.sbackjung.transferstay.Enum;
 
 public enum AuctionStatus {
-    WAiTING,
     IN_PROGRESS,
+    WAITING,
     BID_SUCCESS,
     BID_FAIL
 }
