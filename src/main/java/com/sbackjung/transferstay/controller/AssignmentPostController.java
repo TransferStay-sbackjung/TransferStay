@@ -3,8 +3,10 @@ package com.sbackjung.transferstay.controller;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
+import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.service.AssignmentPostService;
 import com.sbackjung.transferstay.utils.UserIdHolder;
+import io.swagger.v3.core.util.Json;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,37 +30,42 @@ public class AssignmentPostController {
   private final AssignmentPostService assignmentPostService;
 
   @PostMapping
-  public ResponseEntity<AssignmentPostResponseDto> createAssignmentPost(
+  public ResponseEntity<JsonResponse> createAssignmentPost(
       @Valid @RequestBody AssignmentPostRequestDto request) {
     Long userId = UserIdHolder.getUserIdFromToken();
     AssignmentPostResponseDto response = assignmentPostService.createAssignmentPost(request, userId);
-    return ResponseEntity.ok(response);
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 생성되었습니다.", response);
+    return ResponseEntity.ok(jsonResponse);
   }
 
   @GetMapping("/{postId}")
-  public ResponseEntity<AssignmentPostResponseDto> getAssignmentPost(@PathVariable Long postId) {
+  public ResponseEntity<JsonResponse> getAssignmentPost(@PathVariable Long postId) {
     AssignmentPostResponseDto response = assignmentPostService.getAssignmentPost(postId);
-    return ResponseEntity.ok(response);
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 조회되었습니다.", response);
+    return ResponseEntity.ok(jsonResponse);
   }
 
   @GetMapping
-  public ResponseEntity<Page<AssignmentPostResponseDto>> getAllAssignmentPosts(Pageable pageable) {
+  public ResponseEntity<JsonResponse> getAllAssignmentPosts(Pageable pageable) {
     Page<AssignmentPostResponseDto> response = assignmentPostService.getAllAssignmentPosts(pageable);
-    return ResponseEntity.ok(response);
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "모든 양도글이 조회되었습니다.", response);
+    return ResponseEntity.ok(jsonResponse);
   }
 
   @PutMapping("/{postId}")
-  public ResponseEntity<AssignmentPostResponseDto> updateAssignmentPost(
+  public ResponseEntity<JsonResponse> updateAssignmentPost(
       @PathVariable Long postId,
       @Valid @RequestBody AssignmentPostUpdateRequestDto request) {
     AssignmentPostResponseDto updatedResponse = assignmentPostService.updateAssignmentPost(postId, request);
-    return ResponseEntity.ok(updatedResponse);
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 수정되었습니다.", updatedResponse);
+    return ResponseEntity.ok(jsonResponse);
   }
 
   @DeleteMapping("/{postId}")
-  public ResponseEntity<AssignmentPostResponseDto> deleteAssignmentPost(@PathVariable Long postId) {
+  public ResponseEntity<JsonResponse> deleteAssignmentPost(@PathVariable Long postId) {
     Long userId = UserIdHolder.getUserIdFromToken();
     assignmentPostService.deleteAssignmentPost(postId,userId);
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.NO_CONTENT.value(), "양도글이 삭제되었습니다.", null);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(jsonResponse);
   }
 }
