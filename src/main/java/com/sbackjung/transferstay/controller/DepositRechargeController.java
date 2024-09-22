@@ -22,6 +22,7 @@ public class DepositRechargeController {
 
   private final DepositRechargeService depositRechargeService;
 
+  // 충전
   @PostMapping("/recharge")
   public ResponseEntity<String> rechargeDeposit(@RequestBody Long amount) {
     try {
@@ -56,6 +57,7 @@ public class DepositRechargeController {
     }
   }
 
+  // 환불
   @PostMapping("/refund")
   public ResponseEntity<String> refundDeposit(@RequestBody Long amount) {
     try {
@@ -86,6 +88,40 @@ public class DepositRechargeController {
       return ResponseEntity.status(e.getErrorCode().getCode()).body(e.getErrorCode().getMessage());
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCode.DEPOSIT_REFUND_ERROR.getMessage());
+    }
+  }
+
+  // 조회
+  @GetMapping("/balance")
+  public ResponseEntity<String> getDepositBalance() {
+    try {
+      // 현재 인증된 사용자 정보 가져오기
+      Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+      log.info("Principal class: {}", principal.getClass().getName());
+
+      Long balance;
+
+      // 소셜 로그인 사용자일 때
+      if (principal instanceof CustomOAuth2User oAuth2User) {
+        log.info(oAuth2User.getName());
+        String oauthId = oAuth2User.getName();  // 소셜 로그인 사용자 ID 가져오기
+        balance = depositRechargeService.getDepositBalanceByOAuthId(oauthId);
+      }
+      // 자체 회원가입 사용자일 때
+      else if (principal instanceof UserDetailsDto userDetails) {
+        String email = userDetails.getUsername();  // 자체 회원가입 사용자의 이메일 가져오기
+        balance = depositRechargeService.getDepositBalanceByEmail(email);
+      } else {
+        throw new CustomException(ErrorCode.UN_AUTHORIZE);
+      }
+
+      return ResponseEntity.status(HttpStatus.OK).body("현재 잔액은 " + balance + "원입니다.");
+
+    } catch (CustomException e) {
+      return ResponseEntity.status(e.getErrorCode().getCode()).body(e.getErrorCode().getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCode.DEPOSIT_BALANCE_ERROR.getMessage());
     }
   }
 }

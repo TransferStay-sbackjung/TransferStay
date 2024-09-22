@@ -79,4 +79,17 @@ public class DepositRechargeService {
 
     user.setAmount(user.getAmount() - amount);
   }
+
+  // 잔액 조회
+  public Long getDepositBalanceByOAuthId(String oauthId) {
+    UserDomain user = userRepository.findByOauthId(oauthId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    return user.getAmount();  // 현재 잔액 반환
+  }
+
+  public Long getDepositBalanceByEmail(String email) {
+    UserDomain user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    return user.getAmount();  // 현재 잔액 반환
+  }
 }

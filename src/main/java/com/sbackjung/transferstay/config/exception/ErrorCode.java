@@ -2,6 +2,7 @@ package com.sbackjung.transferstay.config.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public enum ErrorCode {
     // 500 Server Error
     INTER_SERVER_ERROR(500,"서버 내부의 에러입니다."),
     DEPOSIT_RECHARGE_ERROR(500, "충전 처리 중 오류가 발생했습니다."),
+    DEPOSIT_BALANCE_ERROR(500, "잔액 조회 중 오류가 발생했습니다."),
     DEPOSIT_REFUND_ERROR(500,  "환불 처리 중 오류가 발생했습니다.");
     private final int code;
     private final String message;
