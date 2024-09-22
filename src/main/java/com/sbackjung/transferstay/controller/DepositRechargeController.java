@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/deposit")
+@RequestMapping("/api/v1/deposit")
 @Slf4j
 public class DepositRechargeController {
 
@@ -92,7 +92,7 @@ public class DepositRechargeController {
   }
 
   // 조회
-  @GetMapping("/balance")
+  @GetMapping
   public ResponseEntity<String> getDepositBalance() {
     try {
       // 현재 인증된 사용자 정보 가져오기
