@@ -4,6 +4,7 @@ import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
 import com.sbackjung.transferstay.service.AssignmentPostService;
+import com.sbackjung.transferstay.utils.UserIdHolder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,8 +30,8 @@ public class AssignmentPostController {
   @PostMapping("/write")
   public ResponseEntity<AssignmentPostResponseDto> createAssignmentPost(
       @Valid @RequestBody AssignmentPostRequestDto request) {
-    // TODO: 실제 인증 구현 시 현재 로그인한 사용자의 ID를 가져오도록 수정
-    Long userId = 1L; // 임시 userId. 실제 구현 시 이 부분을 수정해야 함
+    // TODO: 실제 인증 구현 시 현재 로그인한 사용자의 ID를 가져오도록 수정 -> 완료
+    Long userId = UserIdHolder.getUserIdFromToken();
     AssignmentPostResponseDto response = assignmentPostService.createAssignmentPost(request, userId);
     return ResponseEntity.ok(response);
   }
@@ -56,11 +57,10 @@ public class AssignmentPostController {
   }
 
   @DeleteMapping("/{postId}")
-
   public ResponseEntity<AssignmentPostResponseDto> deleteAssignmentPost(@PathVariable Long postId) {
-    //todo : 사용자 인증정보 추가
-
-    assignmentPostService.deleteAssignmentPost(postId);
+    //todo : 사용자 인증정보 추가 -> 완료
+    Long userId = UserIdHolder.getUserIdFromToken();
+    assignmentPostService.deleteAssignmentPost(postId,userId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 

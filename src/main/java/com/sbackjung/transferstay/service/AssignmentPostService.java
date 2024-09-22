@@ -1,6 +1,8 @@
 package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.PostStatus;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
@@ -21,21 +23,21 @@ public class AssignmentPostService {
   @Transactional
   public AssignmentPostResponseDto createAssignmentPost(AssignmentPostRequestDto request, Long userId) {
     AssignmentPost assignmentPost = AssignmentPost.builder()
-        .userId(userId)
-        .title(request.getTitle())
-        .price(request.getPrice())
-        .description(request.getDescription())
-        .isAuction(request.getIsAuction())
-        .locationDepth1(request.getLocationDepth1())
-        .locationDepth2(request.getLocationDepth2())
-        .reservationPlatform(request.getReservationPlatform())
-        .checkInDate(request.getCheckInDate())
-        .checkOutDate(request.getCheckOutDate())
-        .reservationCode(request.getReservationCode())
-        .reservationName(request.getReservationName())
-        .reservationPhone(request.getReservationPhone())
-        .status(PostStatus.PROGRESS)
-        .build();
+            .userId(userId)
+            .title(request.getTitle())
+            .price(request.getPrice())
+            .description(request.getDescription())
+            .isAuction(request.getIsAuction())
+            .locationDepth1(request.getLocationDepth1())
+            .locationDepth2(request.getLocationDepth2())
+            .reservationPlatform(request.getReservationPlatform())
+            .checkInDate(request.getCheckInDate())
+            .checkOutDate(request.getCheckOutDate())
+            .reservationCode(request.getReservationCode())
+            .reservationName(request.getReservationName())
+            .reservationPhone(request.getReservationPhone())
+            .status(PostStatus.PROGRESS)
+            .build();
 
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
     return toResponse(savedPost);
@@ -44,7 +46,7 @@ public class AssignmentPostService {
   @Transactional
   public AssignmentPostResponseDto getAssignmentPost(Long id) {
     AssignmentPost post = assignmentPostRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+            .orElseThrow(() -> new RuntimeException("Assignment post not found"));
     return toResponse(post);
   }
 
@@ -56,7 +58,7 @@ public class AssignmentPostService {
   @Transactional
   public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostUpdateRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+            .orElseThrow(() -> new RuntimeException("Assignment post not found"));
 
     assignmentPost.update(request);
     return toResponse(assignmentPost);
@@ -64,35 +66,36 @@ public class AssignmentPostService {
 
   private AssignmentPostResponseDto toResponse(AssignmentPost assignmentPost) {
     return AssignmentPostResponseDto.builder()
-        .id(assignmentPost.getId())
-        .title(assignmentPost.getTitle())
-        .price(assignmentPost.getPrice())
-        .description(assignmentPost.getDescription())
-        .isAuction(assignmentPost.isAuction())
-        .locationDepth1(assignmentPost.getLocationDepth1())
-        .locationDepth2(assignmentPost.getLocationDepth2())
-        .reservationPlatform(assignmentPost.getReservationPlatform())
-        .checkInDate(assignmentPost.getCheckInDate())
-        .checkOutDate(assignmentPost.getCheckOutDate())
-        .reservationCode(assignmentPost.getReservationCode())
-        .reservationName(assignmentPost.getReservationName())
-        .reservationPhone(assignmentPost.getReservationPhone())
-        .status(assignmentPost.getStatus())
-        .createdAt(assignmentPost.getCreatedAt())
-        .updatedAt(assignmentPost.getUpdatedAt())
-        .build();
+            .id(assignmentPost.getId())
+            .title(assignmentPost.getTitle())
+            .price(assignmentPost.getPrice())
+            .description(assignmentPost.getDescription())
+            .isAuction(assignmentPost.isAuction())
+            .locationDepth1(assignmentPost.getLocationDepth1())
+            .locationDepth2(assignmentPost.getLocationDepth2())
+            .reservationPlatform(assignmentPost.getReservationPlatform())
+            .checkInDate(assignmentPost.getCheckInDate())
+            .checkOutDate(assignmentPost.getCheckOutDate())
+            .reservationCode(assignmentPost.getReservationCode())
+            .reservationName(assignmentPost.getReservationName())
+            .reservationPhone(assignmentPost.getReservationPhone())
+            .status(assignmentPost.getStatus())
+            .createdAt(assignmentPost.getCreatedAt())
+            .updatedAt(assignmentPost.getUpdatedAt())
+            .build();
   }
 
   @Transactional
-  public void deleteAssignmentPost(Long postId) {
-    // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가
+  public void deleteAssignmentPost(Long postId, Long userId) {
+    // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가 -> 완료
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-        .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-
+            .orElseThrow(() -> new CustomException(ErrorCode.INTER_SERVER_ERROR,
+                    "게시글을 찾을수 없습니다."));
     // 유저 일치 여부
-    // if (!assignmentPost.getUserId().equals(userId)) {
-    //            throw new IllegalArgumentException("You are not authorized to delete this post");
-
+    if (!assignmentPost.getUserId().equals(userId)) {
+      throw new CustomException(ErrorCode.UN_AUTHORIZE, "해당 게시글을 삭제할" +
+              " 권한이 없습니다.");
+    }
     assignmentPostRepository.deleteById(postId);
   }
 }
