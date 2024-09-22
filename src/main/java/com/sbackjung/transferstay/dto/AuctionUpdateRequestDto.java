@@ -9,10 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuctionPostRequestDto implements AuctionDataSetDto{
-    @NotNull
-    private Long postId;
-
+public class AuctionUpdateRequestDto implements AuctionDataSetDto{
     @NotBlank
     private String startDate;
 

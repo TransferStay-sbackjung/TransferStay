@@ -30,11 +30,26 @@ public class AuctionController {
         return ResponseEntity.ok(new JsonResponse(200,"경매 생성 완료.",data));
     }
 
+    @PatchMapping("/{auctionId}")
+    public ResponseEntity<JsonResponse> updateAuction(
+            @PathVariable Long auctionId,
+            @RequestBody @Valid AuctionUpdateRequestDto request
+    ){
+        Long userId = getUserIdFromToken();
+        AuctionUpdateResponseDto data = auctionService.updateAction(request,
+                userId,auctionId);
+        return ResponseEntity.ok(new JsonResponse(200,"경매 수정 완료.",data));
+    }
+
+    /*
+        ?page=0&size=10&sort=startDate,desc
+     */
     @GetMapping({"/{orderBy}","/"})
     public ResponseEntity<JsonResponse> getAuctionList(
             @PathVariable(value = "orderBy",required = false) String orderBy,
             Pageable pageable
     ){
+        // todo : 현재 최고 경매가를 보여주고자한다면, 메소드를 추가해야할것같습니다.
         Page<AuctionGetListDto> auctionList =
                 auctionService.getAuctionList(pageable,orderBy);
         return ResponseEntity.ok(new JsonResponse(200,"경매 리스트 불러오기 완료.",
@@ -45,6 +60,7 @@ public class AuctionController {
     public ResponseEntity<JsonResponse> getAuctionDetail(
             @PathVariable(value = "auctionId",required = true) Long auctionId
     ){
+        // todo : 아마 경매에 참여한 사람들의 정보도 불러와야 할듯합니다.
         AuctionGetDetailDto data = auctionService.getAuctionDetails(auctionId);
         return ResponseEntity.ok(new JsonResponse(200,"경매 세부정보 불러오기 완료.",
                 data));
