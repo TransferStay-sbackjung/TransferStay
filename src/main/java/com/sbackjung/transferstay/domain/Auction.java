@@ -2,15 +2,15 @@ package com.sbackjung.transferstay.domain;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
