@@ -1,11 +1,14 @@
 package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
+import com.sbackjung.transferstay.Enum.BidType;
 import com.sbackjung.transferstay.config.exception.CustomException;
 import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.Auction;
+import com.sbackjung.transferstay.domain.AuctionTransaction;
 import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.repository.AuctionRepository;
+import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AuctionService {
     private final AuctionRepository auctionRepository;
+    private final AuctionTransactionRepository auctionTransActionRepository;
 
     @Transactional
     public AuctionPostResponseDto createAuction(AuctionPostRequestDto request, Long userId
@@ -111,8 +115,26 @@ public class AuctionService {
 
 
     // 최초 응찰 service
-    public void firstBidding(){
+    public void firstBidding(Auction auction, Long bidderId, Long suggestPrice) {
+        // 입찰가가 시작가 이상인지 확인
+        if (suggestPrice < auction.getStartPrice()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "입찰가는 시작가 이상이어야 합니다.");
+        }
 
+        // 최초 응찰 기록
+        AuctionTransaction auctionTransaction = AuctionTransaction.builder()
+            .auctionId(auction.getActionId())
+            .bidderId(bidderId)
+            .suggestPrice(suggestPrice)
+            .maxPrice(suggestPrice) // maxPrice 를 현재 응찰가로 지정하여 재 응찰 시 사용하면 좋을 것 같습니다.
+            .type(BidType.MANUAL)
+            .build();
+        auctionTransActionRepository.save(auctionTransaction);
+
+        // 경매 상태 업데이트 (최고가 및 낙찰자 정보)
+        auction.setWinningPrice(suggestPrice);
+        auction.setWinningBidderId(bidderId);
+        auctionRepository.save(auction);
     }
 
     // 재 응찰 service

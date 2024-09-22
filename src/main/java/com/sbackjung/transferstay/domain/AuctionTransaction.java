@@ -1,6 +1,5 @@
 package com.sbackjung.transferstay.domain;
 
-import com.sbackjung.transferstay.Enum.AuctionStatus;
 import com.sbackjung.transferstay.Enum.BidStatus;
 import com.sbackjung.transferstay.Enum.BidType;
 import jakarta.persistence.Column;
@@ -13,13 +12,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "Autionc_transaction")
 @EntityListeners(EntityListeners.class)
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuctionTransaction {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id; // 입찰 내역 id

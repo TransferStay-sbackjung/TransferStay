@@ -92,7 +92,7 @@ public class AuctionController {
 
     // 응찰하기
     @PostMapping("/{postId}/bidding")
-    public ResponseEntity<JsonResponse> bidding (@PathVariable("postId") Long postId){
+    public ResponseEntity<JsonResponse> bidding (@PathVariable("postId") Long postId, @RequestBody PlaceBidRequestDto requestDto){
 
         // 유효한 응찰인지 확인 -> postId 로 Auction 찾은 후 유효한 경매인지 체크
         Auction auction = auctionRepository.findByPostId(postId)
@@ -109,7 +109,7 @@ public class AuctionController {
 
         if(auctionTransaction.isEmpty()) {
             // -> 최초 응찰 service
-            auctionService.firstBidding();
+            auctionService.firstBidding(auction, userId, requestDto.getSuggestPrice());
         } else {
             // -> 재 응찰 service
             auctionService.reBidding();
