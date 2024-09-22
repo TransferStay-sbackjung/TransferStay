@@ -12,25 +12,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/likes")
+@RequestMapping("/api/v1/assignment-posts")
 @RequiredArgsConstructor
 public class LikeAccommodationController {
 
   private final LikeAccommodationService likeAccommodationService;
 
-  @PostMapping("/{postId}")
+  @PostMapping("/{postId}/likes")
   public ResponseEntity<String> addLike(@PathVariable Long postId, @RequestParam Long userId) {
     likeAccommodationService.addLike(userId, postId);
     return ResponseEntity.ok("게시물을 찜하였습니다.");
   }
 
-  @DeleteMapping("/{postId}")
+  @DeleteMapping("/{postId}/likes")
   public ResponseEntity<String> removeLike(@PathVariable Long postId, @RequestParam Long userId) {
     likeAccommodationService.removeLike(userId, postId);
     return ResponseEntity.ok("찜하기가 취소되었습니다.");
   }
 
-  @GetMapping("/{postId}")
+  @GetMapping("/{postId}/likes")
   public ResponseEntity<Boolean> isLiked(@PathVariable Long postId, @RequestParam Long userId) {
     boolean isLiked = likeAccommodationService.isPostLikedByUser(userId, postId);
     return ResponseEntity.ok(isLiked);
