@@ -1,6 +1,5 @@
 package com.sbackjung.transferstay.repository;
 
-import com.sbackjung.transferstay.Enum.AuctionStatus;
 import com.sbackjung.transferstay.domain.Auction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +15,6 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
     // findAll을 사용해서 불러오고, pageSort를 통해서 정렬
     Page<Auction> findAll(Pageable pageable);
+
+    Optional<Auction> findByPostId (Long postId);
 }

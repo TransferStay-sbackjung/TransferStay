@@ -109,4 +109,14 @@ public class AuctionService {
         }
     }
 
+
+    // 최초 응찰 service
+    public void firstBidding(){
+
+    }
+
+    // 재 응찰 service
+    public void reBidding(){
+
+    }
 }

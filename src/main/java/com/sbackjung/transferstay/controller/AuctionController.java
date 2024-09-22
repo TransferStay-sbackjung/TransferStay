@@ -1,8 +1,17 @@
 package com.sbackjung.transferstay.controller;
 
 import com.sbackjung.transferstay.dto.*;
+import com.sbackjung.transferstay.Enum.AuctionStatus;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
+import com.sbackjung.transferstay.domain.Auction;
+import com.sbackjung.transferstay.domain.AuctionTransaction;
+import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
+import com.sbackjung.transferstay.dto.AuctionPostResponseDto;
+import com.sbackjung.transferstay.dto.JsonResponse;
+import com.sbackjung.transferstay.repository.AuctionRepository;
+import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
 import com.sbackjung.transferstay.service.AuctionService;
-import com.sbackjung.transferstay.utils.UserIdHolder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 import static com.sbackjung.transferstay.utils.UserIdHolder.getUserIdFromToken;
 
 @RestController
@@ -20,6 +31,9 @@ import static com.sbackjung.transferstay.utils.UserIdHolder.getUserIdFromToken;
 @RequestMapping("/auction")
 public class AuctionController {
     private final AuctionService auctionService;
+
+    public final AuctionRepository auctionRepository;
+    public final AuctionTransactionRepository auctionTransactionRepository;
 
     @PostMapping("/")
     public ResponseEntity<JsonResponse> createAuction(
@@ -74,5 +88,33 @@ public class AuctionController {
         Long userId = getUserIdFromToken();
         auctionService.deleteAuction(userId,auctionId);
         return ResponseEntity.ok(new JsonResponse(200,"경매 삭제 완료.",null));
+    }
+
+    // 응찰하기
+    @PostMapping("/{postId}/bidding")
+    public ResponseEntity<JsonResponse> bidding (@PathVariable("postId") Long postId){
+
+        // 유효한 응찰인지 확인 -> postId 로 Auction 찾은 후 유효한 경매인지 체크
+        Auction auction = auctionRepository.findByPostId(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 경매를 찾을 수 없습니다."));
+        // Auction Status 확인
+        if(auction.getStatus() != AuctionStatus.IN_PROGRESS){
+            throw new CustomException(ErrorCode.BAD_REQUEST, "진행 중인 경매가 아닙니다 :: " + auction.getStatus().toString());
+        }
+
+        Long userId = getUserIdFromToken();
+
+        // userId로 응찰 내역이 있는지 확인
+        Optional<AuctionTransaction> auctionTransaction = auctionTransactionRepository.findByAuctionIdAndBidderId(auction.getActionId(), userId);
+
+        if(auctionTransaction.isEmpty()) {
+            // -> 최초 응찰 service
+            auctionService.firstBidding();
+        } else {
+            // -> 재 응찰 service
+            auctionService.reBidding();
+        }
+
+        return ResponseEntity.ok(new JsonResponse(200, "응찰이 완료되었습니다.", null));
     }
 }
