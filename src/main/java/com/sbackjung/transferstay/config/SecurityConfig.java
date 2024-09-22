@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,11 +46,9 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/login/oauth2/**", "/h2" +
-                "-console/**", "/auth/**").permitAll()
-            .requestMatchers("/email-login").permitAll()
-            .requestMatchers("/api/v1/user/join").permitAll()
-            .requestMatchers("/api/v1/email/**").permitAll()
+            .requestMatchers("/", "/login/oauth2/**", "/h2-console/**", "/auth/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/assignment-posts/{postId}", "/api/v1/assignment-posts", "/api/v1/search").permitAll()
+            .requestMatchers("/email-login", "/api/v1/user/join", "/api/v1/email/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
         )
