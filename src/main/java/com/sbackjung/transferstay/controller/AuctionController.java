@@ -58,11 +58,21 @@ public class AuctionController {
 
     @GetMapping("/details/{auctionId}")
     public ResponseEntity<JsonResponse> getAuctionDetail(
-            @PathVariable(value = "auctionId",required = true) Long auctionId
+            @PathVariable(value = "auctionId") Long auctionId
     ){
         // todo : 아마 경매에 참여한 사람들의 정보도 불러와야 할듯합니다.
         AuctionGetDetailDto data = auctionService.getAuctionDetails(auctionId);
         return ResponseEntity.ok(new JsonResponse(200,"경매 세부정보 불러오기 완료.",
                 data));
+    }
+
+    @DeleteMapping("/{auctionId}")
+    public ResponseEntity<JsonResponse> deleteAuction(
+            @PathVariable(value = "auctionId") Long auctionId
+    ){
+        // todo : 아마 경매에 참여한 사람들의 상태도 봐야할듯합니다.
+        Long userId = getUserIdFromToken();
+        auctionService.deleteAuction(userId,auctionId);
+        return ResponseEntity.ok(new JsonResponse(200,"경매 삭제 완료.",null));
     }
 }

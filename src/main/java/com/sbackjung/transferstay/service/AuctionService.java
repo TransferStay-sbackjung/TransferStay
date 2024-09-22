@@ -75,6 +75,18 @@ public class AuctionService {
         return AuctionGetDetailDto.from(auction);
     }
 
+    @Transactional
+    public void deleteAuction(Long userId,Long auctionId) {
+        Auction auction = auctionRepository.findAuctionByActionId(auctionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
+                        "해당 경매는 존재하지 않습니다."));
+        if(!auction.getUserId().equals(userId)){
+            throw new CustomException(ErrorCode.UN_AUTHORIZE,"해당 경매를 삭제할 권한이 " +
+                    "없습니다.");
+        }
+        auctionRepository.delete(auction);
+    }
+
     // 편의성을 위해서 String -> LocalDateTime로 변환해주는 함수
     private static LocalDateTime combineDateAndTime(String date,String time){
         return LocalDateTime.parse(date + "T" + time);
@@ -96,7 +108,5 @@ public class AuctionService {
             auction.setStatus(AuctionStatus.IN_PROGRESS);
         }
     }
-
-
 
 }
