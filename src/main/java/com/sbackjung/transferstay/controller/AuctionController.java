@@ -112,7 +112,7 @@ public class AuctionController {
             auctionService.firstBidding(auction, userId, requestDto.getSuggestPrice());
         } else {
             // -> 재 응찰 service
-            auctionService.reBidding();
+            auctionService.reBidding(auction, auctionTransaction.get(), requestDto.getSuggestPrice());
         }
 
         return ResponseEntity.ok(new JsonResponse(200, "응찰이 완료되었습니다.", null));

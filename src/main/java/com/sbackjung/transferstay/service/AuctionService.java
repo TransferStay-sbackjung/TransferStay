@@ -126,7 +126,7 @@ public class AuctionService {
             .auctionId(auction.getActionId())
             .bidderId(bidderId)
             .suggestPrice(suggestPrice)
-            .maxPrice(suggestPrice) // maxPrice 를 현재 응찰가로 지정하여 재 응찰 시 사용하면 좋을 것 같습니다.
+            .maxPrice(suggestPrice)
             .type(BidType.MANUAL)
             .build();
         auctionTransActionRepository.save(auctionTransaction);
@@ -138,7 +138,17 @@ public class AuctionService {
     }
 
     // 재 응찰 service
-    public void reBidding(){
+    public void reBidding(Auction auction, AuctionTransaction auctionTransaction, Long suggestPrice) {
+        if(suggestPrice <= auction.getWinningPrice()){
+            throw new CustomException(ErrorCode.BAD_REQUEST, "입찰가는 현재가보다 높아야 합니다.");
+        }
+        // 입찰 기록 갱신
+        auctionTransaction.setSuggestPrice(suggestPrice);
+        auctionTransaction.setMaxPrice(suggestPrice);
+        auctionTransActionRepository.save(auctionTransaction);
 
+        auction.setWinningPrice(suggestPrice);
+        auction.setWinningBidderId(auctionTransaction.getBidderId());
+        auctionRepository.save(auction);
     }
 }
