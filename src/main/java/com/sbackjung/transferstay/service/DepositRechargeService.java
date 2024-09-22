@@ -5,11 +5,13 @@ import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.UserDomain;
 import com.sbackjung.transferstay.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DepositRechargeService {
 
   private final UserRepository userRepository;
@@ -25,7 +27,8 @@ public class DepositRechargeService {
       throw new CustomException(ErrorCode.INVALID_AMOUNT);
     }
 
-    UserDomain user = userRepository.findByEmailWithLock(oauthId)
+    log.info(oauthId);
+    UserDomain user = userRepository.findByOauthId(oauthId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
     // 현재 금액에 충전 금액 추가
@@ -44,12 +47,49 @@ public class DepositRechargeService {
       throw new CustomException(ErrorCode.INVALID_AMOUNT);
     }
 
-    UserDomain user = userRepository.findByEmailWithLock(email)
+    UserDomain user = userRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
     // 현재 금액에 충전 금액 추가
     Long currentAmount = user.getAmount();
     user.setAmount(currentAmount + amount);
 
+  }
+  // 환불 처리
+  @Transactional
+  public void refundDepositByOAuthId(String oauthId, Long amount) {
+    UserDomain user = userRepository.findByOauthId(oauthId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+    if (user.getAmount() < amount) {
+      throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
+    }
+
+    user.setAmount(user.getAmount() - amount);
+  }
+
+  @Transactional
+  public void refundDepositByEmail(String email, Long amount) {
+    UserDomain user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+    if (user.getAmount() < amount) {
+      throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
+    }
+
+    user.setAmount(user.getAmount() - amount);
+  }
+
+  // 잔액 조회
+  public Long getDepositBalanceByOAuthId(String oauthId) {
+    UserDomain user = userRepository.findByOauthId(oauthId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    return user.getAmount();  // 현재 잔액 반환
+  }
+
+  public Long getDepositBalanceByEmail(String email) {
+    UserDomain user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    return user.getAmount();  // 현재 잔액 반환
   }
 }

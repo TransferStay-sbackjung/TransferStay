@@ -25,7 +25,7 @@ public class SocialLoginService extends DefaultOAuth2UserService {
   public static final String KAKAO = "kakao";
 
   @Override
-  public OAuth2User loadUser(OAuth2UserRequest request) {
+  public CustomOAuth2User loadUser(OAuth2UserRequest request) {
     OAuth2User oAuth2User = super.loadUser(request);
     String oauthClientName =
         request.getClientRegistration().getClientName();

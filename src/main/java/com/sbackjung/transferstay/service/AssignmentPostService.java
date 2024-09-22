@@ -36,7 +36,7 @@ public class AssignmentPostService {
             .reservationCode(request.getReservationCode())
             .reservationName(request.getReservationName())
             .reservationPhone(request.getReservationPhone())
-            .status(PostStatus.PROGRESS)
+            .status(PostStatus.PAYMENT_IN_PROGRESS)
             .build();
 
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
@@ -45,20 +45,20 @@ public class AssignmentPostService {
 
   @Transactional
   public AssignmentPostResponseDto getAssignmentPost(Long id) {
-    AssignmentPost post = assignmentPostRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+    AssignmentPost post = assignmentPostRepository.findByIdAndStatusNot(id, PostStatus.DELETED)
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
     return toResponse(post);
   }
 
   @Transactional
   public Page<AssignmentPostResponseDto> getAllAssignmentPosts(Pageable pageable) {
-    return assignmentPostRepository.findAll(pageable).map(this::toResponse);
+    return assignmentPostRepository.findByStatusNot(PostStatus.DELETED, pageable).map(this::toResponse);
   }
 
   @Transactional
   public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostUpdateRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("Assignment post not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
 
     assignmentPost.update(request);
     return toResponse(assignmentPost);
