@@ -90,6 +90,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         String token = jwtUtils.createJwtToken(userId,email,role,expiredMs);
+        log.info(token);
 
         AuthenticationResponse authResponse = new AuthenticationResponse(true
                 , "Authentication Success.", email);
