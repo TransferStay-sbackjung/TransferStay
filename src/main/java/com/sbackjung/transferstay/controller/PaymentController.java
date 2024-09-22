@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/payments")
+@RequestMapping("/api/v1/assignment-posts")
 public class PaymentController {
   private final PaymentService paymentService;
 
 
-  @PostMapping("/{assignmentPostId}")
+  @PostMapping("/{assignmentPostId}/payments")
   public ResponseEntity<String> processPayment(@PathVariable Long assignmentPostId, @RequestParam Long userId) {
     try {
       paymentService.processPayment(assignmentPostId, userId);
@@ -29,7 +29,7 @@ public class PaymentController {
     }
   }
 
-  @PostMapping("/confirm/{assignmentPostId}")
+  @PostMapping("/{assignmentPostId}/payments/confirm")
   public ResponseEntity<String> confirmPayment(@PathVariable Long assignmentPostId, @RequestParam Long userId) {
     try {
       paymentService.completePayment(assignmentPostId, userId);
