@@ -8,6 +8,7 @@ import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.domain.Escrow;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import com.sbackjung.transferstay.repository.EscrowRepository;
+import com.sbackjung.transferstay.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ public class  PaymentService {
 
   private final AssignmentPostRepository assignmentPostRepository;
   private final EscrowRepository escrowRepository;
+  private final UserRepository userRepository;
 
   @Transactional
   public void processPayment(Long assignmentId, Long userId) {
@@ -27,7 +29,9 @@ public class  PaymentService {
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."));
 
     // 임시 유저 잔액 설정 (실제 구현 시 UserRepository를 사용하여 유저 정보를 조회)
-    long userBalance = 1000000L;
+    long userBalance = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "사용자 정보를 찾을 수 없습니다."))
+        .getAmount();
 
     // 2. 잔액 확인
     if (userBalance >= assignmentPost.getPrice()) {

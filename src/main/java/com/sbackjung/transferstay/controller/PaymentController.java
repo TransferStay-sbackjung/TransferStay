@@ -1,6 +1,8 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.service.PaymentService;
+import com.sbackjung.transferstay.utils.UserIdHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +18,35 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
   private final PaymentService paymentService;
 
-
   @PostMapping("/{assignmentPostId}/payments")
-  public ResponseEntity<String> processPayment(@PathVariable Long assignmentPostId, @RequestParam Long userId) {
+  public ResponseEntity<JsonResponse> processPayment(@PathVariable Long assignmentPostId) {
+    Long userId = UserIdHolder.getUserIdFromToken();
     try {
       paymentService.processPayment(assignmentPostId, userId);
-      return ResponseEntity.ok("결제 성공");
+      JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "결제 성공", null);
+      return ResponseEntity.ok(response);
     } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body("잔액 부족");
+      JsonResponse response = new JsonResponse(HttpStatus.BAD_REQUEST.value(), "잔액 부족", null);
+      return ResponseEntity.badRequest().body(response);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 실패");
+      JsonResponse response = new JsonResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제 실패", null);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
   }
 
   @PostMapping("/{assignmentPostId}/payments/confirm")
-  public ResponseEntity<String> confirmPayment(@PathVariable Long assignmentPostId, @RequestParam Long userId) {
+  public ResponseEntity<JsonResponse> confirmPayment(@PathVariable Long assignmentPostId) {
+    Long userId = UserIdHolder.getUserIdFromToken(); // UserIdHolder에서 userId 가져오기
     try {
       paymentService.completePayment(assignmentPostId, userId);
-      return ResponseEntity.ok("결제확정");
+      JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "결제확정", null);
+      return ResponseEntity.ok(response);
     } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body("escrow not found");
+      JsonResponse response = new JsonResponse(HttpStatus.BAD_REQUEST.value(), "escrow not found", null);
+      return ResponseEntity.badRequest().body(response);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제확정 실패");
+      JsonResponse response = new JsonResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제확정 실패", null);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
   }
 }
