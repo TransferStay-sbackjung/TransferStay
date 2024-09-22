@@ -1,9 +1,6 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.dto.AuctionGetListDto;
-import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
-import com.sbackjung.transferstay.dto.AuctionPostResponseDto;
-import com.sbackjung.transferstay.dto.JsonResponse;
+import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.service.AuctionService;
 import com.sbackjung.transferstay.utils.UserIdHolder;
 import jakarta.validation.Valid;
@@ -42,5 +39,14 @@ public class AuctionController {
                 auctionService.getAuctionList(pageable,orderBy);
         return ResponseEntity.ok(new JsonResponse(200,"경매 리스트 불러오기 완료.",
                 auctionList));
+    }
+
+    @GetMapping("/details/{auctionId}")
+    public ResponseEntity<JsonResponse> getAuctionDetail(
+            @PathVariable(value = "auctionId",required = true) Long auctionId
+    ){
+        AuctionGetDetailDto data = auctionService.getAuctionDetails(auctionId);
+        return ResponseEntity.ok(new JsonResponse(200,"경매 세부정보 불러오기 완료.",
+                data));
     }
 }

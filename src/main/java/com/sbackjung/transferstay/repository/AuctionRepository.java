@@ -7,8 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
-    // findAll을 사용하여 정렬을 Pageable로 처리
+    // auctionId로 경매상세정보
+    Optional<Auction> findAuctionByActionId(Long auctionId);
+
+    // findAll을 사용해서 불러오고, pageSort를 통해서 정렬
     Page<Auction> findAll(Pageable pageable);
 }

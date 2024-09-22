@@ -1,7 +1,10 @@
 package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
+import com.sbackjung.transferstay.config.exception.CustomException;
+import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.Auction;
+import com.sbackjung.transferstay.dto.AuctionGetDetailDto;
 import com.sbackjung.transferstay.dto.AuctionGetListDto;
 import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
 import com.sbackjung.transferstay.dto.AuctionPostResponseDto;
@@ -60,10 +63,20 @@ public class AuctionService {
                 .map(AuctionGetListDto::from);
     }
 
+    @Transactional
+    public AuctionGetDetailDto getAuctionDetails(Long auctionId) {
+        Auction auction = auctionRepository.findAuctionByActionId(auctionId)
+                .orElseThrow(()->new CustomException(ErrorCode.BAD_REQUEST,
+                        "해당 경매는 존재하지않습니다."));
+        // todo : 종료된 경매에 대해서는 그냥 return or 에러처리?
+        return AuctionGetDetailDto.from(auction);
+    }
+
     // 편의성을 위해서 String -> LocalDateTime로 변환해주는 함수
     private static LocalDateTime combineDateAndTime(String date,String time){
         return LocalDateTime.parse(date + "T" + time);
     }
+
 
 
 }
