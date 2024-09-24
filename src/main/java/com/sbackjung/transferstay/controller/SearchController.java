@@ -5,6 +5,7 @@ import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.dto.SearchResponse;
 import com.sbackjung.transferstay.service.SearchService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,10 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/")
+@Tag(name = "Search", description = "검색 API")
 public class SearchController {
 
     private final SearchService searchService;
 
+    @Tag(name = "Search", description = "검색 API")
     @GetMapping("/search")
     public ResponseEntity<JsonResponse> searchRequest(@RequestParam(value = "freeField", required = false) String freeField,
                                                       @RequestParam(value = "checkInDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkInDate,

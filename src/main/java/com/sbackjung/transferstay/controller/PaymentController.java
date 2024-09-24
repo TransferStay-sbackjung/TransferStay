@@ -3,6 +3,8 @@ package com.sbackjung.transferstay.controller;
 import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.service.PaymentService;
 import com.sbackjung.transferstay.utils.UserIdHolder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/assignment-posts")
+@Tag(name = "Payment", description = "결제 처리 API")
 public class PaymentController {
   private final PaymentService paymentService;
 
+  @Operation(summary = "일반 결제 처리", description = "일반 결제를 처리합니다.")
   @PostMapping("/{assignmentPostId}/payments")
   public ResponseEntity<JsonResponse> processPayment(@PathVariable Long assignmentPostId) {
     Long userId = UserIdHolder.getUserIdFromToken();
