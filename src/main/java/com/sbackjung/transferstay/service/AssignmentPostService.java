@@ -22,80 +22,48 @@ public class AssignmentPostService {
 
   @Transactional
   public AssignmentPostResponseDto createAssignmentPost(AssignmentPostRequestDto request, Long userId) {
-    AssignmentPost assignmentPost = AssignmentPost.builder()
-            .userId(userId)
-            .title(request.getTitle())
-            .price(request.getPrice())
-            .description(request.getDescription())
-            .isAuction(request.getIsAuction())
-            .locationDepth1(request.getLocationDepth1())
-            .locationDepth2(request.getLocationDepth2())
-            .reservationPlatform(request.getReservationPlatform())
-            .checkInDate(request.getCheckInDate())
-            .checkOutDate(request.getCheckOutDate())
-            .reservationCode(request.getReservationCode())
-            .reservationName(request.getReservationName())
-            .reservationPhone(request.getReservationPhone())
-            .status(PostStatus.PAYMENT_IN_PROGRESS)
-            .build();
-
+    AssignmentPost assignmentPost = request.toEntity(userId, PostStatus.PAYMENT_IN_PROGRESS);
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
-    return toResponse(savedPost);
+    return AssignmentPostResponseDto.fromEntity(savedPost);
   }
 
   @Transactional
   public AssignmentPostResponseDto getAssignmentPost(Long id) {
     AssignmentPost post = assignmentPostRepository.findByIdAndStatusNot(id, PostStatus.DELETED)
-        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
-    return toResponse(post);
+        .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다."));
+    return AssignmentPostResponseDto.fromEntity(post);
   }
 
   @Transactional
   public Page<AssignmentPostResponseDto> getAllAssignmentPosts(Pageable pageable) {
-    return assignmentPostRepository.findByStatusNot(PostStatus.DELETED, pageable).map(this::toResponse);
+    return assignmentPostRepository.findByStatusNot(PostStatus.DELETED, pageable).map(AssignmentPostResponseDto::fromEntity);
   }
 
   @Transactional
   public AssignmentPostResponseDto updateAssignmentPost(Long postId, AssignmentPostUpdateRequestDto request) {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "게시글을 찾을 수 없습니다."));
+        .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다."));
 
     assignmentPost.update(request);
-    return toResponse(assignmentPost);
-  }
-
-  private AssignmentPostResponseDto toResponse(AssignmentPost assignmentPost) {
-    return AssignmentPostResponseDto.builder()
-            .id(assignmentPost.getId())
-            .title(assignmentPost.getTitle())
-            .price(assignmentPost.getPrice())
-            .description(assignmentPost.getDescription())
-            .isAuction(assignmentPost.isAuction())
-            .locationDepth1(assignmentPost.getLocationDepth1())
-            .locationDepth2(assignmentPost.getLocationDepth2())
-            .reservationPlatform(assignmentPost.getReservationPlatform())
-            .checkInDate(assignmentPost.getCheckInDate())
-            .checkOutDate(assignmentPost.getCheckOutDate())
-            .reservationCode(assignmentPost.getReservationCode())
-            .reservationName(assignmentPost.getReservationName())
-            .reservationPhone(assignmentPost.getReservationPhone())
-            .status(assignmentPost.getStatus())
-            .createdAt(assignmentPost.getCreatedAt())
-            .updatedAt(assignmentPost.getUpdatedAt())
-            .build();
+    return AssignmentPostResponseDto.fromEntity(assignmentPost);
   }
 
   @Transactional
   public void deleteAssignmentPost(Long postId, Long userId) {
-    // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가 -> 완료
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INTER_SERVER_ERROR,
-                    "게시글을 찾을수 없습니다."));
+        .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND,
+            "게시글을 찾을수 없습니다."));
+
+    // 이미 삭제된 게시글일 경우
+    if (assignmentPost.getStatus() == PostStatus.DELETED) {
+      throw new CustomException(ErrorCode.POST_NOT_FOUND, "이미 삭제된 게시글입니다.");
+    }
     // 유저 일치 여부
     if (!assignmentPost.getUserId().equals(userId)) {
       throw new CustomException(ErrorCode.UN_AUTHORIZE, "해당 게시글을 삭제할" +
-              " 권한이 없습니다.");
+          " 권한이 없습니다.");
     }
-    assignmentPostRepository.deleteById(postId);
+    // status DELETE 로 변경
+    assignmentPost.setStatus(PostStatus.DELETED);
   }
 }

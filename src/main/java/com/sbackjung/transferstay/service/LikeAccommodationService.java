@@ -7,7 +7,9 @@ import com.sbackjung.transferstay.domain.LikeAccommodation;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import com.sbackjung.transferstay.repository.LikeAccommodationRepository;
 import jakarta.transaction.Transactional;
+
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,11 @@ public class LikeAccommodationService {
 
   @Transactional
   public void removeLike(Long userId, Long postId) {
+
+    if (!assignmentPostRepository.existsById(postId)) {
+      throw new CustomException(ErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다.");
+    }
+
     // 해당 게시글에 대한 사용자의 좋아요 여부 확인
     Optional<LikeAccommodation> existingLike = likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId);
     if (existingLike.isPresent()) {
@@ -52,6 +59,11 @@ public class LikeAccommodationService {
   }
 
   public boolean isPostLikedByUser(Long userId, Long postId) {
+
+    if (!assignmentPostRepository.existsById(postId)) {
+      throw new CustomException(ErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다.");
+    }
+
     // 게시글이 사용자의 좋아요 목록에 있는지 확인
     return likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId).isPresent();
   }
