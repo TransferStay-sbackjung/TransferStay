@@ -73,7 +73,7 @@ public class AssignmentPostController {
   public ResponseEntity<JsonResponse> deleteAssignmentPost(@PathVariable Long postId) {
     Long userId = UserIdHolder.getUserIdFromToken();
     assignmentPostService.deleteAssignmentPost(postId,userId);
-    JsonResponse jsonResponse = new JsonResponse(HttpStatus.NO_CONTENT.value(), "양도글이 삭제되었습니다.", null);
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(jsonResponse);
+    JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 삭제되었습니다.", null);
+    return ResponseEntity.ok(jsonResponse);
   }
 }

@@ -87,15 +87,20 @@ public class AssignmentPostService {
 
   @Transactional
   public void deleteAssignmentPost(Long postId, Long userId) {
-    // todo : 작성자(user) 유무 및 게시글 작성자인지 확인 후 삭제 로직 추가 -> 완료
     AssignmentPost assignmentPost = assignmentPostRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INTER_SERVER_ERROR,
+            .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND,
                     "게시글을 찾을수 없습니다."));
+
+    // 이미 삭제된 게시글일 경우
+    if(assignmentPost.getStatus() == PostStatus.DELETED) {
+      throw new CustomException(ErrorCode.POST_NOT_FOUND, "이미 삭제된 게시글입니다.");
+    }
     // 유저 일치 여부
     if (!assignmentPost.getUserId().equals(userId)) {
       throw new CustomException(ErrorCode.UN_AUTHORIZE, "해당 게시글을 삭제할" +
               " 권한이 없습니다.");
     }
-    assignmentPostRepository.deleteById(postId);
+    // status DELETE 로 변경
+    assignmentPost.setStatus(PostStatus.DELETED);
   }
 }
