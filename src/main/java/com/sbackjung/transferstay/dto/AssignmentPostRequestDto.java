@@ -1,6 +1,7 @@
 package com.sbackjung.transferstay.dto;
 
 import com.sbackjung.transferstay.Enum.PostStatus;
+import com.sbackjung.transferstay.domain.AssignmentPost;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -48,4 +49,22 @@ public class AssignmentPostRequestDto {
 
   private PostStatus status;
 
+  public AssignmentPost toEntity(Long userId, PostStatus status) {
+    return AssignmentPost.builder()
+        .userId(userId)
+        .title(this.title)
+        .price(this.price)
+        .description(this.description)
+        .isAuction(this.isAuction)
+        .locationDepth1(this.locationDepth1)
+        .locationDepth2(this.locationDepth2)
+        .reservationPlatform(this.reservationPlatform)
+        .checkInDate(this.checkInDate)
+        .checkOutDate(this.checkOutDate)
+        .reservationCode(this.reservationCode)
+        .reservationName(this.reservationName)
+        .reservationPhone(this.reservationPhone)
+        .status(status)
+        .build();
+  }
 }
