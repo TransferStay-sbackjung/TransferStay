@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,6 +18,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @DynamicUpdate
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Transaction {
@@ -27,7 +31,7 @@ public class Transaction {
   private Long userId; // 사용자 id (게시글 작성자, 구매자 등)
 
   @Column(nullable = false)
-  private long amount; // 계좌금액?
+  private long amount; // 거래금액
 
   @Column(nullable = false)
   private Boolean type; // 송금/입금/충전 정보 -> 3가지를 boolean로 표기할 수 있나..?
@@ -36,7 +40,7 @@ public class Transaction {
   private String description; // 거래명 (입금 / 출금)
 
   @Column(nullable = false)
-  private long balance; // 잔액??
+  private long balance; // 예치금 잔액
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt; // 거래시간
