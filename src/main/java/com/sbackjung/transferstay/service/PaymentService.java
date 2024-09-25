@@ -36,26 +36,27 @@ public class PaymentService {
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "사용자 정보를 찾을 수 없습니다."));
 
     long userBalance = user.getAmount();
-    // 2. 잔액 확인
+
+    // 2. 잔액 확인 후 이상없을 시 결제 진행
     if (userBalance >= assignmentPost.getPrice()) {
 
       // 에스크로 생성 및 저장
       Escrow escrow = Escrow.builder()
           .assignmentPost(assignmentPost)
-          .buyerId(userId)
-          .sellerId(assignmentPost.getSellerId())
+          .buyerId(userId) // 구매자
+          .sellerId(assignmentPost.getSellerId()) // 게시글 작성자 = seller
           .amount(assignmentPost.getPrice())
           .status(EscrowStatus.IN_PROGRESS)
           .build();
 
       escrowRepository.save(escrow);
 
-      // trnasaction 생성 (결제내역 기록)
+      // trnasaction 생성 (구매자 - 결제 내역 기록 생성)
       Transaction transaction = Transaction.builder()
-          .userId(userId)
+          .userId(userId)  // 구매자
           .amount(assignmentPost.getPrice())
           .type(true)
-          .description("구매 결제")
+          .description("결제")
           .balance(userBalance - assignmentPost.getPrice()) // 잔액 업데이트
           .build();
       transactionRepository.save(transaction);
@@ -77,22 +78,26 @@ public class PaymentService {
     AssignmentPost assignmentPost = assignmentPostRepository.findById(assignmentId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 게시글을 찾을 수 없습니다."));
 
-    // 에스크로 상태 변경
+    // 에스크로 조회 및 변경
     Escrow escrow = escrowRepository.findByAssignmentPostId(assignmentId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 에스크로 정보를 찾을 수 없습니다."));
 
+    // 구매자인지 확인 (숙박 이용 후 결제 완료 할 수 있는 권한이 있는지)
+    if (!escrow.getBuyerId().equals(userId)) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, "권한이 없는 사용자 입니다.");
+    }
     escrow.setStatus(EscrowStatus.COMPLETED);
-    assignmentPost.setStatus(PostStatus.TRANSACTION_COMPLETED);
 
     // 판매자의 잔액 업데이트 (판매자에게 금액 송금)
     UserDomain seller = userRepository.findById(assignmentPost.getSellerId())
-            .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, " 판매자 정보를 찾을 수 없습니다."));
+        .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, " 판매자 정보를 찾을 수 없습니다."));
 
     long sellerBalance = seller.getAmount();
+
     seller.setAmount(sellerBalance - escrow.getAmount());
     userRepository.save(seller);
 
-    // 트랜잭션 기록 (판매자에게 입금내역 기록)
+    // 판매자 - 거래 기록 생성 (입금 내역 기록)
     Transaction transaction = Transaction.builder()
         .userId(seller.getUserId())
         .amount(escrow.getAmount())
