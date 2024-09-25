@@ -3,6 +3,8 @@ package com.sbackjung.transferstay.dto;
 import com.sbackjung.transferstay.Enum.PostStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.sbackjung.transferstay.domain.AssignmentPost;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -31,4 +33,25 @@ public class AssignmentPostResponseDto {
 
   // 상태
   private final PostStatus status;
+
+  public static AssignmentPostResponseDto fromEntity(AssignmentPost assignmentPost) {
+    return AssignmentPostResponseDto.builder()
+        .id(assignmentPost.getId())
+        .title(assignmentPost.getTitle())
+        .price(assignmentPost.getPrice())
+        .description(assignmentPost.getDescription())
+        .isAuction(assignmentPost.isAuction())
+        .locationDepth1(assignmentPost.getLocationDepth1())
+        .locationDepth2(assignmentPost.getLocationDepth2())
+        .reservationPlatform(assignmentPost.getReservationPlatform())
+        .checkInDate(assignmentPost.getCheckInDate())
+        .checkOutDate(assignmentPost.getCheckOutDate())
+        .reservationCode(assignmentPost.getReservationCode())
+        .reservationName(assignmentPost.getReservationName())
+        .reservationPhone(assignmentPost.getReservationPhone())
+        .status(assignmentPost.getStatus())
+        .createdAt(assignmentPost.getCreatedAt())
+        .updatedAt(assignmentPost.getUpdatedAt())
+        .build();
+  }
 }
