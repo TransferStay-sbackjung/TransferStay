@@ -23,11 +23,18 @@ public class DepositRechargeService {
     if (amount < 1000 || amount % 1000 != 0) {
       throw new CustomException(ErrorCode.INVALID_AMOUNT);
     }
+    // 최대 금액 설정
+    final Long MAX_AMOUNT = 1_000_000_000L;
 
     UserDomain user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
     Long currentAmount = user.getAmount();
+
+    if (currentAmount + amount > MAX_AMOUNT) {
+      throw new CustomException(ErrorCode.EXCEEDS_MAX_AMOUNT, "충전 금액이 최대 한도를 초과할 수 없습니다.");
+    }
+
     user.setAmount(currentAmount + amount);
   }
 
