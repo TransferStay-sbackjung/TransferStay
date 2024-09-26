@@ -44,13 +44,14 @@ public class AssignmentPostService {
     // Auction 기능 사용 시 -> auction 생성
     // todo : 코드 리뷰가 필요합니다
     if(savedPost.isAuction()){
-      AuctionPostRequestDto auctionPostRequestDto = new AuctionPostRequestDto();
-      auctionPostRequestDto.setPostId(savedPost.getId());
-      auctionPostRequestDto.setStartDate(request.getStartDate());
-      auctionPostRequestDto.setStartTime(request.getStartTime());
-      auctionPostRequestDto.setDeadlineDate(request.getDeadlineDate());
-      auctionPostRequestDto.setDeadlineTime(request.getDeadlineTime());
-      auctionPostRequestDto.setStartPrice(request.getPrice());
+      AuctionPostRequestDto auctionPostRequestDto = AuctionPostRequestDto.builder()
+          .postId(savedPost.getId())
+          .startDate(request.getStartDate())
+          .startTime(request.getStartTime())
+          .deadlineDate(request.getDeadlineDate())
+          .deadlineTime(request.getDeadlineTime())
+          .startPrice(request.getStartPrice())
+          .build();
       Long auctionId = (auctionService.createAuction(auctionPostRequestDto, userId)).getActionId();
       if(auctionId != null){
         log.info("create auction success");
