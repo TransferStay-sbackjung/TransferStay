@@ -6,18 +6,16 @@ import com.sbackjung.transferstay.config.exception.CustomException;
 import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.Auction;
 import com.sbackjung.transferstay.domain.AuctionTransaction;
-import com.sbackjung.transferstay.dto.AuctionDataSetDto;
-import com.sbackjung.transferstay.dto.AuctionGetDetailDto;
-import com.sbackjung.transferstay.dto.AuctionGetListDto;
-import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
-import com.sbackjung.transferstay.dto.AuctionPostResponseDto;
-import com.sbackjung.transferstay.dto.AuctionUpdateRequestDto;
-import com.sbackjung.transferstay.dto.AuctionUpdateResponseDto;
-import com.sbackjung.transferstay.dto.PlaceBidRequestDto;
+import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.repository.AuctionRepository;
 import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
+import com.sbackjung.transferstay.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,9 +28,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class AuctionService {
-
   private final AuctionRepository auctionRepository;
   private final AuctionTransactionRepository auctionTransActionRepository;
+  private final TransactionRepository transactionRepository;
 
   @Transactional
   public AuctionPostResponseDto createAuction(AuctionPostRequestDto request, Long userId
@@ -84,8 +82,10 @@ public class AuctionService {
     Auction auction = auctionRepository.findAuctionByActionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
             "해당 경매는 존재하지않습니다."));
+    List<AuctionBidderDto> bidders = auctionTransActionRepository.findByAuctionId(auctionId)
+            .stream().map(AuctionBidderDto::fromEntity).toList();
     // todo : 종료된 경매에 대해서는 그냥 return or 에러처리?
-    return AuctionGetDetailDto.from(auction);
+    return AuctionGetDetailDto.from(auction,bidders);
   }
 
   @Transactional
@@ -159,6 +159,7 @@ public class AuctionService {
 
   // 수동 응찰 로직
   private void handleManualBidding(Auction auction, Long bidderId, PlaceBidRequestDto requestDto) {
+    Long hoPrice = calculateHoPrice(auction.getStartPrice());
 
     AuctionTransaction auctionTransaction = AuctionTransaction.builder()
         .auctionId(auction.getActionId())
@@ -173,11 +174,16 @@ public class AuctionService {
     auction.setWinningPrice(requestDto.getSuggestPrice());
     auction.setWinningBidderId(bidderId);
     auctionRepository.save(auction);
+
+    updateAutoBiddingAfterBid(auction.getActionId(),
+            requestDto.getSuggestPrice(),hoPrice);
   }
+
   // 자동 응찰 로직
   private void handleAutoBidding(Auction auction, Long bidderId, PlaceBidRequestDto requestDto) {
 
     Long newBidPrice = calculateAutoBidPrice(auction, requestDto.getMaxPrice());
+    Long hoPrice = calculateHoPrice(auction.getStartPrice());
 
     // 입찰 기록 생성 또는 갱신
     AuctionTransaction auctionTransaction = AuctionTransaction.builder()
@@ -193,6 +199,76 @@ public class AuctionService {
     auction.setWinningPrice(newBidPrice);
     auction.setWinningBidderId(bidderId);
     auctionRepository.save(auction);
+
+    updateAutoBiddingAfterBid(auction.getActionId(),
+            requestDto.getSuggestPrice(),hoPrice);
+  }
+
+  /*
+      자동 응찰 갱신 과정
+      1. 새로운 응찰자가(자동,수동포함) 응찰
+      2. 최종응찰가, 최종응찰자를 결정하기위해 반복
+      2-1. Auto를 설정한 사람중에서, 현재 입찰가 보다 높은
+      MaxPrice를 가진사람이 있으면 2번을 갱신
+      2-2. 호가가 너무 적어서 최대 응찰자가 기준이 되지 못하는것을
+      방지하기위해서 update가 발생할떄까지,for 문을 계속 반복
+      3. 마지막으로 같은 응찰가를 불렀지만 순서차이로 되지 못할수도
+      있기 때문에, stream을 통해서, 가장 먼저 응찰한 사람 기준으로 응찰자를
+      한번 더 선택
+      4. Auction 응찰자,응찰가 업데이트 및 AuctionTransAction에 수정된
+      응찰가들 업데이트.
+   */
+
+  private void updateAutoBiddingAfterBid(Long auctionId, Long newBidPrice,
+                                         Long hoPrice){
+    List<AuctionTransaction> autoBidders = auctionTransActionRepository.findByAuctionIdAndType(auctionId, BidType.AUTO);
+    // 예외처리는 위에서 일괄적으로 진행 
+    Optional<Auction> auction = auctionRepository.findById(auctionId);
+    if (auction.isEmpty()) {
+      throw new CustomException(ErrorCode.BAD_REQUEST,"경매를 찾을 수 없습니다.");
+    }
+    // 호가로 다음 입찰가 결정
+    Long nextBidPrice = newBidPrice + hoPrice;
+    Long lastBidPrice = newBidPrice;
+    // 현재 최고 입찰자
+    Long currWinnerId = auction.get().getWinningBidderId();
+
+    // 자동 응찰자를 대상으로 입찰 반복 -> 한 바퀴 돌고, 최고 입찰자가 먹지
+    // 못하는것을 방지하기위해서.
+    boolean isBidUpdated = true;
+    
+    // 자동응찰과정
+    while(isBidUpdated){
+      isBidUpdated = false;
+
+      for(AuctionTransaction ta : autoBidders){
+        if(ta.getMaxPrice() >= nextBidPrice){
+          ta.setSuggestPrice(nextBidPrice);
+
+          // 입찰 가격 상승 및 최종 입찰가 마지막 입찰자 설정
+          nextBidPrice += hoPrice;
+          lastBidPrice = nextBidPrice;
+
+          currWinnerId = ta.getBidderId();
+          isBidUpdated = true; // 입찰이 발생했음으로 반복
+        }
+      }
+    }
+
+    auctionTransActionRepository.saveAll(autoBidders);
+
+    final Long lastBidPrice2= lastBidPrice;
+    Optional<AuctionTransaction> winner = autoBidders.stream().filter(
+            ta -> ta.getMaxPrice().equals(lastBidPrice2))
+            .min(Comparator.comparing(AuctionTransaction::getCreatedAt));
+
+    if(winner.isPresent()){
+      currWinnerId = winner.get().getBidderId();
+    }
+
+    auction.get().setWinningBidderId(currWinnerId);
+    auction.get().setWinningPrice(lastBidPrice);
+    auctionRepository.save(auction.get());
   }
 
   private Long calculateAutoBidPrice(Auction auction, Long maxPrice) {
@@ -200,4 +276,29 @@ public class AuctionService {
     Long newBidPrice = auction.getWinningPrice() + INCREMENT;
     return Math.min(newBidPrice, maxPrice);
   }
+
+  /*
+    우리의 호가
+
+    0 ~ 4.99만원 : 1,000
+
+    5 ~ 9.99만원 : 2,000
+
+    10 ~ 29.99만원 : 5,000
+
+    30 ~ : 10,000
+   */
+  private Long calculateHoPrice(Long price){
+    if(price < 50000L){
+      return 1000L;
+    }else if(price < 100000L){
+      return 2000L;
+    }else if(price < 300000L){
+      return 5000L;
+    }else{
+      return 10000L;
+  }
+  }
+
+
 }

@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuctionController {
 
   private final AuctionService auctionService;
-
   public final AuctionRepository auctionRepository;
   public final AuctionTransactionRepository auctionTransactionRepository;
 
@@ -84,7 +83,6 @@ public class AuctionController {
   public ResponseEntity<JsonResponse> getAuctionDetail(
       @PathVariable(value = "auctionId") Long auctionId
   ) {
-    // todo : 아마 경매에 참여한 사람들의 정보도 불러와야 할듯합니다.
     AuctionGetDetailDto data = auctionService.getAuctionDetails(auctionId);
     return ResponseEntity.ok(new JsonResponse(200, "경매 세부정보 불러오기 완료.",
         data));
@@ -114,7 +112,8 @@ public class AuctionController {
           "진행 중인 경매가 아닙니다 :: " + auction.getStatus().toString());
     }
 
-    if (auction.getStartPrice() <= requestDto.getSuggestPrice()
+    // 로직 수정
+    if (auction.getStartPrice() >= requestDto.getSuggestPrice()
         || auction.getStartPrice() > requestDto.getMaxPrice()) {
       throw new CustomException(ErrorCode.BAD_REQUEST, "제안가 또는 최대 제안가가 시작가보다 낮거나 잘못되었습니다.");
     }
@@ -142,4 +141,5 @@ public class AuctionController {
 
     return ResponseEntity.ok(new JsonResponse(200, "응찰이 완료되었습니다.", null));
   }
+
 }

@@ -5,6 +5,7 @@ import com.sbackjung.transferstay.domain.Auction;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,8 +22,10 @@ public class AuctionGetDetailDto {
     private Long winningBidderId;
     private Long winningPrice;
     private AuctionStatus status;
+    private List<AuctionBidderDto> bidders;
 
-    public static AuctionGetDetailDto from(Auction auction){
+    public static AuctionGetDetailDto from(Auction auction,
+                                           List<AuctionBidderDto> bidders){
         return AuctionGetDetailDto.builder()
                 .actionId(auction.getActionId())
                 .postId(auction.getPostId())
@@ -33,6 +36,7 @@ public class AuctionGetDetailDto {
                 .winningBidderId(auction.getWinningBidderId())
                 .winningPrice(auction.getWinningPrice())
                 .status(auction.getStatus())
+                .bidders(bidders)
                 .build();
     }
 }
