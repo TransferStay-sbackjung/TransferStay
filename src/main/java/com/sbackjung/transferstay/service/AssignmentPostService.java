@@ -7,9 +7,11 @@ import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.dto.AssignmentPostRequestDto;
 import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.dto.AssignmentPostUpdateRequestDto;
+import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,11 +19,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AssignmentPostService {
 
   private final AssignmentPostRepository assignmentPostRepository;
+  private final AuctionService auctionService;
 
   public List<AssignmentPostResponseDto> getUserPosts(Long userId) {
     List<AssignmentPost> posts = assignmentPostRepository.findByUserId(userId);
@@ -32,8 +36,27 @@ public class AssignmentPostService {
 
   @Transactional
   public AssignmentPostResponseDto createAssignmentPost(AssignmentPostRequestDto request, Long userId) {
+    // 게시글 내용 request 값 -> post 생성
     AssignmentPost assignmentPost = request.toEntity(userId, PostStatus.PAYMENT_IN_PROGRESS);
     AssignmentPost savedPost = assignmentPostRepository.save(assignmentPost);
+    log.info("create assignment post success");
+
+    // Auction 기능 사용 시 -> auction 생성
+    // todo : 코드 리뷰가 필요합니다
+    if(savedPost.isAuction()){
+      AuctionPostRequestDto auctionPostRequestDto = new AuctionPostRequestDto();
+      auctionPostRequestDto.setPostId(savedPost.getId());
+      auctionPostRequestDto.setStartDate(request.getStartDate());
+      auctionPostRequestDto.setStartTime(request.getStartTime());
+      auctionPostRequestDto.setDeadlineDate(request.getDeadlineDate());
+      auctionPostRequestDto.setDeadlineTime(request.getDeadlineTime());
+      auctionPostRequestDto.setStartPrice(request.getPrice());
+      Long auctionId = (auctionService.createAuction(auctionPostRequestDto, userId)).getActionId();
+      if(auctionId != null){
+        log.info("create auction success");
+      }
+    }
+
     return AssignmentPostResponseDto.fromEntity(savedPost);
   }
 

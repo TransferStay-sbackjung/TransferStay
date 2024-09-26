@@ -52,6 +52,12 @@ public class AssignmentPostRequestDto {
 
   private PostStatus status;
 
+  // auction 레코드 생성을 위해
+  private final String startDate;
+  private final String startTime;
+  private final String deadlineDate;
+  private final String deadlineTime;
+
   public AssignmentPost toEntity(Long userId, PostStatus status) {
     return AssignmentPost.builder()
         .userId(userId)
