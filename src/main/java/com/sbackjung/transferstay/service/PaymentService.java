@@ -66,6 +66,7 @@ public class PaymentService {
       userRepository.save(user);
       // 거래 상태 업데이트
       assignmentPost.setStatus(PostStatus.TRANSACTION_IN_PROGRESS);
+      assignmentPostRepository.save(assignmentPost);
     } else {
       // 잔액이 부족한 경우
       throw new CustomException(ErrorCode.BAD_REQUEST, "결제할 금액이 부족합니다.");

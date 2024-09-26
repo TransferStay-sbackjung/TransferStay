@@ -46,7 +46,9 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/login/oauth2/**", "/h2-console/**", "/auth/**").permitAll()
+            .requestMatchers("/","/check-db", "/login/oauth2/**", "/h2" +
+                            "-console/**",
+                    "/auth/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/assignment-posts/{postId}", "/api/v1/assignment-posts", "/api/v1/search").permitAll()
             .requestMatchers("/email-login", "/api/v1/user/join", "/api/v1/email/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
