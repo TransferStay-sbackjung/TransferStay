@@ -58,6 +58,7 @@ public class AssignmentPostRequestDto {
   private final String deadlineDate;
   private final String deadlineTime;
   private final Long startPrice;
+  private final Long purchasePrice;
 
   public AssignmentPost toEntity(Long userId, PostStatus status) {
     return AssignmentPost.builder()

@@ -19,6 +19,7 @@ public class AuctionPostResponseDto {
     private LocalDateTime startTime;
     private LocalDateTime deadline;
     private Long startPrice;
+    private Long purchasePrice;
     private AuctionStatus status;
 
     public static AuctionPostResponseDto from(Auction auction){
@@ -29,6 +30,7 @@ public class AuctionPostResponseDto {
                 .startTime(auction.getStartTime())
                 .deadline(auction.getDeadline())
                 .startPrice(auction.getStartPrice())
+                .purchasePrice(auction.getPurchasePrice())
                 .status(auction.getStatus())
                 .build();
     }

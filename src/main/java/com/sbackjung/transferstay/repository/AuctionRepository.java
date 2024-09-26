@@ -36,4 +36,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
                                    @Param("bidFail") AuctionStatus bidFail,
                                    @Param("currentTime") LocalDateTime currentTime,
                                    @Param("waiting") AuctionStatus waiting);
+    List<Auction> findByDeadlineAfterAndDeadlineBefore(LocalDateTime now,
+                                                       LocalDateTime after);
+
 }

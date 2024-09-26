@@ -5,5 +5,6 @@ public interface AuctionDataSetDto {
     String getStartTime();
     String getDeadlineDate();
     String getDeadlineTime();
+    Long getPurchasePrice();
     Long getStartPrice();
 }

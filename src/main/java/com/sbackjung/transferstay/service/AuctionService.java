@@ -2,14 +2,13 @@ package com.sbackjung.transferstay.service;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
 import com.sbackjung.transferstay.Enum.BidType;
+import com.sbackjung.transferstay.Enum.EscrowStatus;
+import com.sbackjung.transferstay.Enum.PostStatus;
 import com.sbackjung.transferstay.config.exception.CustomException;
 import com.sbackjung.transferstay.config.exception.ErrorCode;
-import com.sbackjung.transferstay.domain.Auction;
-import com.sbackjung.transferstay.domain.AuctionTransaction;
+import com.sbackjung.transferstay.domain.*;
 import com.sbackjung.transferstay.dto.*;
-import com.sbackjung.transferstay.repository.AuctionRepository;
-import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
-import com.sbackjung.transferstay.repository.TransactionRepository;
+import com.sbackjung.transferstay.repository.*;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -30,6 +29,9 @@ import org.springframework.stereotype.Service;
 public class AuctionService {
   private final AuctionRepository auctionRepository;
   private final AuctionTransactionRepository auctionTransActionRepository;
+  private final UserRepository userRepository;
+  private final AssignmentPostRepository assignmentPostRepository;
+  private final EscrowRepository escrowRepository;
   private final TransactionRepository transactionRepository;
 
   @Transactional
@@ -44,7 +46,7 @@ public class AuctionService {
   }
 
   @Transactional
-  public AuctionUpdateResponseDto updateAction(AuctionUpdateRequestDto request, Long userId,
+  public AuctionUpdateResponseDto updateAuction(AuctionUpdateRequestDto request, Long userId,
       Long auctionId) {
     // todo : 경매 참여중인 인원이나 시간에 대해서 제한이 필요할것같습니다.
     Auction auction = auctionRepository.findAuctionByActionId(auctionId)
@@ -114,6 +116,7 @@ public class AuctionService {
     auction.setStartTime(startTime);
     auction.setDeadline(deadline);
     auction.setStartPrice(request.getStartPrice());
+    auction.setPurchasePrice(request.getPurchasePrice());
 
     // 경매 상태 설정
     if (startTime.isAfter(LocalDateTime.now())) {
@@ -204,22 +207,93 @@ public class AuctionService {
             requestDto.getSuggestPrice(),hoPrice);
   }
 
+  @Transactional
+  public AuctionPurchaseDto auctionPurchase(Long postId, Long userId) {
+    // 경매글 상태 확인
+    Auction auction = auctionRepository.findByPostId(postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 " +
+                    "경매는 존재하지 않습니다."));
+    if(!auction.getStatus().equals(AuctionStatus.IN_PROGRESS)){
+      throw new CustomException(ErrorCode.BAD_REQUEST,"해당 경매는 진행중이지않습니다.");
+    } 
+    // 유저 잔액 확인
+    UserDomain user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.UN_AUTHORIZE,
+                    "유저 정보가 없습니다."));
+
+    Long userBalance = user.getAmount();
+    Long price = auction.getPurchasePrice();
+
+    if(userBalance < price){
+      throw new CustomException(ErrorCode.BAD_REQUEST,"잔액이 부족합니다.");
+    }
+
+    AssignmentPost post = assignmentPostRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
+                    "게시글은 찾을 수 없습니다."));
+    // 에스크로 생성
+    Escrow escrow = Escrow.builder()
+            .assignmentPost(post)
+            .buyerId(userId)
+            .sellerId(post.getSellerId())
+            .amount(price)
+            .status(EscrowStatus.IN_PROGRESS)
+            .build();
+    escrowRepository.save(escrow);
+    // 송금 트랜잭션 생성
+    Transaction transaction = Transaction.builder()
+            .userId(userId)
+            .amount(price)
+            .type(true)
+            .description("결제")
+            .balance(userBalance - price)
+            .build();
+    transactionRepository.save(transaction);
+    // 사용자 금액 차감 
+    user.setAmount(user.getAmount() - auction.getPurchasePrice());
+    userRepository.save(user);
+    // 경매 상태 변경
+    auction.setStatus(AuctionStatus.BID_SUCCESS);
+    auction.setWinningBidderId(userId);
+    auction.setWinningPrice(price);
+    auctionRepository.save(auction);
+    // 게시글 상태 변경
+    // todo : 결제중? 거래중? 숙박 다녀와야야 거래가 완료되니까
+    post.setStatus(PostStatus.PAYMENT_IN_PROGRESS);
+    assignmentPostRepository.save(post);
+
+    return AuctionPurchaseDto.builder()
+            .postId(postId)
+            .auctionId(auction.getActionId())
+            .buyerId(userId)
+            .sellerId(post.getSellerId())
+            .amount(price)
+            .build();
+  }
+
   /*
       자동 응찰 갱신 과정
+      
       1. 새로운 응찰자가(자동,수동포함) 응찰
+      
       2. 최종응찰가, 최종응찰자를 결정하기위해 반복
-      2-1. Auto를 설정한 사람중에서, 현재 입찰가 보다 높은
-      MaxPrice를 가진사람이 있으면 2번을 갱신
+      
+      2-1. Auto 를 설정한 사람중에서, 현재 입찰가 보다 높은
+      MaxPrice 를 가진사람이 있으면 갱신하고 다음 Auto 응찰자로 넘어감
+
       2-2. 호가가 너무 적어서 최대 응찰자가 기준이 되지 못하는것을
-      방지하기위해서 update가 발생할떄까지,for 문을 계속 반복
+      방지하기위해서 update 가 발생할떄까지,for 문을 계속 반복
+
       3. 마지막으로 같은 응찰가를 불렀지만 순서차이로 되지 못할수도
-      있기 때문에, stream을 통해서, 가장 먼저 응찰한 사람 기준으로 응찰자를
+      있기 때문에, stream 을 통해서, 가장 먼저 응찰한 사람 기준으로 응찰자를
       한번 더 선택
-      4. Auction 응찰자,응찰가 업데이트 및 AuctionTransAction에 수정된
+
+      4. Auction 응찰자,응찰가 업데이트 및 AuctionTransAuction에 수정된
       응찰가들 업데이트.
    */
 
-  private void updateAutoBiddingAfterBid(Long auctionId, Long newBidPrice,
+  @Transactional
+  public void updateAutoBiddingAfterBid(Long auctionId, Long newBidPrice,
                                          Long hoPrice){
     List<AuctionTransaction> autoBidders = auctionTransActionRepository.findByAuctionIdAndType(auctionId, BidType.AUTO);
     // 예외처리는 위에서 일괄적으로 진행 
@@ -297,7 +371,20 @@ public class AuctionService {
       return 5000L;
     }else{
       return 10000L;
+    }
   }
+
+
+  @Transactional
+  public void test() {
+    List<Auction> byDeadlineAfter =
+            auctionRepository.findByDeadlineAfterAndDeadlineBefore(LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
+    if(!byDeadlineAfter.isEmpty()){
+      for(Auction a : byDeadlineAfter){
+        System.out.println(a.getStatus());
+      }
+    }
+
   }
 
 

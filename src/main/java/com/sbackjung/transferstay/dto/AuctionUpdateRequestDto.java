@@ -25,4 +25,7 @@ public class AuctionUpdateRequestDto implements AuctionDataSetDto{
     @NotNull
     private Long startPrice;
 
+    @NotNull
+    private Long purchasePrice;
+
 }

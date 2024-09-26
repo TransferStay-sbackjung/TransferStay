@@ -7,14 +7,7 @@ import com.sbackjung.transferstay.config.exception.CustomException;
 import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.Auction;
 import com.sbackjung.transferstay.domain.AuctionTransaction;
-import com.sbackjung.transferstay.dto.AuctionGetDetailDto;
-import com.sbackjung.transferstay.dto.AuctionGetListDto;
-import com.sbackjung.transferstay.dto.AuctionPostRequestDto;
-import com.sbackjung.transferstay.dto.AuctionPostResponseDto;
-import com.sbackjung.transferstay.dto.AuctionUpdateRequestDto;
-import com.sbackjung.transferstay.dto.AuctionUpdateResponseDto;
-import com.sbackjung.transferstay.dto.JsonResponse;
-import com.sbackjung.transferstay.dto.PlaceBidRequestDto;
+import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.repository.AuctionRepository;
 import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
 import com.sbackjung.transferstay.service.AuctionService;
@@ -59,7 +52,7 @@ public class AuctionController {
       @RequestBody @Valid AuctionUpdateRequestDto request
   ) {
     Long userId = getUserIdFromToken();
-    AuctionUpdateResponseDto data = auctionService.updateAction(request,
+    AuctionUpdateResponseDto data = auctionService.updateAuction(request,
         userId, auctionId);
     return ResponseEntity.ok(new JsonResponse(200, "경매 수정 완료.", data));
   }
@@ -142,4 +135,12 @@ public class AuctionController {
     return ResponseEntity.ok(new JsonResponse(200, "응찰이 완료되었습니다.", null));
   }
 
+  @PostMapping("/{postId}/purchase")
+  public ResponseEntity<JsonResponse> auctionPurchase(
+          @PathVariable Long postId
+  ){
+
+    AuctionPurchaseDto data = auctionService.auctionPurchase(postId, getUserIdFromToken());
+    return ResponseEntity.ok(new JsonResponse(200,"경매 즉시 구매가 완료되었습니다.",data));
+  }
 }

@@ -4,6 +4,7 @@ import com.sbackjung.transferstay.Enum.AuctionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
-@EntityListeners(EntityListeners.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Auction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,9 @@ public class Auction {
 
     @Column(nullable = false)
     private Long startPrice;
+
+    @Column(nullable = false)
+    private Long purchasePrice;
 
     private Long winningBidderId;
 

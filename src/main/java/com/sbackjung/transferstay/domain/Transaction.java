@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -43,5 +44,6 @@ public class Transaction {
   private long balance; // 예치금 잔액
 
   @Column(name = "created_at", nullable = false)
+  @CreatedDate
   private LocalDateTime createdAt; // 거래시간
 }

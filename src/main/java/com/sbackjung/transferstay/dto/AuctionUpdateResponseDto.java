@@ -18,6 +18,7 @@ public class AuctionUpdateResponseDto {
     private LocalDateTime startTime;
     private LocalDateTime deadline;
     private Long startPrice;
+    private Long purchasePrice;
     private AuctionStatus status;
     private LocalDateTime updateAt;
 
@@ -29,6 +30,7 @@ public class AuctionUpdateResponseDto {
                 .startTime(auction.getStartTime())
                 .deadline(auction.getDeadline())
                 .startPrice(auction.getStartPrice())
+                .purchasePrice(auction.getPurchasePrice())
                 .status(auction.getStatus())
                 .updateAt(LocalDateTime.now())
                 .build();

@@ -28,6 +28,9 @@ public class AuctionPostRequestDto implements AuctionDataSetDto{
     @NotNull
     private Long startPrice;
 
+    @NotNull
+    private Long purchasePrice;
+
 
 
 }
