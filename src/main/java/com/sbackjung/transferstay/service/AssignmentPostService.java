@@ -14,11 +14,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AssignmentPostService {
 
   private final AssignmentPostRepository assignmentPostRepository;
+
+  public List<AssignmentPostResponseDto> getUserPosts(Long userId) {
+    List<AssignmentPost> posts = assignmentPostRepository.findByUserId(userId);
+    return posts.stream()
+        .map(AssignmentPostResponseDto::fromEntity)
+        .collect(Collectors.toList());
+  }
 
   @Transactional
   public AssignmentPostResponseDto createAssignmentPost(AssignmentPostRequestDto request, Long userId) {
