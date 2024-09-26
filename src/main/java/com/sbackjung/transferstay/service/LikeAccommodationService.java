@@ -4,11 +4,14 @@ import com.sbackjung.transferstay.config.exception.CustomException;
 import com.sbackjung.transferstay.config.exception.ErrorCode;
 import com.sbackjung.transferstay.domain.AssignmentPost;
 import com.sbackjung.transferstay.domain.LikeAccommodation;
+import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.repository.AssignmentPostRepository;
 import com.sbackjung.transferstay.repository.LikeAccommodationRepository;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -66,5 +69,13 @@ public class LikeAccommodationService {
 
     // 게시글이 사용자의 좋아요 목록에 있는지 확인
     return likeAccommodationRepository.findByUserIdAndAssignmentPostId(userId, postId).isPresent();
+  }
+
+  @Transactional
+  public List<AssignmentPostResponseDto> getUserLikedPosts(Long userId) {
+    List<LikeAccommodation> likedPosts = likeAccommodationRepository.findByUserId(userId); // 사용자가 좋아요한 게시물 조회
+    return likedPosts.stream()
+        .map(like -> AssignmentPostResponseDto.fromEntity(like.getAssignmentPost())) // DTO로 변환
+        .collect(Collectors.toList());
   }
 }

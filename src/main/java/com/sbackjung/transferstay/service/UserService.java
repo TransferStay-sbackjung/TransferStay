@@ -16,12 +16,14 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  // 사용자 정보 조회
   public UserInfoResponseDto getUserInfo(Long userId) {
     UserDomain user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     return UserInfoResponseDto.from(user);
   }
 
+  // 사용자 정보 수정
   @Transactional
   public void updateUserInfo(Long userId, UserInfoUpdateRequestDto request) {
     UserDomain user = userRepository.findById(userId)

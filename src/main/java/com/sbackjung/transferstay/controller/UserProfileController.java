@@ -1,8 +1,11 @@
 package com.sbackjung.transferstay.controller;
 
+import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
 import com.sbackjung.transferstay.dto.JsonResponse;
 import com.sbackjung.transferstay.dto.UserInfoResponseDto;
 import com.sbackjung.transferstay.dto.UserInfoUpdateRequestDto;
+import com.sbackjung.transferstay.service.AssignmentPostService;
+import com.sbackjung.transferstay.service.LikeAccommodationService;
 import com.sbackjung.transferstay.service.UserService;
 import com.sbackjung.transferstay.utils.UserIdHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,14 +16,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user/")
 @Slf4j
 @Tag(name = "UserProfile", description = "마이페이지 API")
-public class UserController {
+public class UserProfileController {
 
   private final UserService userService;
+  private final AssignmentPostService assignmentPostService;
+  private final LikeAccommodationService likeAccommodationService;
 
   @Operation(summary = "사용자 조회", description = "사용자 정보를 조회합니다.")
   @GetMapping
@@ -44,13 +51,17 @@ public class UserController {
   @GetMapping("/posts")
   public ResponseEntity<JsonResponse> getUserPosts() {
     Long userId = UserIdHolder.getUserIdFromToken();
-    return null;
+    List<AssignmentPostResponseDto> userPosts = assignmentPostService.getUserPosts(userId);
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 작성한 게시물을 조회하였습니다.", userPosts);
+    return ResponseEntity.ok(response);
   }
 
   @Operation(summary = "사용자가 좋아요 한 게시물 조회", description = "사용자가 좋아요한 게시물을 조회합니다.")
   @GetMapping("/liked-posts")
   public ResponseEntity<JsonResponse> getUserLikedPosts() {
     Long userId = UserIdHolder.getUserIdFromToken();
-    return null;
+    List<AssignmentPostResponseDto> likedPosts = likeAccommodationService.getUserLikedPosts(userId);
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 좋아요한 게시물을 조회하였습니다.", likedPosts);
+    return ResponseEntity.ok(response);
   }
 }
