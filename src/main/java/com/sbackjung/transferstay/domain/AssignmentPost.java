@@ -72,6 +72,9 @@ public class AssignmentPost {
   @Column(name = "check_out_date")
   private LocalDate checkOutDate;
 
+  @Column(name = "personnel")
+  private int personnel;
+
   @Column(name = "reservation_code")
   private String reservationCode;
 
@@ -97,6 +100,7 @@ public class AssignmentPost {
   public Long getSellerId() {
     return this.userId;
   }
+
   public void update(AssignmentPostUpdateRequestDto dto) {
     if (dto.getTitle() != null) {
       this.title = dto.getTitle();
@@ -114,6 +118,7 @@ public class AssignmentPost {
     if (dto.getLocationDepth2() != null) {
       this.locationDepth2 = dto.getLocationDepth2();
     }
+
     if (dto.getReservationPlatform() != null) {
       this.reservationPlatform = dto.getReservationPlatform();
     }

@@ -23,6 +23,9 @@ public class AssignmentPostRequestDto {
 
   private final String locationDepth2;
 
+  @NotNull(message = "투숙 가능 인원을 입력해 주세요.")
+  private final int personnel;
+
   @NotNull(message = "체크인 날짜를 입력해 주세요.")
   private final LocalDate checkInDate;
 
@@ -58,6 +61,7 @@ public class AssignmentPostRequestDto {
         .isAuction(this.isAuction)
         .locationDepth1(this.locationDepth1)
         .locationDepth2(this.locationDepth2)
+        .personnel(this.personnel)
         .reservationPlatform(this.reservationPlatform)
         .checkInDate(this.checkInDate)
         .checkOutDate(this.checkOutDate)

@@ -26,6 +26,7 @@ public class AssignmentPostResponseDto {
   // 예약 관련 필드
   private final LocalDate checkInDate;
   private final LocalDate checkOutDate;
+  private final int personnel;
   private final String reservationPlatform;
   private final String reservationCode;
   private final String reservationName;
@@ -43,6 +44,7 @@ public class AssignmentPostResponseDto {
         .isAuction(assignmentPost.isAuction())
         .locationDepth1(assignmentPost.getLocationDepth1())
         .locationDepth2(assignmentPost.getLocationDepth2())
+        .personnel(assignmentPost.getPersonnel())
         .reservationPlatform(assignmentPost.getReservationPlatform())
         .checkInDate(assignmentPost.getCheckInDate())
         .checkOutDate(assignmentPost.getCheckOutDate())

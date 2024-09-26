@@ -20,6 +20,7 @@ public class AssignmentPostUpdateRequestDto {
   private boolean isAuction;
   private String locationDepth1;
   private String locationDepth2;
+  private int personnel;
   private String reservationPlatform;
   private LocalDate checkInDate;
   private LocalDate checkOutDate;
