@@ -65,7 +65,7 @@ public class SocialLoginService extends DefaultOAuth2UserService {
     Optional<UserDomain> byEmail = userRepository.findByEmail(email);
     // 해당 이메일이 존재한다면,
     if (byEmail.isPresent()) {
-      // todo : 해당 부분 기존에 존재하는 계정으로 로그인하도록 설절
+      // todo : 해당 부분 기존에 존재하는 계정으로 로그인하도록 설정, 동일한 email oauth ID가 다르면 새로 만들기?
       // todo : 소셜 로그인 과 이메일로 분리  -> 같은 유저인데 이메일이 다르면 새로 생성
       log.info("email is exist {}",byEmail.get().getEmail());
       System.out.println("email is exist oauthid : " + byEmail.get().getOauthId());

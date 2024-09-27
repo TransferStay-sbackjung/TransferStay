@@ -82,7 +82,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         // OAuth2 로그인 경로와 다른 특정 경로에 대해서는 필터링을 하지 않음
-        return path.startsWith("/oauth2/authorization/");
+        return path.startsWith("/oauth2/authorization/") || path.equals("/api" +
+                "/test");
     }
 
     private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {

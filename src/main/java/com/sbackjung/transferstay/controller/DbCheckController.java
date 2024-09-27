@@ -30,9 +30,9 @@ public class DbCheckController {
         checkDbConnection();
     }
 
-    @GetMapping("/")
+    @GetMapping("/api/test")
     public String mainCheck(){
-        return "main ";
+        return "프론트엔드 Test ";
     }
 
     @GetMapping("/check-db")
