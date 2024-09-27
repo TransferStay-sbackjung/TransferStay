@@ -96,6 +96,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 , "Authentication Success.", email);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
         response.setHeader("Authorization", "Bearer " + token);
         response.setStatus(HttpStatus.OK.value());
 

@@ -86,12 +86,12 @@ public class AuctionService {
             "해당 경매는 존재하지않습니다."));
     List<AuctionBidderDto> bidders = auctionTransActionRepository.findByAuctionId(auctionId)
             .stream().map(AuctionBidderDto::fromEntity).toList();
-    // todo : 종료된 경매에 대해서는 그냥 return or 에러처리?
     return AuctionGetDetailDto.from(auction,bidders);
   }
 
   @Transactional
   public void deleteAuction(Long userId, Long auctionId) {
+    // todo : 끝난 경매에 대해서만 삭제 처리 가능하도록
     Auction auction = auctionRepository.findAuctionByActionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
             "해당 경매는 존재하지 않습니다."));
@@ -304,6 +304,7 @@ public class AuctionService {
     // 호가로 다음 입찰가 결정
     Long nextBidPrice = newBidPrice + hoPrice;
     Long lastBidPrice = newBidPrice;
+
     // 현재 최고 입찰자
     Long currWinnerId = auction.get().getWinningBidderId();
 

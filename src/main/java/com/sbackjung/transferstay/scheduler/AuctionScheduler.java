@@ -1,9 +1,7 @@
 package com.sbackjung.transferstay.scheduler;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
-import com.sbackjung.transferstay.domain.Auction;
 import com.sbackjung.transferstay.repository.AuctionRepository;
-import com.sbackjung.transferstay.repository.TransactionRepository;
 import com.sbackjung.transferstay.service.AuctionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,8 @@ public class AuctionScheduler {
                 AuctionStatus.IN_PROGRESS,
                 AuctionStatus.BID_FAIL,
                 LocalDateTime.now(),
-                AuctionStatus.WAITING);
+                AuctionStatus.WAITING
+        );
 
         log.info("{} rows updated.",i);
         if(i > 0){

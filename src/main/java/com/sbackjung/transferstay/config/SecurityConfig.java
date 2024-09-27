@@ -22,6 +22,9 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +44,7 @@ public class SecurityConfig {
 
     http
         .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .formLogin(auth -> auth.disable())
         .httpBasic(auth -> auth.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -48,7 +52,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(request -> request
             .requestMatchers("/","/check-db", "/login/oauth2/**", "/h2" +
                             "-console/**",
-                    "/auth/**").permitAll()
+                    "/auth/**","/api/test").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/assignment-posts/{postId}", "/api/v1/assignment-posts", "/api/v1/search").permitAll()
             .requestMatchers("/email-login", "/api/v1/user/join", "/api/v1/email/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
@@ -85,4 +90,17 @@ public class SecurityConfig {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.addAllowedOrigin("http://localhost:3000");  // 허용할 도메인
+    configuration.addAllowedMethod("*");  // 모든 HTTP 메소드 허용
+    configuration.addAllowedHeader("*");  // 모든 헤더 허용
+    configuration.setAllowCredentials(true);  // 인증 정보 허용 (쿠키, 헤더 등)
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 }
