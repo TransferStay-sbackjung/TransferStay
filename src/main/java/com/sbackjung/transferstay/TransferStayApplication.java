@@ -11,13 +11,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class TransferStayApplication {
 
-    public static void main(String[] args) {
-        // 어플리케이션 구동 전 환경변수 로드
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(),entry.getValue()));
+  public static void main(String[] args) {
+    // 어플리케이션 구동 전 환경변수 로드
+    Dotenv dotenv = Dotenv.load();
+    dotenv.entries().forEach(entry ->
+        System.setProperty(entry.getKey(), entry.getValue()));
 
-        SpringApplication.run(TransferStayApplication.class, args);
-    }
+    SpringApplication.run(TransferStayApplication.class, args);
+  }
 
 }

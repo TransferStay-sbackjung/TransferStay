@@ -2,7 +2,6 @@ package com.sbackjung.transferstay.dto;
 
 import com.sbackjung.transferstay.Enum.AuctionStatus;
 import com.sbackjung.transferstay.domain.Auction;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class AuctionPostResponseDto {
-    private Long actionId;
+    private Long auctionId;
     private Long userId;
     private Long postId;
     private LocalDateTime startTime;
@@ -24,7 +23,7 @@ public class AuctionPostResponseDto {
 
     public static AuctionPostResponseDto from(Auction auction){
         return AuctionPostResponseDto.builder()
-                .actionId(auction.getActionId())
+                .auctionId(auction.getAuctionId())
                 .userId(auction.getUserId())
                 .postId(auction.getPostId())
                 .startTime(auction.getStartTime())

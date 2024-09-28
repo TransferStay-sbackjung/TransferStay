@@ -16,10 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "auction")
 public class Auction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long actionId;
+    private Long auctionId;
 
     @Column(nullable = false)
     private Long postId;

@@ -6,15 +6,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
-    jpa:
-      defer-datasource-initialization: true
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
       hibernate:
-        ddl-auto: update
-      open-in-view: false
-      properties:
-        hibernate:
-          format_sql: true
-          show_sql: false
+        format_sql: true
+        show_sql: false
 
 #spring:
 #  datasource:

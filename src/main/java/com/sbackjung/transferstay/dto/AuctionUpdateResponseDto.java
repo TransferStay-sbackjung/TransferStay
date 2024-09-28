@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class AuctionUpdateResponseDto {
-    private Long actionId;
+    private Long auctionId;
     private Long userId;
     private Long postId;
     private LocalDateTime startTime;
@@ -24,7 +24,7 @@ public class AuctionUpdateResponseDto {
 
     public static AuctionUpdateResponseDto from(Auction auction){
         return AuctionUpdateResponseDto.builder()
-                .actionId(auction.getActionId())
+                .auctionId(auction.getAuctionId())
                 .userId(auction.getUserId())
                 .postId(auction.getPostId())
                 .startTime(auction.getStartTime())

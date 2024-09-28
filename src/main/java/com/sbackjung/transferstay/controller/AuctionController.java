@@ -114,14 +114,14 @@ public class AuctionController {
     Long userId = getUserIdFromToken();
 
     Optional<AuctionTransaction> auctionTransaction = auctionTransactionRepository.findByAuctionIdAndBidderId(
-        auction.getActionId(), userId);
+        auction.getAuctionId(), userId);
 
     // auctionTransaction 로그로 값 확인(추후 삭제 에정)
     if (auctionTransaction.isPresent()) {
       log.info("AuctionTransaction found: {}", auctionTransaction.get());
     } else {
       log.info("No AuctionTransaction found for auctionId: {} and userId: {}",
-          auction.getActionId(), userId);
+          auction.getAuctionId(), userId);
     }
 
     if (auctionTransaction.isEmpty()) {

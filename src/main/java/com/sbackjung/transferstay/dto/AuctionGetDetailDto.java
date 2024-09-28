@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AuctionGetDetailDto {
-    private Long actionId;
+    private Long auctionId;
     private Long postId;
     private Long userId;
     private LocalDateTime startTime;
@@ -27,7 +27,7 @@ public class AuctionGetDetailDto {
     public static AuctionGetDetailDto from(Auction auction,
                                            List<AuctionBidderDto> bidders){
         return AuctionGetDetailDto.builder()
-                .actionId(auction.getActionId())
+                .auctionId(auction.getAuctionId())
                 .postId(auction.getPostId())
                 .userId(auction.getUserId())
                 .startTime(auction.getStartTime())

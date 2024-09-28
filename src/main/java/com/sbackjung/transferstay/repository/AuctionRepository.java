@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
     // auctionId로 경매상세정보
-    Optional<Auction> findAuctionByActionId(Long auctionId);
+    Optional<Auction> findByAuctionId(Long auctionId);
 
     // findAll을 사용해서 불러오고, pageSort를 통해서 정렬
     Page<Auction> findAll(Pageable pageable);

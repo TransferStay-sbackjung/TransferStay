@@ -49,7 +49,7 @@ public class AuctionService {
   public AuctionUpdateResponseDto updateAuction(AuctionUpdateRequestDto request, Long userId,
       Long auctionId) {
     // todo : 경매 참여중인 인원이나 시간에 대해서 제한이 필요할것같습니다.
-    Auction auction = auctionRepository.findAuctionByActionId(auctionId)
+    Auction auction = auctionRepository.findByAuctionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
             "해당 경매는 존재하지않습니다."));
     if (!auction.getUserId().equals(userId)) {
@@ -81,7 +81,7 @@ public class AuctionService {
 
   @Transactional
   public AuctionGetDetailDto getAuctionDetails(Long auctionId) {
-    Auction auction = auctionRepository.findAuctionByActionId(auctionId)
+    Auction auction = auctionRepository.findByAuctionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
             "해당 경매는 존재하지않습니다."));
     List<AuctionBidderDto> bidders = auctionTransActionRepository.findByAuctionId(auctionId)
@@ -92,7 +92,7 @@ public class AuctionService {
   @Transactional
   public void deleteAuction(Long userId, Long auctionId) {
     // todo : 끝난 경매에 대해서만 삭제 처리 가능하도록
-    Auction auction = auctionRepository.findAuctionByActionId(auctionId)
+    Auction auction = auctionRepository.findByAuctionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST,
             "해당 경매는 존재하지 않습니다."));
     if (!auction.getUserId().equals(userId)) {
@@ -165,7 +165,7 @@ public class AuctionService {
     Long hoPrice = calculateHoPrice(auction.getStartPrice());
 
     AuctionTransaction auctionTransaction = AuctionTransaction.builder()
-        .auctionId(auction.getActionId())
+        .auctionId(auction.getAuctionId())
         .bidderId(bidderId)
         .suggestPrice(requestDto.getSuggestPrice())
         .maxPrice(requestDto.getMaxPrice())
@@ -178,7 +178,7 @@ public class AuctionService {
     auction.setWinningBidderId(bidderId);
     auctionRepository.save(auction);
 
-    updateAutoBiddingAfterBid(auction.getActionId(),
+    updateAutoBiddingAfterBid(auction.getAuctionId(),
             requestDto.getSuggestPrice(),hoPrice);
   }
 
@@ -190,7 +190,7 @@ public class AuctionService {
 
     // 입찰 기록 생성 또는 갱신
     AuctionTransaction auctionTransaction = AuctionTransaction.builder()
-        .auctionId(auction.getActionId())
+        .auctionId(auction.getAuctionId())
         .bidderId(bidderId)
         .suggestPrice(newBidPrice)
         .maxPrice(requestDto.getMaxPrice())
@@ -203,7 +203,7 @@ public class AuctionService {
     auction.setWinningBidderId(bidderId);
     auctionRepository.save(auction);
 
-    updateAutoBiddingAfterBid(auction.getActionId(),
+    updateAutoBiddingAfterBid(auction.getAuctionId(),
             requestDto.getSuggestPrice(),hoPrice);
   }
 
@@ -264,7 +264,7 @@ public class AuctionService {
 
     return AuctionPurchaseDto.builder()
             .postId(postId)
-            .auctionId(auction.getActionId())
+            .auctionId(auction.getAuctionId())
             .buyerId(userId)
             .sellerId(post.getSellerId())
             .amount(price)

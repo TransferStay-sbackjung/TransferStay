@@ -54,7 +54,7 @@ public class AssignmentPostService {
           .startPrice(request.getStartPrice())
               .purchasePrice(request.getPurchasePrice())
           .build();
-      Long auctionId = (auctionService.createAuction(auctionPostRequestDto, userId)).getActionId();
+      Long auctionId = (auctionService.createAuction(auctionPostRequestDto, userId)).getAuctionId();
       if(auctionId != null){
         log.info("create auction success");
       }
