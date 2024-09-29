@@ -58,11 +58,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - Updated CD Script for GitHub Actions
-
       - name: EC2에 SSH 연결 후 JAR 실행
-      - uses: appleboy/ssh-action@v0.1.0
-      - with:
+        uses: appleboy/ssh-action@v0.1.0
+        with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
@@ -73,14 +71,14 @@ jobs:
             source ~/.bash_profile
             echo "현재 디렉토리: $(pwd)"
             echo "Java 버전: $(java -version)"
-
+            
             # JAR 파일 경로 설정
-            JAR_PATH="/home/ubuntu/build/libs/TransferStay-0.0.1-SNAPSHOT.jar"
-  
+            JAR_PATH="/home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar"
+            
             # 기존 JAR 프로세스 종료
             echo "기존 애플리케이션 종료 중..."
             pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true
-  
+            
             # 기존 프로세스 종료 확인
             if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
               echo "이전 프로세스가 아직 실행 중입니다. 강제 종료합니다."
@@ -88,7 +86,7 @@ jobs:
             else
               echo "실행 중인 이전 프로세스가 없습니다."
             fi
-  
+            
             # 새로운 JAR 파일 실행 및 로그 저장
             echo "새로운 애플리케이션 시작 중..."
             if [ -f "$JAR_PATH" ]; then
@@ -98,14 +96,13 @@ jobs:
               echo "JAR 파일을 $JAR_PATH 에서 찾을 수 없습니다!"
               exit 1
             fi
-  
+            
             # 프로세스 시작 확인
             sleep 10
             if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
               echo "새 프로세스가 성공적으로 시작되었습니다."
               echo "프로세스 세부 정보:"
               ps aux | grep 'TransferStay-0.0.1-SNAPSHOT.jar'
-            
             else
               echo "새 프로세스 시작에 실패했습니다."
               echo "app.log 파일의 내용:"
