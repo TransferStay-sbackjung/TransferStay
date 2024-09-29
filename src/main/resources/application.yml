@@ -79,3 +79,5 @@ spring:
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:default}
+  main:
+    allow-bean-definition-overriding: true
