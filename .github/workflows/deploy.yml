@@ -36,7 +36,9 @@ jobs:
 
       # Gradle 빌드 실행 (테스트 제외)
       - name: Build with Gradle
-        run: ./gradlew build -x test  # 테스트 제외하고 빌드
+        run: |
+              echo USERNAME="${{ secrets.USERNAME }}"
+              ./gradlew build -x test  # 테스트 제외하고 빌드
 
       # 빌드된 JAR 파일을 EC2로 복사
       - name: Copy JAR to EC2
