@@ -40,7 +40,7 @@ jobs:
 
       # 빌드된 JAR 파일에 실행 권한 부여
       - name: Grant execute permission for JAR
-        run: chmod +x build/libs/TransferStay-0.0.1-SNAPSHOT.jar
+        run: chmod +x build/libs/*.jar  # 가장 최신 빌드된 JAR 파일에 권한 부여
 
       # 권한이 부여된 JAR 파일을 EC2로 복사
       - name: Copy JAR to EC2
@@ -50,7 +50,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
+          source: build/libs/*.jar  # 가장 최근에 빌드된 JAR 파일 자동으로 선택
           target: /home/ubuntu/
 
   deploy:
@@ -72,40 +72,58 @@ jobs:
             echo "현재 디렉토리: $(pwd)"
             echo "Java 버전: $(java -version)"
             
-            # JAR 파일 경로 설정
-            JAR_PATH="/home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar"
+            # JAR 파일 경로 설정 (최신 JAR 파일을 자동으로 찾음)
+            JAR_PATH=$(ls -t /home/ubuntu/*.jar | head -n 1)
             
             # 기존 JAR 프로세스 종료
             echo "기존 애플리케이션 종료 중..."
-            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true
-            
-            # 기존 프로세스 종료 확인
-            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
-              echo "이전 프로세스가 아직 실행 중입니다. 강제 종료합니다."
-              pkill -9 -f 'TransferStay-0.0.1-SNAPSHOT.jar'
+            if pgrep -f "$JAR_PATH"; then
+              echo "이전 프로세스가 실행 중입니다. 종료합니다."
+              pkill -f "$JAR_PATH"
             else
               echo "실행 중인 이전 프로세스가 없습니다."
             fi
-            
+
+            # 프로세스 종료가 완료되었는지 확인
+            if pgrep -f "$JAR_PATH"; then
+              echo "프로세스가 아직 종료되지 않았습니다. 강제 종료합니다."
+              pkill -9 -f "$JAR_PATH"
+            else
+              echo "이전 프로세스 종료가 완료되었습니다."
+            fi
+
             # 새로운 JAR 파일 실행 및 로그 저장
             echo "새로운 애플리케이션 시작 중..."
             if [ -f "$JAR_PATH" ]; then
               chmod +x "$JAR_PATH"
               nohup java -jar "$JAR_PATH" > app.log 2>&1 &
             else
-              echo "JAR 파일을 $JAR_PATH 에서 찾을 수 없습니다!"
+              echo "JAR 파일을 찾을 수 없습니다!"
               exit 1
             fi
-            
+
             # 프로세스 시작 확인
             sleep 10
-            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+            if pgrep -f "$JAR_PATH"; then
               echo "새 프로세스가 성공적으로 시작되었습니다."
               echo "프로세스 세부 정보:"
-              ps aux | grep 'TransferStay-0.0.1-SNAPSHOT.jar'
+              ps aux | grep "$JAR_PATH"
             else
               echo "새 프로세스 시작에 실패했습니다."
               echo "app.log 파일의 내용:"
               tail -n 50 app.log
               exit 1
+            fi
+
+            # 로그 파일 크기 관리 (기본 10MB 이상일 경우 삭제)
+            LOG_FILE="/home/ubuntu/app.log"
+            MAX_LOG_SIZE=10485760  # 10MB
+
+            if [ -f "$LOG_FILE" ]; then
+              LOG_SIZE=$(stat -c%s "$LOG_FILE")
+              if [ "$LOG_SIZE" -gt "$MAX_LOG_SIZE" ]; then
+                echo "로그 파일이 너무 큽니다. 로그를 백업하고 새 파일을 생성합니다."
+                mv "$LOG_FILE" "$LOG_FILE.bak"
+                touch "$LOG_FILE"
+              fi
             fi
