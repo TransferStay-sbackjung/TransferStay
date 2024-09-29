@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import MainPage from './component/MainPage';
 import LoginPage from './component/auth/Login';
 import EmailLogin from './component/auth/EmailLogin';
 import SignUp from './component/auth/SignUp';
+import AuthCallback from './component/auth/AuthCallback';  // AuthCallback 추가
 
 // post
 import WritePost from './component/post/WritePost'; // 게시글 작성 페이지 컴포넌트
@@ -26,6 +26,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/auth/:token" element={<AuthCallback />} /> {/* 닫는 태그 수정 */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/email-login" element={<EmailLogin />} />
