@@ -74,6 +74,11 @@ const MyPage = () => {
     navigate('/balanceRefund'); // 잔액 충전 페이지로 이동
   };
 
+  // 환불 페이지로 이동하는 함수
+  const handleNavigateToUserPost = () => {
+    navigate('/userPostPage'); // 잔액 충전 페이지로 이동
+  };
+
   return (
     <div>
       <NavBar /> {/* 네비게이션 바 */}
@@ -128,7 +133,7 @@ const MyPage = () => {
         <div className="my-posts-section">
           <div className="my-posts">
             <h3>내가 올린 글</h3>
-            <button className="post-button">글 보러가기</button>
+            <button className="post-button" onClick={handleNavigateToUserPost}>글 보러가기</button>
           </div>
           <div className="my-auction-posts">
             <h3>경매 참여 중인 글</h3>
