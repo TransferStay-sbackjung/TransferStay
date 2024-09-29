@@ -3,7 +3,7 @@ name: EC2 Connection Test Pipeline  # 워크플로 이름
 on:
   push:
     branches:
-      - develop  # develop 브랜치에 푸시가 발생할 때 실행
+      - develop
 
 jobs:
   ec2-connection-test:  # EC2 연결 확인 작업
