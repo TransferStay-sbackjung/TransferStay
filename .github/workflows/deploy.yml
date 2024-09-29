@@ -38,10 +38,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test  # 테스트 제외하고 빌드
 
-      - name: Grant execute permission for JAR
-        run: chmod +x /home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar
-
-
       # 빌드된 JAR 파일을 EC2로 복사
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.0  # 버전 명시
@@ -52,6 +48,9 @@ jobs:
           port: ${{ secrets.PORT }}
           source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/
+
+      - name: Grant execute permission for JAR
+        run: chmod +x /home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar
 
   deploy:
     needs: build
