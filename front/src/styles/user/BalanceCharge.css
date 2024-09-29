@@ -1,0 +1,99 @@
+/* 잔액 충전 페이지 스타일 */
+.balance-charge-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 잔액 섹션 */
+.balance-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.balance-section h2 {
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* 충전 폼 섹션 */
+.charge-form {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.charge-form h3 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.charge-form input {
+    width: 60%;
+    padding: 10px;
+    font-size: 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.charge-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.charge-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.charge-button:hover {
+    background-color: #0056b3;
+}
+
+/* 충전 이력 섹션 */
+.charge-history {
+    margin-top: 20px;
+}
+
+.charge-history h3 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.charge-history ul {
+    list-style: none;
+    padding: 0;
+}
+
+.charge-history li {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.charge-history li span {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.charge-history p {
+    text-align: center;
+    color: #777;
+}

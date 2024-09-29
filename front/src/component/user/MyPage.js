@@ -9,6 +9,7 @@ const MyPage = () => {
   // 사용자 정보 상태 관리
   const [userInfo, setUserInfo] = useState({
     userId: '',
+    amount:'',
     email: '',
     phone: ''
   });
@@ -32,6 +33,7 @@ const MyPage = () => {
             const response = await infoResponse.json();
             setUserInfo({
               userId: response.data.userId,
+              amount: response.data.amount,
               email: response.data.email,
               phone: response.data.phone,
             });
@@ -60,8 +62,12 @@ const MyPage = () => {
     };
 
     checkLoginStatus();
-  }, [navigate()]);
+  }, [navigate]);
 
+  // 충전 페이지로 이동하는 함수
+  const handleNavigateToChargePage = () => {
+    navigate('/balanceCharge'); // 잔액 충전 페이지로 이동
+  };
 
   return (
     <div>
@@ -75,6 +81,7 @@ const MyPage = () => {
           <div className="profile-info">
             <p>Email: {userInfo.email}</p> {/* 사용자 이메일 표시 */}
             <p>Phone: {userInfo.phone}</p> {/* 사용자 전화번호 표시 */}
+            <p>예치금 잔액: {userInfo.amount}</p> {/* 사용자 전화번호 표시 */}
             <button className="edit-button">개인정보 수정</button>
           </div>
         </div>
@@ -105,9 +112,9 @@ const MyPage = () => {
         {/* 예치금 잔액 섹션 */}
         <div className="balance-section">
           <h3>예치금 잔액</h3>
-          <p>200,000 원</p>
+          <p>{userInfo.amount.toLocaleString()} 원</p>
           <div className="balance-buttons">
-            <button className="balance-button">충전하기</button>
+            <button className="balance-button" onClick={handleNavigateToChargePage}>충전하기</button> {/* 충전 페이지로 이동 */}
             <button className="balance-button">환급하기</button>
           </div>
         </div>

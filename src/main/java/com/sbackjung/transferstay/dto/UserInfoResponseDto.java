@@ -9,10 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserInfoResponseDto {
   private Long userId;
+  private Long amount;
   private String email;
   private String phone;
 
   public static UserInfoResponseDto from(UserDomain user) {
-    return new UserInfoResponseDto(user.getUserId(), user.getEmail(), user.getPhone());
+    return new UserInfoResponseDto(user.getUserId(),user.getAmount(), user.getEmail(),
+            user.getPhone());
   }
 }

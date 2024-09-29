@@ -38,8 +38,8 @@ public class DepositRechargeController {
       @Parameter(description = "충전할 금액", required = true, schema = @Schema(type = "long", example = "10000"))
       @RequestBody Long amount) {
     Long userId = UserIdHolder.getUserIdFromToken();
-    depositRechargeService.rechargeDeposit(userId, amount);
-    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "충전이 완료되었습니다.", null);
+    Long balance = depositRechargeService.rechargeDeposit(userId, amount);
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "충전이 완료되었습니다.", balance);
     return ResponseEntity.ok(response);
   }
 

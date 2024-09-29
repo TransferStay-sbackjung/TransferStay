@@ -17,8 +17,9 @@ public class DepositRechargeService {
   private final UserRepository userRepository;
 
   // 충전
+  // todo : 예치금 관련해서 Transaction이 생성되야하지 않을까요?
   @Transactional
-  public void rechargeDeposit(Long userId, Long amount) {
+  public Long rechargeDeposit(Long userId, Long amount) {
     // 충전 금액 유효성 검사
     if (amount < 1000 || amount % 1000 != 0) {
       throw new CustomException(ErrorCode.INVALID_AMOUNT);
@@ -36,6 +37,8 @@ public class DepositRechargeService {
     }
 
     user.setAmount(currentAmount + amount);
+
+    return currentAmount + amount;
   }
 
   // 환불

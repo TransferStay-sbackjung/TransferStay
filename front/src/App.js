@@ -17,6 +17,7 @@ import SearchResults from './component/SearchResults'; // 게시글 검색 결�
 
 // myPage
 import MyPage from './component/user/MyPage'; // 마이페이지 컴포넌트
+import BalanceCharge from './component/user/BalanceCharge'; // 마이페이지 컴포넌트
 
 // auction
 import AuctionPosts from './component/AuctionPosts'; // 전체 경매글 조회 컴포넌트
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/my-page" element={<MyPage />} />
         <Route path="/all-posts" element={<AllPosts />} />
         <Route path="/auction-posts" element={<AuctionPosts />} />
+        <Route path="/balanceCharge" element={<BalanceCharge />} />
       </Routes>
     </Router>
   );
