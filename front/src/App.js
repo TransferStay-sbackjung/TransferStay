@@ -16,7 +16,7 @@ import AllPosts from './component/post/AllPosts'; // 전체 게시글 조회 컴
 import SearchResults from './component/SearchResults'; // 게시글 검색 결과 컴포넌트
 
 // myPage
-import MyPage from './component/MyPage'; // 마이페이지 컴포넌트
+import MyPage from './component/user/MyPage'; // 마이페이지 컴포넌트
 
 // auction
 import AuctionPosts from './component/AuctionPosts'; // 전체 경매글 조회 컴포넌트

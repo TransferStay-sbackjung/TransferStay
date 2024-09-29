@@ -52,7 +52,7 @@
   background-color: #555;
 }
 
-/* 찜한 숙소 섹션 */
+/* 찜한 게시글 섹션 */
 .liked-section {
   margin-top: 20px;
 }
@@ -62,13 +62,13 @@
 }
 
 .liked-items {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개의 아이템 */
+  gap: 20px;
   margin-top: 15px;
 }
 
 .liked-item {
-  width: 22%;
   background-color: #f4f4f4;
   border-radius: 10px;
   text-align: center;
@@ -90,6 +90,13 @@
 
 .item-info p {
   color: #777;
+}
+
+/* 빈 화면 처리를 위한 스타일 */
+.liked-item.empty {
+  background-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 /* 예치금 섹션 */

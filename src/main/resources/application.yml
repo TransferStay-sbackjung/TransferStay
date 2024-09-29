@@ -7,7 +7,7 @@ spring:
 #    h2:
 #      console:
 #        enabled: true
-    url: ${DATABASE_URL}
+    url: ${LOCAL_DB}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
