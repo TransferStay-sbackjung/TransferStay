@@ -49,8 +49,15 @@ jobs:
           source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/
 
+      # JAR 파일에 실행 권한 부여
       - name: Grant execute permission for JAR
-        run: chmod +x /home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: chmod +x /home/ubuntu/TransferStay-0.0.1-SNAPSHOT.jar
 
   deploy:
     needs: build
