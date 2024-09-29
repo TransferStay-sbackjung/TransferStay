@@ -68,5 +68,28 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/
-            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true  # 기존 JAR 파일 종료
-            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &  # 새로운 JAR 파일 실행 및 로그 저장
+            
+            # 기존 JAR 프로세스 종료
+            echo "Stopping existing application..."
+            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true
+            
+            # 기존 프로세스 종료 확인
+            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+              echo "Previous process still running, forcing termination."
+              pkill -9 -f 'TransferStay-0.0.1-SNAPSHOT.jar'
+            else
+              echo "No previous process running."
+            fi
+
+            # 새로운 JAR 파일 실행 및 로그 저장
+            echo "Starting new application..."
+            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            
+            # 프로세스 시작 확인
+            sleep 5
+            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+              echo "New process started successfully."
+            else
+              echo "Failed to start the new process."
+              exit 1
+            fi
