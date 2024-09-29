@@ -19,5 +19,4 @@ public class TransferStayApplication {
 
     SpringApplication.run(TransferStayApplication.class, args);
   }
-
 }
