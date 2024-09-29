@@ -3,8 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      # todo main 브랜치로 변경하기
-      - develop  # develop 브랜치에 푸시될 때 빌드 및 배포
+      - develop  # todo: 나중에 main 브랜치로 변경
 
 jobs:
   build:
@@ -13,24 +12,35 @@ jobs:
     steps:
       # GitHub 저장소에서 코드 가져오기
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # 최신 버전 사용
 
       # JDK 설치
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3  # 최신 버전 사용
         with:
           java-version: '17'
+          distribution: 'temurin'
 
+      # Gradle 캐시 적용 (빌드 최적화)
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Gradle Wrapper 실행 권한 부여
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x ./gradlew
 
-      # Gradle 빌드 실행
+      # Gradle 빌드 실행 (테스트 제외)
       - name: Build with Gradle
         run: ./gradlew build -x test  # 테스트 제외하고 빌드
 
       # 빌드된 JAR 파일을 EC2로 복사
       - name: Copy JAR to EC2
-        uses: appleboy/scp-action@v0.1.0
+        uses: appleboy/scp-action@v0.1.0  # 버전 명시
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -41,15 +51,16 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       # EC2에 접속해서 JAR 파일 실행
       - name: SSH to EC2 and run JAR
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.0  # 버전 명시
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /home/ubuntu/
-            pkill -f 'java -jar' || true  # 기존 JAR 파일 종료
-            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar &  # 새로운 JAR 파일 실행
+            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true  # 기존 JAR 파일 종료
+            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &  # 새로운 JAR 파일 실행 및 로그 저장
