@@ -1,26 +1,20 @@
-name: EC2 Connection Test Pipeline  # 워크플로 이름
+name: Display Secrets
 
 on:
   push:
     branches:
-      - develop
+      - develop  # develop 브랜치에 푸시할 때 실행
 
 jobs:
-  ec2-connection-test:  # EC2 연결 확인 작업
-    runs-on: ubuntu-latest  # 최신 Ubuntu OS에서 작업 실행
+  show-secrets:
+    runs-on: ubuntu-latest
 
     steps:
-      # GitHub 저장소에서 코드 가져오기
       - name: Checkout code
-        uses: actions/checkout@v3  # 최신 버전의 checkout 액션 사용
+        uses: actions/checkout@v3
 
-      # EC2에 SSH로 접속해서 날짜/시간 출력 (연결 확인용)
-      - name: SSH to EC2 and check connection
-        uses: appleboy/ssh-action@v0.1.0  # SSH를 통해 EC2 연결 확인
-        with:
-          host: ${{ secrets.EC2_HOST }}  # EC2 호스트 주소 (GitHub Secrets에서 가져옴)
-          username: ${{ secrets.EC2_USER }}  # EC2 사용자 이름 (GitHub Secrets에서 가져옴)
-          key: ${{ secrets.EC2_KEY }}  # SSH 키 (GitHub Secrets에서 가져옴)
-          script: |
-            echo "Connected to EC2"  # EC2에 접속한 후 메시지 출력
-            date  # EC2에서 현재 날짜/시간 출력
+      - name: Show Secret Values
+        run: |
+          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
+          echo "EC2_USER: ${{ secrets.EC2_USER }}"
+          echo "EC2_KEY: ${{ secrets.EC2_KEY }}"
