@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/MainPage.css';
+import '../styles/MainPage.css'; // 스타일 파일
 import NavBar from './NavBar';  // 네비게이션 바 컴포넌트 임포트
 
 const MainPage = () => {
