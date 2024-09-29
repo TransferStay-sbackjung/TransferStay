@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop  # todo: 나중에 main 브랜치로 변경
+      - develop  # 나중에 main 브랜치로 변경 예정
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3  # 최신 버전 사용
 
-      # JDK 설치
+      # JDK 17 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v3  # 최신 버전 사용
         with:
@@ -36,11 +36,13 @@ jobs:
 
       # Gradle 빌드 실행 (테스트 제외)
       - name: Build with Gradle
-        run: |
-              echo USERNAME="${{ secrets.USERNAME }}"
-              ./gradlew build -x test  # 테스트 제외하고 빌드
+        run: ./gradlew build -x test  # 테스트 제외하고 빌드
 
-      # 빌드된 JAR 파일을 EC2로 복사
+      # 빌드된 JAR 파일에 실행 권한 부여
+      - name: Grant execute permission for JAR
+        run: chmod +x build/libs/TransferStay-0.0.1-SNAPSHOT.jar
+
+      # 권한이 부여된 JAR 파일을 EC2로 복사
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.0  # 버전 명시
         with:
@@ -66,5 +68,28 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/
-            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true  # 기존 JAR 파일 종료
-            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &  # 새로운 JAR 파일 실행 및 로그 저장
+            
+            # 기존 JAR 프로세스 종료
+            echo "Stopping existing application..."
+            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true
+            
+            # 기존 프로세스 종료 확인
+            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+              echo "Previous process still running, forcing termination."
+              pkill -9 -f 'TransferStay-0.0.1-SNAPSHOT.jar'
+            else
+              echo "No previous process running."
+            fi
+
+            # 새로운 JAR 파일 실행 및 로그 저장
+            echo "Starting new application..."
+            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            
+            # 프로세스 시작 확인
+            sleep 5
+            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+              echo "New process started successfully."
+            else
+              echo "Failed to start the new process."
+              exit 1
+            fi
