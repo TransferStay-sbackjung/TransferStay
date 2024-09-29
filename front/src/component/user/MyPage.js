@@ -74,9 +74,14 @@ const MyPage = () => {
     navigate('/balanceRefund'); // 잔액 충전 페이지로 이동
   };
 
-  // 환불 페이지로 이동하는 함수
+  // 생성한 게시글로 이동하는 함수
   const handleNavigateToUserPost = () => {
     navigate('/userPostPage'); // 잔액 충전 페이지로 이동
+  };
+
+  // 참여중인 경매글로 이동하는 함수
+  const handleNavigateToAuctionPost = () => {
+    navigate('/userAuctionPostPage'); // 잔액 충전 페이지로 이동
   };
 
   return (
@@ -137,7 +142,7 @@ const MyPage = () => {
           </div>
           <div className="my-auction-posts">
             <h3>경매 참여 중인 글</h3>
-            <button className="post-button">참여 중인 글 보기</button>
+            <button className="post-button" onClick={handleNavigateToAuctionPost}>참여 중인 글 보기</button>
           </div>
         </div>
 

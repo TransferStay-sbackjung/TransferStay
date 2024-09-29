@@ -11,6 +11,7 @@ import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.repository.*;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -344,6 +345,20 @@ public class AuctionService {
     auction.get().setWinningBidderId(currWinnerId);
     auction.get().setWinningPrice(lastBidPrice);
     auctionRepository.save(auction.get());
+  }
+
+  @Transactional
+  public List<AuctionGetListDto> getUserAuctionList(Long userId) {
+    List<AuctionTransaction> participateList =
+            auctionTransActionRepository.findByBidderId(userId);
+    List<AuctionGetListDto> result = new ArrayList<>();
+    for(AuctionTransaction transaction : participateList){
+      Optional<Auction> byId = auctionRepository.findById(transaction.getAuctionId());
+      if(byId.isPresent()){
+        result.add(AuctionGetListDto.from(byId.get()));
+      }
+    }
+    return result;
   }
 
   private Long calculateAutoBidPrice(Auction auction, Long maxPrice) {

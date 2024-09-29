@@ -18,4 +18,6 @@ public interface AssignmentPostRepository extends JpaRepository<AssignmentPost, 
 
   // 사용자가 작성한 게시물 조회
   List<AssignmentPost> findByUserId(Long userId);
+
+  List<AssignmentPost> findByUserIdOrderByCreatedAtDesc(Long userId);
 }
