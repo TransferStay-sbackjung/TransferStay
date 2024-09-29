@@ -1,0 +1,169 @@
+/* 네비게이션 바 스타일 */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #333; /* 어두운 배경색 */
+  color: white; /* 텍스트 흰색 */
+}
+
+.navbar-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links span {
+  font-size: 1rem;
+  cursor: pointer;
+  color: #fff; /* 링크 텍스트 흰색 */
+}
+
+.navbar-links span:hover {
+  text-decoration: underline;
+  color: #f0e68c; /* 호버 시 노란색으로 변경 */
+}
+
+/* 로그인 버튼 스타일 */
+.navbar-login {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin-left: 20px;
+}
+
+.navbar-login:hover {
+  background-color: #0056b3;
+}
+
+/* 양도 글 작성 페이지 전체 스타일 */
+.write-post {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.write-post h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 입력 폼 스타일 */
+.write-post-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  display: block;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+.form-group textarea {
+  resize: none;
+}
+
+/* 가격 입력 필드 */
+.form-group input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 버튼 스타일 */
+.submit-button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* 경매 관련 필드들 간 간격 조정 */
+.auction-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* 경매 관련 날짜와 시간 필드 */
+.form-group input[type="date"],
+.form-group input[type="time"] {
+  width: 48%;
+  display: inline-block;
+}
+
+/* 이미지 업로드 필드 */
+.form-group input[type="file"] {
+  border: none;
+}
+
+.form-group img {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+  .form-group input[type="date"],
+  .form-group input[type="time"] {
+    width: 100%;
+  }
+
+  .auction-fields {
+    flex-direction: column;
+  }
+}

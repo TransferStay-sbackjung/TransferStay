@@ -1,0 +1,190 @@
+/* 마이페이지 전체 레이아웃 */
+.my-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+  display: flex;
+  align-items: center;
+  background-color: #e0e0e0;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.profile-picture img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.logout-button, .edit-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 150px;
+}
+
+.edit-button {
+  margin-top: 10px;
+}
+
+.logout-button:hover, .edit-button:hover {
+  background-color: #555;
+}
+
+/* 찜한 숙소 섹션 */
+.liked-section {
+  margin-top: 20px;
+}
+
+.liked-section h3 {
+  font-size: 1.5rem;
+}
+
+.liked-items {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.liked-item {
+  width: 22%;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.liked-item img {
+  width: 100%;
+  border-radius: 10px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.item-info h4 {
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+.item-info p {
+  color: #777;
+}
+
+/* 예치금 섹션 */
+.balance-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.balance-section h3 {
+  font-size: 1.5rem;
+}
+
+.balance-section p {
+  font-size: 2rem;
+  margin: 10px 0;
+}
+
+.balance-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.balance-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.balance-button:hover {
+  background-color: #555;
+}
+
+/* 내가 올린 글, 경매 참여 중인 글 섹션 */
+.my-posts-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.my-posts, .my-auction-posts {
+  width: 48%;
+  text-align: center;
+}
+
+.post-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.post-button:hover {
+  background-color: #555;
+}
+
+/* 문의하기 섹션 */
+.inquiry-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.inquiry-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.inquiry-button:hover {
+  background-color: #555;
+}
+
+/* 푸터 스타일 */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer button {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+  margin: 0 15px;
+}
+
+.footer button:hover {
+  color: darkblue;
+}
