@@ -18,6 +18,9 @@ import SearchResults from './component/SearchResults'; // 게시글 검색 결�
 // myPage
 import MyPage from './component/user/MyPage'; // 마이페이지 컴포넌트
 import BalanceCharge from './component/user/BalanceCharge'; // 마이페이지 컴포넌트
+import BalanceRefund from './component/user/BalanceRefund'; // 마이페이지 컴포넌트
+import UserPostPage from './component/user/UserPostPage';
+import UserAuctionPage from "./component/user/UserAuctionPage";
 
 // auction
 import AuctionPosts from './component/AuctionPosts'; // 전체 경매글 조회 컴포넌트
@@ -37,6 +40,9 @@ const App = () => {
         <Route path="/all-posts" element={<AllPosts />} />
         <Route path="/auction-posts" element={<AuctionPosts />} />
         <Route path="/balanceCharge" element={<BalanceCharge />} />
+        <Route path="/balanceRefund" element={<BalanceRefund />} />
+        <Route path="/userPostPage" element={<UserPostPage />} />
+        <Route path="/userAuctionPostPage" element={<UserAuctionPage />} />
       </Routes>
     </Router>
   );

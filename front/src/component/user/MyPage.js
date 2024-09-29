@@ -69,6 +69,21 @@ const MyPage = () => {
     navigate('/balanceCharge'); // 잔액 충전 페이지로 이동
   };
 
+  // 환불 페이지로 이동하는 함수
+  const handleNavigateToRefundPage = () => {
+    navigate('/balanceRefund'); // 잔액 충전 페이지로 이동
+  };
+
+  // 생성한 게시글로 이동하는 함수
+  const handleNavigateToUserPost = () => {
+    navigate('/userPostPage'); // 잔액 충전 페이지로 이동
+  };
+
+  // 참여중인 경매글로 이동하는 함수
+  const handleNavigateToAuctionPost = () => {
+    navigate('/userAuctionPostPage'); // 잔액 충전 페이지로 이동
+  };
+
   return (
     <div>
       <NavBar /> {/* 네비게이션 바 */}
@@ -76,7 +91,7 @@ const MyPage = () => {
         {/* 프로필 섹션 */}
         <div className="profile-section">
           <div className="profile-picture">
-            <img src="/path/to/profile-picture" alt="Profile"/>
+            <img src="/defaultimg.png" alt="Profile"/>
           </div>
           <div className="profile-info">
             <p>Email: {userInfo.email}</p> {/* 사용자 이메일 표시 */}
@@ -115,7 +130,7 @@ const MyPage = () => {
           <p>{userInfo.amount.toLocaleString()} 원</p>
           <div className="balance-buttons">
             <button className="balance-button" onClick={handleNavigateToChargePage}>충전하기</button> {/* 충전 페이지로 이동 */}
-            <button className="balance-button">환급하기</button>
+            <button className="balance-button" onClick={handleNavigateToRefundPage}>환급하기</button>
           </div>
         </div>
 
@@ -123,11 +138,11 @@ const MyPage = () => {
         <div className="my-posts-section">
           <div className="my-posts">
             <h3>내가 올린 글</h3>
-            <button className="post-button">글 보러가기</button>
+            <button className="post-button" onClick={handleNavigateToUserPost}>글 보러가기</button>
           </div>
           <div className="my-auction-posts">
             <h3>경매 참여 중인 글</h3>
-            <button className="post-button">참여 중인 글 보기</button>
+            <button className="post-button" onClick={handleNavigateToAuctionPost}>참여 중인 글 보기</button>
           </div>
         </div>
 

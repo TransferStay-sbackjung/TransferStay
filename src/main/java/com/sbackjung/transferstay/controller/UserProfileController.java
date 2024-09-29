@@ -1,10 +1,8 @@
 package com.sbackjung.transferstay.controller;
 
-import com.sbackjung.transferstay.dto.AssignmentPostResponseDto;
-import com.sbackjung.transferstay.dto.JsonResponse;
-import com.sbackjung.transferstay.dto.UserInfoResponseDto;
-import com.sbackjung.transferstay.dto.UserInfoUpdateRequestDto;
+import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.service.AssignmentPostService;
+import com.sbackjung.transferstay.service.AuctionService;
 import com.sbackjung.transferstay.service.LikeAccommodationService;
 import com.sbackjung.transferstay.service.UserService;
 import com.sbackjung.transferstay.utils.UserIdHolder;
@@ -26,6 +24,7 @@ import java.util.List;
 public class UserProfileController {
 
   private final UserService userService;
+  private final AuctionService auctionService;
   private final AssignmentPostService assignmentPostService;
   private final LikeAccommodationService likeAccommodationService;
 
@@ -62,6 +61,17 @@ public class UserProfileController {
     Long userId = UserIdHolder.getUserIdFromToken();
     List<AssignmentPostResponseDto> likedPosts = likeAccommodationService.getUserLikedPosts(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 좋아요한 게시물을 조회하였습니다.", likedPosts);
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(summary = "사용자가 참여한 한 경매글 조회", description = "사용자가 참여한 경매를 " +
+          "조회합니다.")
+  @GetMapping("/auction-posts")
+  public ResponseEntity<JsonResponse> getUserAuctionPosts() {
+    Long userId = UserIdHolder.getUserIdFromToken();
+    List<AuctionGetListDto> userAuctionList = auctionService.getUserAuctionList(userId);
+    JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 " +
+            "참여한 경매를 조회했습니다.", userAuctionList);
     return ResponseEntity.ok(response);
   }
 }

@@ -28,7 +28,7 @@ public class AssignmentPostService {
   private final AuctionService auctionService;
 
   public List<AssignmentPostResponseDto> getUserPosts(Long userId) {
-    List<AssignmentPost> posts = assignmentPostRepository.findByUserId(userId);
+    List<AssignmentPost> posts = assignmentPostRepository.findByUserIdOrderByCreatedAtDesc(userId);
     return posts.stream()
         .map(AssignmentPostResponseDto::fromEntity)
         .collect(Collectors.toList());
