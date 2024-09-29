@@ -58,38 +58,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # EC2에 접속해서 JAR 파일 실행
-      - name: SSH to EC2 and run JAR
-        uses: appleboy/ssh-action@v0.1.0  # 버전 명시
-        with:
+      - Updated CD Script for GitHub Actions
+
+      - name: EC2에 SSH 연결 후 JAR 실행
+      - uses: appleboy/ssh-action@v0.1.0
+      - with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            set -x  # 디버그 모드 활성화
             cd /home/ubuntu/
-            
+            source ~/.bash_profile
+            echo "현재 디렉토리: $(pwd)"
+            echo "Java 버전: $(java -version)"
+
+            # JAR 파일 경로 설정
+            JAR_PATH="/home/ubuntu/build/libs/TransferStay-0.0.1-SNAPSHOT.jar"
+  
             # 기존 JAR 프로세스 종료
-            echo "Stopping existing application..."
+            echo "기존 애플리케이션 종료 중..."
             pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true
-            
+  
             # 기존 프로세스 종료 확인
             if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
-              echo "Previous process still running, forcing termination."
+              echo "이전 프로세스가 아직 실행 중입니다. 강제 종료합니다."
               pkill -9 -f 'TransferStay-0.0.1-SNAPSHOT.jar'
             else
-              echo "No previous process running."
+              echo "실행 중인 이전 프로세스가 없습니다."
             fi
-
+  
             # 새로운 JAR 파일 실행 및 로그 저장
-            echo "Starting new application..."
-            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
-            
-            # 프로세스 시작 확인
-            sleep 5
-            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
-              echo "New process started successfully."
+            echo "새로운 애플리케이션 시작 중..."
+            if [ -f "$JAR_PATH" ]; then
+              chmod +x "$JAR_PATH"
+              nohup java -jar "$JAR_PATH" > app.log 2>&1 &
             else
-              echo "Failed to start the new process."
+              echo "JAR 파일을 $JAR_PATH 에서 찾을 수 없습니다!"
+              exit 1
+            fi
+  
+            # 프로세스 시작 확인
+            sleep 10
+            if pgrep -f 'TransferStay-0.0.1-SNAPSHOT.jar'; then
+              echo "새 프로세스가 성공적으로 시작되었습니다."
+              echo "프로세스 세부 정보:"
+              ps aux | grep 'TransferStay-0.0.1-SNAPSHOT.jar'
+            
+            else
+              echo "새 프로세스 시작에 실패했습니다."
+              echo "app.log 파일의 내용:"
+              tail -n 50 app.log
               exit 1
             fi
