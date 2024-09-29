@@ -43,7 +43,7 @@ public class DepositRechargeService {
 
   // 환불
   @Transactional
-  public void refundDeposit(Long userId, Long amount) {
+  public Long refundDeposit(Long userId, Long amount) {
     UserDomain user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -51,7 +51,10 @@ public class DepositRechargeService {
       throw new CustomException(ErrorCode.INSUFFICIENT_FUNDS);
     }
 
-    user.setAmount(user.getAmount() - amount);
+    Long setAmount = user.getAmount() - amount;
+    user.setAmount(setAmount);
+
+    return setAmount;
   }
 
   // 잔액 조회
