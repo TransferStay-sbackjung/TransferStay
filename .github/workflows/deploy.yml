@@ -1,66 +1,69 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline  # 워크플로 이름을 "CI/CD Pipeline"으로 지정
 
 on:
   push:
     branches:
-      - develop  # todo: 나중에 main 브랜치로 변경
+      - develop  # todo: 나중에 main 브랜치로 변경할 예정
+
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  transferstay-build:  # 첫 번째 작업: 빌드 작업 정의
+    runs-on: ubuntu-latest  # 최신 Ubuntu OS에서 작업 실행
 
     steps:
-      # GitHub 저장소에서 코드 가져오기
+      # 첫 번째 단계: 코드 체크아웃 (GitHub 저장소에서 최신 소스 코드를 가져옴)
       - name: Checkout code
-        uses: actions/checkout@v3  # 최신 버전 사용
+        uses: actions/checkout@v3  # 최신 버전의 checkout 액션 사용해 저장소 코드 가져오기
 
-      # JDK 설치
+      # 두 번째 단계: JDK 17 설치
       - name: Set up JDK 17
-        uses: actions/setup-java@v3  # 최신 버전 사용
+        uses: actions/setup-java@v3  # 최신 버전의 setup-java 액션 사용
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'temurin'  # Temurin(OpenJDK) 배포판 사용
 
-      # Gradle 캐시 적용 (빌드 최적화)
+      # 세 번째 단계: Gradle 캐시 설정 (빌드 속도 최적화를 위해 Gradle 의존성 캐싱)
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v3  # actions/cache@v3를 사용해 캐시 관리
         with:
-          path: ~/.gradle/caches
+          path: ~/.gradle/caches  # 캐시할 Gradle 패키지 경로 설정 (로컬 .gradle/caches 폴더)
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          # 캐시를 구분하는 고유 키 설정: OS + Gradle 설정 파일 해시 값 사용
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-  # 캐시 복원 키: 동일 OS의 Gradle 캐시 우선 복원
 
-      # Gradle Wrapper 실행 권한 부여
+      # 네 번째 단계: Gradle 래퍼 실행 권한 부여 (Gradle이 실행될 수 있도록 권한 설정)
       - name: Grant execute permission for Gradle Wrapper
-        run: chmod +x ./gradlew
+        run: chmod +x ./gradlew  # Gradle 래퍼(gradlew)에 실행 권한 부여
 
-      # Gradle 빌드 실행 (테스트 제외)
+      # 다섯 번째 단계: Gradle 빌드 실행 (테스트는 제외하고 빌드 수행)
       - name: Build with Gradle
-        run: ./gradlew build -x test  # 테스트 제외하고 빌드
+        run: ./gradlew build -x test  # 테스트 단계를 제외하고 빌드 수행 (-x test 옵션)
 
-      # 빌드된 JAR 파일을 EC2로 복사
+      # 여섯 번째 단계: 빌드된 JAR 파일을 EC2로 복사 (SSH를 통해 EC2로 전송)
       - name: Copy JAR to EC2
-        uses: appleboy/scp-action@v0.1.0  # 버전 명시
+        uses: appleboy/scp-action@v0.1.0  # SCP를 사용해 파일을 복사하는 액션 사용
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
-          target: /home/ubuntu/
+          host: ${{ secrets.EC2_HOST }}  # EC2 호스트 주소
+          username: ${{ secrets.EC2_USER }}  # EC2 사용자 이름
+          key: ${{ secrets.EC2_KEY }}  # SSH 키
+          source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar  # 로컬에서 복사할 JAR 파일 경로
+          target: /home/ubuntu/  # EC2에서 파일이 저장될 경로
 
+  # 배포작업
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
+    needs: transferstay-build  # transferstay-build 작업이 완료된 후에 실행되도록 설정
+    runs-on: ubuntu-latest  # 최신 Ubuntu OS에서 작업 실행
 
     steps:
-      # EC2에 접속해서 JAR 파일 실행
+      # 첫 번째 단계: EC2에 SSH 접속 후 JAR 파일 실행
       - name: SSH to EC2 and run JAR
-        uses: appleboy/ssh-action@v0.1.0  # 버전 명시
+        uses: appleboy/ssh-action@v0.1.0  # SSH를 통해 원격 명령 실행 액션 사용
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            cd /home/ubuntu/
-            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true  # 기존 JAR 파일 종료
-            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &  # 새로운 JAR 파일 실행 및 로그 저장
+          host: ${{ secrets.EC2_HOST }}  # EC2 호스트 주소
+          username: ${{ secrets.EC2_USER }}  # EC2 사용자 이름
+          key: ${{ secrets.EC2_KEY }}  # SSH 키
+          script: |  # EC2에서 실행할 명령어 스크립트
+            cd /home/ubuntu/  # JAR 파일이 저장된 디렉터리로 이동
+            pkill -f 'TransferStay-0.0.1-SNAPSHOT.jar' || true  # 기존에 실행 중인 JAR 파일을 종료 (실패해도 계속 실행)
+            nohup java -jar TransferStay-0.0.1-SNAPSHOT.jar > app.log 2>&1 &  # 백그라운드에서 JAR 파일 실행하고 로그를 app.log에 저장
