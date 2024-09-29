@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # GitHub 저장소에서 코드 가져오기
       - name: Checkout code
         uses: actions/checkout@v3  # 최신 버전 사용
 
-      # JDK 17 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v3  # 최신 버전 사용
         with:
@@ -66,7 +64,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            set -x  # 디버그 모드 활성화
+            set -x  
             cd /home/ubuntu/
             source ~/.bash_profile
             echo "현재 디렉토리: $(pwd)"
