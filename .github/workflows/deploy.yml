@@ -84,6 +84,11 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            # 현재 디렉토리 확인
+            echo "현재 작업 디렉토리 확인:"
+            pwd  # 현재 작업 디렉토리 출력
+            
+            cd /home/ubuntu/
             JAR_PATH=build/libs/TransferStay-0.0.1-SNAPSHOT.jar
 
             echo "새로운 애플리케이션 시작 중..."
