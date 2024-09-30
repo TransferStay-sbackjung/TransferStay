@@ -61,7 +61,10 @@ jobs:
             # JAR 파일을 사용하는 프로세스의 PID 찾기
             PID=$(pgrep -f "$JAR_PATH")
             
-            if [ -n "$PID" ]; then
+            # JAR 파일을 사용하는 프로세스의 PID 찾기
+            PID=$(pgrep -f "$JAR_PATH")
+            
+            if [ -n "$PID" ] && [ "$PID" -gt 1 ]; then
               echo "이전 프로세스($PID)가 실행 중입니다. 종료합니다."
               kill "$PID"
               sleep 20  # 프로세스가 종료될 시간을 확보
@@ -70,13 +73,16 @@ jobs:
             fi
             
             # 프로세스가 종료되었는지 확인
-            if [ -n "$PID" ]; then
+            PID=$(pgrep -f "$JAR_PATH")
+            
+            if [ -n "$PID" ] && [ "$PID" -gt 1 ]; then
               echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료합니다."
               kill -9 "$PID"
               sleep 10  # 강제 종료 후 잠시 대기
             else
               echo "이전 프로세스 종료가 완료되었습니다."
             fi
+
 
 
       - name: 새로운 JAR 파일 실행
