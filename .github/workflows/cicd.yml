@@ -42,9 +42,10 @@ jobs:
         run: cd front && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
 
       - name: Build React app
-        run: cd front && npm run build  # 리액트 앱 빌드
+        run: |
+          cd front
+          CI=false npm run build  # 리액트 앱 빌드
 
-          # 빌드된 리액트 파일을 EC2로 복사
       - name: Copy React build files to EC2
         uses: appleboy/scp-action@v0.1.0  # scp : security copy protocol
         with:
