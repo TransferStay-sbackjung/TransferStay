@@ -54,7 +54,7 @@ jobs:
          key: ${{ secrets.KEY }}
          port: ${{ secrets.PORT }}
          source: front/build/  # 리액트 빌드 파일 경로
-         target: /home/ubuntu
+         target: /var/www/html
 
 
 
