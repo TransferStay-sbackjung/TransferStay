@@ -17,12 +17,12 @@ function Login() {
 
     // 카카오 로그인 처리
     const handleKakaoLogin = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/kakao'; // 카카오 OAuth URL
+        window.location.href = 'http://13.125.138.53:8080/oauth2/authorization/kakao'; // 카카오 OAuth URL
     };
 
     // 네이버 로그인 처리
     const handleNaverLogin = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/naver'; // 네이버 OAuth URL
+        window.location.href = 'http://transferstay.p-e.kr:8080/oauth2/authorization/naver'; // 네이버 OAuth URL
     };
 
     return (
