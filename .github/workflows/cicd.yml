@@ -102,7 +102,7 @@ jobs:
             echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
             
             # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
-            nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+            nohup sudo java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
             
             echo "애플리케이션이 백그라운드에서 실행 중입니다."
             else
