@@ -39,10 +39,10 @@ jobs:
             node-version: '22'
 
       - name: Install dependencies
-        run: cd frontend && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
+        run: cd front && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
 
       - name: Build React app
-        run: cd frontend && npm run build  # 리액트 앱 빌드
+        run: cd front && npm run build  # 리액트 앱 빌드
 
           # 빌드된 리액트 파일을 EC2로 복사
       - name: Copy React build files to EC2
@@ -52,7 +52,7 @@ jobs:
          username: ${{ secrets.USERNAME }}
          key: ${{ secrets.KEY }}
          port: ${{ secrets.PORT }}
-         source: frontend/build/  # 리액트 빌드 파일 경로
+         source: front/build/  # 리액트 빌드 파일 경로
          target: /var/www/html
 
 
