@@ -1,28 +1,39 @@
-pring:
+spring:
   datasource:
-    #    url: jdbc:h2:mem:testdb
-    #    driver-class-name: org.h2.Driver
-    #    username: sa
-    #    password: password
-    #    h2:
-    #      console:
-    #        enabled: true
-    url: ${DATABASE_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: 10
-  jpa:
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-    properties:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    h2:
+      console:
+        enabled: true
+    jpa:
+      defer-datasource-initialization: true
+      database-platform: H2
       hibernate:
-        format_sql: true
-        show_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: create-drop
+      open-in-view: false
+      properties:
+        hibernate:
+          format_sql: true
+          show_sql: false
+
+#    url: ${DATABASE_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      maximum-pool-size: 10
+#  jpa:
+#    defer-datasource-initialization: true
+#    hibernate:
+#      ddl-auto: update
+#    open-in-view: false
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        show_sql: true
+#        dialect: org.hibernate.dialect.MySQLDialect
   mail:
     host: smtp.gmail.com
     post: 587

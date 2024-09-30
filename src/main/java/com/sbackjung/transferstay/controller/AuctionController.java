@@ -11,6 +11,8 @@ import com.sbackjung.transferstay.dto.*;
 import com.sbackjung.transferstay.repository.AuctionRepository;
 import com.sbackjung.transferstay.repository.AuctionTransactionRepository;
 import com.sbackjung.transferstay.service.AuctionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/auction")
+@Tag(name = "Auction", description = "경매 API")
 public class AuctionController {
 
   private final AuctionService auctionService;
   public final AuctionRepository auctionRepository;
   public final AuctionTransactionRepository auctionTransactionRepository;
 
+  @Operation(summary = "경매 생성", description = "새로운 경매를 생성합니다.")
   @PostMapping("/")
   public ResponseEntity<JsonResponse> createAuction(
       @RequestBody @Valid AuctionPostRequestDto request
@@ -46,6 +50,7 @@ public class AuctionController {
     return ResponseEntity.ok(new JsonResponse(200, "경매 생성 완료.", data));
   }
 
+  @Operation(summary = "경매 수정", description = "경매 정보를 수정합니다.")
   @PatchMapping("/{auctionId}")
   public ResponseEntity<JsonResponse> updateAuction(
       @PathVariable Long auctionId,
@@ -60,6 +65,7 @@ public class AuctionController {
   /*
       ?page=0&size=10&sort=startDate,desc
    */
+  @Operation(summary = "경매 목록 조회", description = "페이지별 경매 목록을 조회합니다.")
   @GetMapping({"/{orderBy}", "/"})
   public ResponseEntity<JsonResponse> getAuctionList(
       @PathVariable(value = "orderBy", required = false) String orderBy,
@@ -72,6 +78,7 @@ public class AuctionController {
         auctionList));
   }
 
+  @Operation(summary = "경매 상세 조회", description = "특정 경매의 세부 정보를 조회합니다.")
   @GetMapping("/details/{auctionId}")
   public ResponseEntity<JsonResponse> getAuctionDetail(
       @PathVariable(value = "auctionId") Long auctionId
@@ -81,6 +88,7 @@ public class AuctionController {
         data));
   }
 
+  @Operation(summary = "경매 삭제", description = "특정 경매를 삭제합니다.")
   @DeleteMapping("/{auctionId}")
   public ResponseEntity<JsonResponse> deleteAuction(
       @PathVariable(value = "auctionId") Long auctionId
@@ -92,6 +100,7 @@ public class AuctionController {
   }
 
   // 응찰하기
+  @Operation(summary = "응찰하기", description = "경매에 응찰합니다.")
   @PostMapping("/{postId}/bidding")
   public ResponseEntity<JsonResponse> bidding(@PathVariable("postId") Long postId,
       @RequestBody PlaceBidRequestDto requestDto) {
@@ -135,6 +144,7 @@ public class AuctionController {
     return ResponseEntity.ok(new JsonResponse(200, "응찰이 완료되었습니다.", null));
   }
 
+  @Operation(summary = "즉시 구매", description = "경매 물건을 즉시 구매합니다.")
   @PostMapping("/{postId}/purchase")
   public ResponseEntity<JsonResponse> auctionPurchase(
           @PathVariable Long postId
