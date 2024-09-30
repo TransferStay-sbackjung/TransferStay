@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop  # todo : main 변경
+      - testBranch  # todo : main 변경
 
 jobs:
   build:
