@@ -228,19 +228,21 @@ const WritePost = () => {
                   required={formData.isAuction}
                 />
               </div>
+
+              <div className="form-group">
+                          <label>즉시 구매 가격</label>
+                          <input
+                            type="number"
+                            name="purchasePrice"
+                            value={formData.purchasePrice}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
             </>
           )}
 
-          <div className="form-group">
-            <label>구매 가격</label>
-            <input
-              type="number"
-              name="purchasePrice"
-              value={formData.purchasePrice}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+
 
           <div className="form-group">
             <label>예약 코드</label>

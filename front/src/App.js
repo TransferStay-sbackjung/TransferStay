@@ -14,6 +14,8 @@ import AuthCallback from './component/auth/AuthCallback';  // AuthCallback 추�
 import WritePost from './component/post/WritePost'; // 게시글 작성 페이지 컴포넌트
 import AllPosts from './component/post/AllPosts'; // 전체 게시글 조회 컴포넌트
 import SearchResults from './component/SearchResults'; // 게시글 검색 결과 컴포넌트
+import PostDetails from './component/post/PostDetails';
+
 
 // myPage
 import MyPage from './component/user/MyPage'; // 마이페이지 컴포넌트
@@ -43,6 +45,7 @@ const App = () => {
         <Route path="/balanceRefund" element={<BalanceRefund />} />
         <Route path="/userPostPage" element={<UserPostPage />} />
         <Route path="/userAuctionPostPage" element={<UserAuctionPage />} />
+        <Route path="/posts/:postId" element={<PostDetails  />} />
       </Routes>
     </Router>
   );
