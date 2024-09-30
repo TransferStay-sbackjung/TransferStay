@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +62,7 @@ public class SearchController {
         List<SearchResponse.getSearchResponse> results = searchService.getSearchResult(freeField, checkInDate, checkOutDate, personnel, locationDepth1, locationDepth2);
 
         if(results.isEmpty()){
-            return ResponseEntity.ok(new JsonResponse(200, "검색 완료", "검색 결과가 존재하지 않습니다."));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new JsonResponse(204, "검색 완료", "검색 결과가 존재하지 않습니다."));
         }
 
         return ResponseEntity.ok(new JsonResponse(200, "검색 완료", results));
