@@ -84,57 +84,22 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            # 현재 디렉토리 확인
-            echo "현재 작업 디렉토리 확인:"
-            pwd  # 현재 작업 디렉토리 출력
+            echo "현재 작업 디렉토리 확인: $(pwd)"
             
-            cd /home/ubuntu/
-            JAR_PATH=build/libs/TransferStay-0.0.1-SNAPSHOT.jar
-
+            JAR_PATH=/home/ubuntu/build/libs/TransferStay-0.0.1-SNAPSHOT.jar
+            LOG_FILE=/home/ubuntu/app.log  
+            
             echo "새로운 애플리케이션 시작 중..."
+            
+           
             if [ -f "$JAR_PATH" ]; then
-              nohup java -jar "$JAR_PATH" > app.log 2>&1 &
+            echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
+            
+            # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
+            nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+            
+            echo "애플리케이션이 백그라운드에서 실행 중입니다."
             else
-              echo "JAR 파일을 찾을 수 없습니다!"
-              exit 1
-            fi
-
-      - name: EC2에 SSH 연결 후 프로세스 시작 확인
-        uses: appleboy/ssh-action@v0.1.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            sleep 10
-            JAR_PATH=build/libs/TransferStay-0.0.1-SNAPSHOT.jar
-
-            if pgrep -f "$JAR_PATH"; then
-              echo "새 프로세스가 성공적으로 시작되었습니다."
-              ps aux | grep "$JAR_PATH"
-            else
-              echo "새 프로세스 시작에 실패했습니다."
-              tail -n 50 app.log
-              exit 1
-            fi
-
-      - name: EC2에 SSH 연결 후 로그 파일 관리
-        uses: appleboy/ssh-action@v0.1.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            LOG_FILE="/home/ubuntu/app.log"
-            MAX_LOG_SIZE=10485760  # 10MB
-
-            if [ -f "$LOG_FILE" ]; then
-              LOG_SIZE=$(stat -c%s "$LOG_FILE")
-              if [ "$LOG_SIZE" -gt "$MAX_LOG_SIZE" ]; then
-                echo "로그 파일이 너무 큽니다. 로그를 삭제하고 새 파일을 생성합니다."
-                rm "$LOG_FILE"
-                touch "$LOG_FILE"
-              fi
+            echo "JAR 파일을 찾을 수 없습니다!"
+            exit 1
             fi
