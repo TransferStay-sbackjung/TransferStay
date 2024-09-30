@@ -1,5 +1,5 @@
 name: CI/CD Pipeline
-# test
+
 on:
   push:
     branches:
@@ -32,6 +32,30 @@ jobs:
 
       - name: Gradle 빌드
         run: ./gradlew build -x test  # 테스트 제외하고 빌드
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: '22'
+
+      - name: Install dependencies
+        run: cd frontend && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
+
+      - name: Build React app
+        run: cd frontend && npm run build  # 리액트 앱 빌드
+
+          # 빌드된 리액트 파일을 EC2로 복사
+      - name: Copy React build files to EC2
+        uses: appleboy/scp-action@v0.1.0  # scp : security copy protocol
+        with:
+         host: ${{ secrets.HOST }}
+         username: ${{ secrets.USERNAME }}
+         key: ${{ secrets.KEY }}
+         port: ${{ secrets.PORT }}
+         source: frontend/build/  # 리액트 빌드 파일 경로
+         target: /var/www/html
+
+
 
       # JAR 파일을 EC2로 복사
       - name: JAR 파일 서버전송
