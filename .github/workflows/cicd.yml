@@ -19,13 +19,14 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install dependencies
-        run: cd front && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
-
-      - name: Build React app
+      - name: Install dependencies and build
         run: |
-          cd front
-          CI=false npm run build  # 리액트 앱 빌드
+            cd front
+            npm install
+            CI=false npm run build
+        env:
+            REACT_APP_API_ROOT="http://transferstay.p-e.kr:8080"
+            REACT_APP_HOME_URL="http://transferstay.p-e.kr:3000"
 
       - name: Copy React build files to EC2
         uses: appleboy/scp-action@v0.1.0  # scp : security copy protocol
