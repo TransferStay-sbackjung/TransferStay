@@ -96,6 +96,7 @@ public class SecurityConfig {
 
     // 허용할 도메인 추가
     configuration.addAllowedOrigin("http://localhost:3000");  // 개발 환경에서 허용
+    configuration.addAllowedOrigin("http://transferstay.p-e.kr:");  // 배포 환경에서 허용
     configuration.addAllowedOrigin("http://transferstay.p-e.kr:3000");  // 배포 환경에서 허용
     configuration.addAllowedMethod("");  // 모든 HTTP 메소드 허용 (GET, POST, PUT, DELETE 등)
     configuration.addAllowedHeader("");  // 모든 헤더 허용
