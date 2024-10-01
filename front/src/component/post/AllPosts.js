@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../NavBar'; // 네비게이션 바 컴포넌트 임포트
 import '../../styles/post/AllPost.css';
 import { useNavigate } from "react-router-dom";
+import {API_BASE_URL} from "../../App";
 
 const AllPosts = () => {
     const [posts, setPosts] = useState([]); // 게시글 리스트를 저장할 상태
@@ -13,7 +14,7 @@ const AllPosts = () => {
         // 전체 게시글 데이터를 API로부터 가져오는 함수
         const fetchPosts = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/v1/assignment-posts'); // 적절한 API 엔드포인트로 변경
+                const response = await fetch(`${API_BASE_URL}/api/v1/assignment-posts`); // 적절한 API 엔드포인트로 변경
                 const result = await response.json();
                 setPosts(result.data.content); // API 응답에서 게시글 데이터 설정
                 setLoading(false); // 데이터 로드 완료 후 로딩 중지

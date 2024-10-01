@@ -45,7 +45,7 @@ const MyPage = () => {
           }
 
           // 사용자가 좋아요한 게시글 데이터 불러오기 (API 호출)
-          const likedPostsResponse = await fetch("http://localhost:8080/api/v1/user/liked-posts", {
+          const likedPostsResponse = await fetch(`${API_BASE_URL}/api/v1/user/liked-posts`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,

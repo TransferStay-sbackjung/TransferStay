@@ -20,7 +20,7 @@ const BalanceRefundPage = () => {
                 navigate('/login');
             } else {
                 try {
-                    const balanceResponse = await fetch("`${API_BASE_URL}/api/v1/deposit`", {
+                    const balanceResponse = await fetch(`${API_BASE_URL}/api/v1/deposit`, {
                         method: "GET",
                         headers: {
                             Authorization: `Bearer ${token}`,

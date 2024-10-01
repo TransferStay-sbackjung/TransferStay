@@ -61,7 +61,7 @@ const BalanceChargePage = () => {
         }
 
         try {
-            const response = await fetch("`${API_BASE_URL}/api/v1/deposit/recharge`", {
+            const response = await fetch(`${API_BASE_URL}/api/v1/deposit/recharge`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

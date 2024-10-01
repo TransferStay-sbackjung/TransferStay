@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/MainPage.css'; // 스타일 파일
-import NavBar from './NavBar';  // 네비게이션 바 컴포넌트 임포트
+import NavBar from './NavBar';
+import {API_BASE_URL} from "../App";  // 네비게이션 바 컴포넌트 임포트
 
 const MainPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -35,7 +36,7 @@ const MainPage = () => {
     useEffect(() => {
         const fetchListings = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/v1/assignment-posts"); // 적절한 엔드포인트로 변경
+                const response = await fetch(`${API_BASE_URL}/api/v1/assignment-posts`); // 적절한 엔드포인트로 변경
                 const result = await response.json();
                 setListings(result.data.content); // 받아온 데이터를 상태로 설정
                 setLoading(false); // 로딩 완료
