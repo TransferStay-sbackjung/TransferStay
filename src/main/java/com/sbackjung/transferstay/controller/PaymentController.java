@@ -6,6 +6,7 @@ import com.sbackjung.transferstay.utils.UserIdHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/assignment-posts")
@@ -28,6 +30,7 @@ public class PaymentController {
     try {
       paymentService.processPayment(assignmentPostId, userId);
       JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "결제 성공", null);
+      log.info("[API] processPayment ");
       return ResponseEntity.ok(response);
     } catch (IllegalArgumentException e) {
       JsonResponse response = new JsonResponse(HttpStatus.BAD_REQUEST.value(), "잔액 부족", null);
@@ -44,6 +47,7 @@ public class PaymentController {
     try {
       paymentService.completePayment(assignmentPostId, userId);
       JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "결제확정", null);
+      log.info("[API] confirmPayment ");
       return ResponseEntity.ok(response);
     } catch (IllegalArgumentException e) {
       JsonResponse response = new JsonResponse(HttpStatus.BAD_REQUEST.value(), "escrow not found", null);

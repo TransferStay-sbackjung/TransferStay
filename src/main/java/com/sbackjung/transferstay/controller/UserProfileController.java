@@ -34,6 +34,7 @@ public class UserProfileController {
     Long userId = UserIdHolder.getUserIdFromToken();
     UserInfoResponseDto responseDto = userService.getUserInfo(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자 정보를 조회하였습니다.", responseDto);
+    log.info("[API] getUserProfile");
     return ResponseEntity.ok(response);
   }
 
@@ -43,6 +44,7 @@ public class UserProfileController {
     Long userId = UserIdHolder.getUserIdFromToken();
     userService.updateUserInfo(userId, request);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자 정보가 수정되었습니다.", null);
+    log.info("[API] update 실행 ");
     return ResponseEntity.ok(response);
   }
 
@@ -52,6 +54,7 @@ public class UserProfileController {
     Long userId = UserIdHolder.getUserIdFromToken();
     List<AssignmentPostResponseDto> userPosts = assignmentPostService.getUserPosts(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 작성한 게시물을 조회하였습니다.", userPosts);
+    log.info("[API] getUserPosts");
     return ResponseEntity.ok(response);
   }
 
@@ -61,6 +64,7 @@ public class UserProfileController {
     Long userId = UserIdHolder.getUserIdFromToken();
     List<AssignmentPostResponseDto> likedPosts = likeAccommodationService.getUserLikedPosts(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 좋아요한 게시물을 조회하였습니다.", likedPosts);
+    log.info("[API] getUserLikedPosts");
     return ResponseEntity.ok(response);
   }
 
@@ -72,6 +76,7 @@ public class UserProfileController {
     List<AuctionGetListDto> userAuctionList = auctionService.getUserAuctionList(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "사용자가 " +
             "참여한 경매를 조회했습니다.", userAuctionList);
+    log.info("[API] getUserAuctionPosts");
     return ResponseEntity.ok(response);
   }
 }

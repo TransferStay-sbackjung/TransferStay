@@ -6,6 +6,7 @@ import com.sbackjung.transferstay.utils.UserIdHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/assignment-posts")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Assignment Post")
 public class LikeAccommodationController {
 
@@ -30,6 +32,8 @@ public class LikeAccommodationController {
     Long userId = UserIdHolder.getUserIdFromToken();
     likeAccommodationService.addLike(userId, postId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "게시물을 찜하였습니다.", null);
+
+    log.info("[API] addLike");
     return ResponseEntity.ok(response);
   }
 
@@ -39,6 +43,7 @@ public class LikeAccommodationController {
     Long userId = UserIdHolder.getUserIdFromToken();
     likeAccommodationService.removeLike(userId, postId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "찜하기가 취소되었습니다.", null);
+    log.info("[API] removeLike");
     return ResponseEntity.ok(response);
   }
 
@@ -48,6 +53,7 @@ public class LikeAccommodationController {
     Long userId = UserIdHolder.getUserIdFromToken();
     boolean isLiked = likeAccommodationService.isPostLikedByUser(userId, postId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "찜 여부 조회 완료.", isLiked);
+    log.info("[API] isLiked");
     return ResponseEntity.ok(response);
   }
 }

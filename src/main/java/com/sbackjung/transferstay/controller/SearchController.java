@@ -64,7 +64,7 @@ public class SearchController {
         if(results.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new JsonResponse(204, "검색 완료", "검색 결과가 존재하지 않습니다."));
         }
-
+        log.info("[API] searchRequest");
         return ResponseEntity.ok(new JsonResponse(200, "검색 완료", results));
 
     }
