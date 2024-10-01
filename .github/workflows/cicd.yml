@@ -3,47 +3,52 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop  # todo : main 변경
+      - develop  # main으로 변경 가능
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. GitHub Repository에서 코드 체크아웃
       - name: Checkout code
         uses: actions/checkout@v3
 
-        # react build
+      # 2. Node.js 설치
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
 
-      - name: Install dependencies
-        run: cd front && npm install  # 프론트엔드 디렉토리로 이동 후 의존성 설치
-
-      - name: Build React app
+      # 3. React 앱 의존성 설치 및 빌드
+      - name: Install dependencies and build
         run: |
           cd front
-          CI=false npm run build  # 리액트 앱 빌드
+          npm install
+          CI=false npm run build
+        env:
+          REACT_APP_API_ROOT: "http://transferstay.p-e.kr:8080"
+          REACT_APP_HOME_URL: "http://transferstay.p-e.kr:3000"
 
+      # 4. React 빌드 파일을 EC2 서버로 복사
       - name: Copy React build files to EC2
-        uses: appleboy/scp-action@v0.1.0  # scp : security copy protocol
+        uses: appleboy/scp-action@v0.1.0  # scp : secure copy protocol
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          source: front/build/  # 리액트 빌드 파일 경로
+          source: front/build/  # React 빌드 파일 경로
           target: /var/www/html
 
-      # jar build
+      # 5. JDK 17 설치 (백엔드 빌드를 위한 Java 설치)
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # 6. Gradle 캐시 사용하여 빌드 속도 향상
       - name: Gradle 패키지 캐싱
         uses: actions/cache@v3
         with:
@@ -52,16 +57,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # 7. Gradle 파일 실행 권한 부여 (Linux에서 실행 권한 필요)
       - name: gradlew 파일 실행 권한 부여
         run: chmod +x ./gradlew
 
+      # 8. Gradle 빌드 (테스트는 제외하고 빌드)
       - name: Gradle 빌드
         run: ./gradlew build -x test  # 테스트 제외하고 빌드
 
-
-      # JAR 파일을 EC2로 복사
-      - name: JAR 파일 서버전송
-        uses: appleboy/scp-action@v0.1.0  # scp : security copy protocol
+      # 9. 빌드한 JAR 파일을 EC2 서버로 전송
+      - name: JAR 파일 서버 전송
+        uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -75,6 +81,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 10. 이전 JAR 프로세스 종료
       - name: 이전 JAR 프로세스 종료
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -84,7 +91,8 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/build/libs/ 
-                 
+            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
+            
             # JAR 파일을 사용하는 프로세스의 PID 찾기
             PID=$(pgrep -f "$JAR_PATH")
             
@@ -107,8 +115,7 @@ jobs:
               echo "이전 프로세스 종료가 완료되었습니다."
             fi
 
-
-
+      # 11. 새로운 JAR 파일 실행
       - name: 새로운 JAR 파일 실행
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -123,13 +130,13 @@ jobs:
             LOG_FILE=/home/ubuntu/app.log  
             
             if [ -f "$JAR_PATH" ]; then
-            echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
+              echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
             
-            # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
-            nohup sudo java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+              # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
+              nohup sudo java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
             
-            echo "애플리케이션이 백그라운드에서 실행 중입니다."
+              echo "애플리케이션이 백그라운드에서 실행 중입니다."
             else
-            echo "JAR 파일을 찾을 수 없습니다!"
-            exit 1
+              echo "JAR 파일을 찾을 수 없습니다!"
+              exit 1
             fi
