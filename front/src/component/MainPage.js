@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/MainPage.css'; // 스타일 파일
 import NavBar from './NavBar';  // 네비게이션 바 컴포넌트 임포트
@@ -10,18 +10,14 @@ const MainPage = () => {
     const [checkInDate, setCheckInDate] = useState('');
     const [checkOutDate, setCheckOutDate] = useState('');
     const [person, setPerson] = useState('');
+    const [listings, setListings] = useState([]); // 양도글 목록을 저장할 상태
+    const [loading, setLoading] = useState(true); // 로딩 상태
 
     const navigate = useNavigate();
 
     // 검색 함수
     const handleSearch = (e) => {
         e.preventDefault();
-
-        // 조건이 하나도 없을 때 alert 표시
-        if (!searchQuery && !locationDepth1 && !locationDepth2 && !checkInDate && !checkOutDate && !person) {
-            alert('검색할 조건을 작성해주세요');
-            return;
-        }
 
         const queryParams = new URLSearchParams();
 
@@ -35,10 +31,35 @@ const MainPage = () => {
         navigate(`/search?${queryParams.toString()}`);
     };
 
+    // 데이터 받아오기
+    useEffect(() => {
+        const fetchListings = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/v1/assignment-posts"); // 적절한 엔드포인트로 변경
+                const result = await response.json();
+                setListings(result.data.content); // 받아온 데이터를 상태로 설정
+                setLoading(false); // 로딩 완료
+            } catch (error) {
+                console.error("Error fetching listings:", error);
+                setLoading(false); // 오류 발생 시 로딩 중단
+            }
+        };
+
+        fetchListings();
+    }, []);
+
+    if (loading) {
+        return <div>로딩 중...</div>; // 로딩 중일 때 표시
+    }
+
+    // 6개를 채우기 위한 임시 카드 생성
+    const emptyCards = Array.from({ length: Math.max(6 - listings.length, 0) });
+
     return (
         <div className="main-page">
             <NavBar />  {/* 네비게이션 바 추가 */}
 
+            {/* 검색 섹션 */}
             <section className="search-section">
                 <h2>원하는 숙소를 검색해보세요</h2>
                 <form onSubmit={handleSearch} className="search-form">
@@ -90,32 +111,45 @@ const MainPage = () => {
                 </form>
             </section>
 
-      <section className="recent-listings">
-        <h3>최근 올라온 양도글</h3>
-        <div className="listings-grid">
-          {/* 임시 양도글 카드 */}
-          {[...Array(8)].map((_, i) => (
-            <div className="listing-card" key={i}>
-              <div className="listing-image">Image</div>
-              <div className="listing-info">
-                <h4>호텔 이름</h4>
-                <p>지역 이름</p>
-                <p>가격 per night</p>
-              </div>
-            </div>
-          ))}
+            {/* 최근 올라온 양도글 섹션 */}
+            <section className="recent-listings">
+                <h3>최근 올라온 양도글</h3>
+                <div className="listings-grid">
+                    {listings.length > 0 ? (
+                        listings.map((listing) => (
+                            <div
+                                className="listing-card"
+                                key={listing.id}
+                                onClick={() => navigate(`/posts/${listing.id}`)} // 게시글 클릭 시 상세 페이지로 이동
+                            >
+                                <div className="listing-image">Image</div> {/* 이미지 URL 추가 가능 */}
+                                <div className="listing-info">
+                                    <h4>{listing.title}</h4>
+                                    <p>{listing.locationDepth1} {listing.locationDepth2}</p>
+                                    <p>{listing.price.toLocaleString()} 원</p>
+                                    <p>체크인: {listing.checkInDate}</p>
+                                    <p>체크아웃: {listing.checkOutDate}</p>
+                                    <p>상태: {listing.status}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>최근 올라온 양도글이 없습니다.</p>
+                    )}
+                    {/* 빈 카드 채우기 */}
+                    {emptyCards.map((_, index) => (
+                        <div className="listing-card empty" key={`empty-${index}`}>
+                            <div className="listing-image">No Image</div>
+                            <div className="listing-info">
+                                <h4>빈 게시글 자리</h4>
+                                <p>정보 없음</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
-      </section>
-
-      <footer>
-        <div className="footer-links">
-          <button className="link-button" onClick={() => window.location.href='#'}>Contact Us</button>
-          <button className="link-button" onClick={() => window.location.href='#'}>About StaySwap</button>
-          <button className="link-button" onClick={() => window.location.href='#'}>Terms of Service</button>
-        </div>
-      </footer>
-    </div>
-  );
+    );
 };
 
 export default MainPage;

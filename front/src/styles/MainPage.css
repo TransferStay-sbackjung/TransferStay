@@ -117,12 +117,14 @@
   margin-bottom: 30px;
 }
 
+/* 한 줄에 4개의 게시글을 배치 */
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개 */
   gap: 20px;
 }
 
+/* 게시글 카드 스타일 */
 .listing-card {
   background-color: white;
   border: 1px solid #ccc;
@@ -130,6 +132,7 @@
   padding: 20px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 350px; /* 일정한 카드 높이 설정 */
 }
 
 .listing-image {
@@ -173,4 +176,11 @@ footer {
 
 .link-button:hover {
   color: darkblue;
+}
+
+/* 빈 카드 스타일 */
+.listing-card.empty {
+  background-color: #f5f5f5;
+  color: #999;
+  border: 1px dashed #ccc;
 }
