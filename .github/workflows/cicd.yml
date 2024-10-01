@@ -20,15 +20,15 @@ jobs:
         with:
           node-version: '22'
 
-      # 3. React 앱 의존성 설치 및 빌드
+      # 3. React 앱 의존성 설치 및 빌드 (시크릿을 사용하여 환경 변수 설정)
       - name: Install dependencies and build
         run: |
           cd front
           npm install
           CI=false npm run build
         env:
-          REACT_APP_API_ROOT: "http://transferstay.p-e.kr:8080"
-          REACT_APP_HOME_URL: "http://transferstay.p-e.kr:3000"
+          REACT_APP_API_ROOT: ${{ secrets.REACT_APP_API_ROOT }}
+          REACT_APP_HOME_URL: ${{ secrets.REACT_APP_HOME_URL }}
 
       # 4. React 빌드 파일을 EC2 서버로 복사
       - name: Copy React build files to EC2
