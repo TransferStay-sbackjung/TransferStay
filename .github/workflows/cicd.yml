@@ -42,6 +42,18 @@ jobs:
           REACT_APP_API_ROOT: ${{ secrets.REACT_APP_API_ROOT }}
           REACT_APP_HOME_URL: ${{ secrets.REACT_APP_HOME_URL }}
 
+      # 기존 파일 삭제
+      - name: Remove old build files
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo rm -rf /var/www/html/*
+
+      # React 빌드 파일을 EC2로 복사
       - name: Copy React build files to EC2
         uses: appleboy/scp-action@v0.1.0
         with:
@@ -51,6 +63,19 @@ jobs:
           port: ${{ secrets.PORT }}
           source: front/build/
           target: /var/www/html
+          overwrite: true
+
+      # 파일 권한 변경
+      - name: Change permissions for build files
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo chown -R ubuntu:ubuntu /var/www/html
+            sudo chmod -R 755 /var/www/html
 
   # 백엔드 빌드 작업 (변경 사항 있을 때만 실행)
   build_backend:
