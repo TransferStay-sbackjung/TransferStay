@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/post/PostDetails.css'; // 스타일 파일 임포트
 import NavBar from '../NavBar';
+import {API_BASE_URL} from "../../App";
 
 const PostDetails = () => {
   const { postId } = useParams();
@@ -38,12 +39,12 @@ const PostDetails = () => {
     const fetchPostAndLikeStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const postResponse = await axios.get(`{API_BASE_URL}/api/v1/assignment-posts/${postId}`);
+        const postResponse = await axios.get(`${API_BASE_URL}/api/v1/assignment-posts/${postId}`);
         setPost(postResponse.data.data);
         setIsLoading(false);
 
         if (token) {
-          const likeResponse = await axios.get(`{API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`, {
+          const likeResponse = await axios.get(`${API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -72,7 +73,7 @@ const PostDetails = () => {
       let response;
       if (isLiked) {
         response = await axios.delete(
-          `{API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`,
+          `${API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

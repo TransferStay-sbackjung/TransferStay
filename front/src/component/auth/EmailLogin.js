@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/auth/EmailLogin.css'; // 스타일 파일
+import '../../styles/auth/EmailLogin.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function EmailLogin() {
     const [email, setEmail] = useState('');

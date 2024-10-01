@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../NavBar'; // 네비게이션 바 컴포넌트 임포트
 import '../../styles/user/BalanceCharge.css';
 import { useNavigate } from "react-router-dom";
+import {API_BASE_URL} from "../../App";
 
 const BalanceChargePage = () => {
     const navigate = useNavigate();
@@ -60,7 +61,7 @@ const BalanceChargePage = () => {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/v1/deposit/recharge`, {
+            const response = await fetch("`${API_BASE_URL}/api/v1/deposit/recharge`", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

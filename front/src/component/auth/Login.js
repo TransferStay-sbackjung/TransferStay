@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 사용
-import '../../styles/auth/Login.css'; // 스타일 파일
+import '../../styles/auth/Login.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function Login() {
     const navigate = useNavigate(); // useNavigate 훅 사용

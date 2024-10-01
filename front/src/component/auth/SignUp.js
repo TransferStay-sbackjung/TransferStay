@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/auth/SignUp.css'; // 스타일 파일
+import '../../styles/auth/SignUp.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function SignUp() {
     const [email, setEmail] = useState(''); // email로 변경
