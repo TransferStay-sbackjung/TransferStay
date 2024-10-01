@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/email")
 @RequiredArgsConstructor
@@ -25,7 +27,9 @@ public class EmailAuthController {
     public ResponseEntity<JsonResponse> sendAuthEmail(
            @RequestBody @Valid EmailAuthRequest request
     ){
-        System.out.println(request.getEmail());
+
+        log.info("[API] sendAuthEmail : {}", request.getEmail());
+
         EmailAuthResponse response =
                 EmailAuthResponse.from(emailService.sendAuthCodeEmail(request.getEmail()));
         JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "인증 이메일이 전송되었습니다.", response);
@@ -37,6 +41,9 @@ public class EmailAuthController {
     public ResponseEntity<JsonResponse> checkAuthCode(
             @RequestBody @Valid AuthCodeRequest request
     ){
+
+        log.info("[API] checkAuthCode");
+
         AuthCodeResponse response = emailService.checkAuthCode(request.getEmail(), request.getAuthCode());
         JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "인증 코드가 확인되었습니다.", response);
         return ResponseEntity.ok(jsonResponse);

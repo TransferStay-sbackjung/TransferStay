@@ -37,6 +37,9 @@ public class DepositRechargeController {
   public ResponseEntity<JsonResponse> rechargeDeposit(
       @Parameter(description = "충전할 금액", required = true, schema = @Schema(type = "long", example = "10000"))
       @RequestBody Long amount) {
+
+    log.info("[API] rechargeDeposit");
+
     Long userId = UserIdHolder.getUserIdFromToken();
     Long balance = depositRechargeService.rechargeDeposit(userId, amount);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "충전이 완료되었습니다.", balance);
@@ -49,6 +52,9 @@ public class DepositRechargeController {
   public ResponseEntity<JsonResponse> refundDeposit(
       @Parameter(description = "환불할 금액", required = true, schema = @Schema(type = "long", example = "5000"))
       @RequestBody Long amount) {
+
+    log.info("[API] refundDeposit");
+
     Long userId = UserIdHolder.getUserIdFromToken();
     Long balance = depositRechargeService.refundDeposit(userId, amount);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "환불이 완료되었습니다.", balance);
@@ -59,6 +65,9 @@ public class DepositRechargeController {
   @Operation(summary = "예치금 잔액 조회", description = "사용자의 예치금 잔액을 조회합니다.")
   @GetMapping
   public ResponseEntity<JsonResponse> getDepositBalance() {
+
+    log.info("[API] getDepositBalance");
+
     Long userId = UserIdHolder.getUserIdFromToken();
     Long balance = depositRechargeService.getDepositBalance(userId);
     JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "현재 잔액은 " + balance + "원입니다.", balance);

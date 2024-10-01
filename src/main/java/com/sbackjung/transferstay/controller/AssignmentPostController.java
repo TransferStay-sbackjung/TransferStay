@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/assignment-posts")
 @RequiredArgsConstructor
@@ -36,6 +38,9 @@ public class AssignmentPostController {
   @PostMapping
   public ResponseEntity<JsonResponse> createAssignmentPost(
       @Valid @RequestBody AssignmentPostRequestDto request) {
+
+    log.info("[API] createAssignmentPost : {}", request);
+
     Long userId = UserIdHolder.getUserIdFromToken();
     AssignmentPostResponseDto response = assignmentPostService.createAssignmentPost(request, userId);
     JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 생성되었습니다.", response);
@@ -45,6 +50,9 @@ public class AssignmentPostController {
   @Operation(summary = "특정 양도 게시글 조회", description = "ID로 특정 양도 게시글을 조회합니다.")
   @GetMapping("/{postId}")
   public ResponseEntity<JsonResponse> getAssignmentPost(@PathVariable Long postId) {
+
+    log.info("[API] getAssignmentPost");
+
     AssignmentPostResponseDto response = assignmentPostService.getAssignmentPost(postId);
     JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 조회되었습니다.", response);
     return ResponseEntity.ok(jsonResponse);
@@ -53,6 +61,9 @@ public class AssignmentPostController {
   @Operation(summary = "모든 양도 게시글 조회", description = "모든 양도 게시글을 조회합니다.")
   @GetMapping
   public ResponseEntity<JsonResponse> getAllAssignmentPosts(Pageable pageable) {
+
+    log.info("[API] getAllAssignmentPosts");
+
     Page<AssignmentPostResponseDto> response = assignmentPostService.getAllAssignmentPosts(pageable);
     JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "모든 양도글이 조회되었습니다.", response);
     return ResponseEntity.ok(jsonResponse);
@@ -63,6 +74,9 @@ public class AssignmentPostController {
   public ResponseEntity<JsonResponse> updateAssignmentPost(
       @PathVariable Long postId,
       @Valid @RequestBody AssignmentPostUpdateRequestDto request) {
+
+    log.info("[API] updateAssignmentPost");
+
     AssignmentPostResponseDto updatedResponse = assignmentPostService.updateAssignmentPost(postId, request);
     JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 수정되었습니다.", updatedResponse);
     return ResponseEntity.ok(jsonResponse);
@@ -71,6 +85,9 @@ public class AssignmentPostController {
   @Operation(summary = "양도 게시글 삭제", description = "ID로 특정 양도 게시글을 삭제합니다.")
   @DeleteMapping("/{postId}")
   public ResponseEntity<JsonResponse> deleteAssignmentPost(@PathVariable Long postId) {
+
+    log.info("[API] deleteAssignmentPost");
+
     Long userId = UserIdHolder.getUserIdFromToken();
     assignmentPostService.deleteAssignmentPost(postId,userId);
     JsonResponse jsonResponse = new JsonResponse(HttpStatus.OK.value(), "양도글이 삭제되었습니다.", null);

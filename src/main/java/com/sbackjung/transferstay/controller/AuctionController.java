@@ -45,6 +45,7 @@ public class AuctionController {
   public ResponseEntity<JsonResponse> createAuction(
       @RequestBody @Valid AuctionPostRequestDto request
   ) {
+    log.info("[API] createAuction : {}", request);
     Long userId = getUserIdFromToken();
     AuctionPostResponseDto data = auctionService.createAuction(request, userId);
     return ResponseEntity.ok(new JsonResponse(200, "경매 생성 완료.", data));
