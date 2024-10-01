@@ -31,6 +31,7 @@ public class UserJoinController {
     ){
         UserJoinResponse userJoinResponse = emailLoginService.userJoin(request);
         JsonResponse response = new JsonResponse(HttpStatus.OK.value(), "회원가입이 완료되었습니다.", userJoinResponse);
+        log.info("[API] userJoin");
         return ResponseEntity.ok(response);
     }
 }
