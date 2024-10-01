@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../NavBar'; // 네비게이션 바 컴포넌트 임포트
 import '../../styles/user/UserPostPage.css'; // 스타일 파일 임포트
 import { useNavigate } from "react-router-dom";
+import {API_BASE_URL} from "../../App";
 
 const UserPostsPage = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const UserPostsPage = () => {
                 navigate('/login');
             } else {
                 try {
-                    const response = await fetch("http://localhost:8080/api/v1/user/posts", {
+                    const response = await fetch(`${API_BASE_URL}/api/v1/user/posts`, {
                         method: "GET",
                         headers: {
                             Authorization: `Bearer ${token}`,
