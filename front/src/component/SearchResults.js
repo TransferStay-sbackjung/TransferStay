@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios, {get} from 'axios'; // API 요청을 위해 axios 임포트
 import NavBar from './NavBar';  // 네비게이션 바 컴포넌트 임포트
-import '../styles/post/SearchPost.css'; // 스타일 임포트
+import '../styles/post/SearchPost.css';
+import {API_BASE_URL} from "../App"; // 스타일 임포트
 
 const SearchResults = () => {
     const [posts, setPosts] = useState([]);
@@ -39,7 +40,7 @@ const SearchResults = () => {
             try {
                 const searchParams = new URLSearchParams(location.search);
                 const queryString = searchParams.toString();
-                const response = await axios.get(`http://localhost:8080/api/v1/search?${queryString}`);
+                const response = await axios.get(`${API_BASE_URL}/api/v1/search?${queryString}`);
 
                 if (response.status === 200) {
                     setPosts(response.data.data); // 검색 결과가 있을 경우 데이터 설정
