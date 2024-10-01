@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/auth/EmailLogin.css'; // 스타일 파일
+import '../../styles/auth/EmailLogin.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function EmailLogin() {
     const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ function EmailLogin() {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/email-login', { email, password });
+            const response = await axios.post(`${API_BASE_URL}/email-login`, { email, password });
 
             const token = response.headers['authorization']?.split(' ')[1]; // 'Bearer [token]'에서 토큰 부분만 추출
             if (token) {

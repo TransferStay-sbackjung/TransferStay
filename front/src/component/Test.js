@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import '../App.css'; // 스타일 파일을 import
+import '../App.css';
+import {API_BASE_URL} from "../App"; // 스타일 파일을 import
 
 function App() {
     const [hello, setHello] = useState('');
 
     useEffect(() => {
         // API 요청 보내기 (JWT 토큰을 Authorization 헤더에 추가)
-        axios.get('http://localhost:8080/api/test')
+        axios.get(`${API_BASE_URL}/api/test`)
             .then((res) => {
                 setHello(res.data);  // 응답 데이터를 상태에 저장
             })

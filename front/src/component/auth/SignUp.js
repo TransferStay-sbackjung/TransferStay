@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/auth/SignUp.css'; // 스타일 파일
+import '../../styles/auth/SignUp.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function SignUp() {
     const [email, setEmail] = useState(''); // email로 변경
@@ -17,7 +18,7 @@ function SignUp() {
         }
             // 왜 /api 로 프록시로 보내면 에러가 뜰까
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/user/join', {
+            const response = await axios.post(`${API_BASE_URL}/api/v1/user/join`, {
                 email, // name 대신 email 사용
                 password,
                 passwordCheck, // 서버가 받는 passwordCheck도 함께 보내기

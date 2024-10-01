@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 사용
-import '../../styles/auth/Login.css'; // 스타일 파일
+import '../../styles/auth/Login.css';
+import {API_BASE_URL} from "../../App"; // 스타일 파일
 
 function Login() {
     const navigate = useNavigate(); // useNavigate 훅 사용
@@ -17,12 +18,12 @@ function Login() {
 
     // 카카오 로그인 처리
     const handleKakaoLogin = () => {
-        window.location.href = 'http://13.125.138.53:8080/oauth2/authorization/kakao'; // 카카오 OAuth URL
+        window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`; // 카카오 OAuth URL
     };
 
     // 네이버 로그인 처리
     const handleNaverLogin = () => {
-        window.location.href = 'http://transferstay.p-e.kr:8080/oauth2/authorization/naver'; // 네이버 OAuth URL
+        window.location.href = `${API_BASE_URL}/oauth2/authorization/naver`; // 네이버 OAuth URL
     };
 
     return (

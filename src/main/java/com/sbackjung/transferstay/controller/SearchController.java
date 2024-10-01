@@ -35,6 +35,8 @@ public class SearchController {
                                                       @RequestParam(value = "locationDepth2", required = false) String locationDepth2
     ){
 
+        log.info("[API] searchRequest");
+
         // Controller 로 넘기기 전 처리해야 할 예외 사항들
 
         // 1. 모든 파라미터가 null 또는 기본값(예: person의 경우 0)인지 확인
@@ -64,7 +66,7 @@ public class SearchController {
         if(results.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new JsonResponse(204, "검색 완료", "검색 결과가 존재하지 않습니다."));
         }
-        log.info("[API] searchRequest");
+
         return ResponseEntity.ok(new JsonResponse(200, "검색 완료", results));
 
     }

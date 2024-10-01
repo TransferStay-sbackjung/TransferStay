@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // API 요청을 위해 axios 임포트
 import NavBar from '../NavBar'; // 네비게이션 바 임포트
-import '../../styles/post/WritePost.css'; // 스타일 임포트
+import '../../styles/post/WritePost.css';
+import {API_BASE_URL} from "../../App"; // 스타일 임포트
 
 const WritePost = () => {
   const [formData, setFormData] = useState({
@@ -55,7 +56,7 @@ const WritePost = () => {
     const token = localStorage.getItem('token'); // 저장된 토큰 가져오기
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/assignment-posts', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/assignment-posts`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
         },

@@ -1,7 +1,8 @@
 import React, {useEffect,useState} from 'react';
 import NavBar from '../NavBar'; // 네비게이션 바 컴포넌트 임포트
 import '../../styles/user/MyPage.css';
-import {useNavigate} from "react-router-dom"; // 스타일 파일 임포트
+import {useNavigate} from "react-router-dom";
+import {API_BASE_URL} from "../../App"; // 스타일 파일 임포트
 
 const MyPage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const MyPage = () => {
         return;
       }else {
         try {
-          const infoResponse = await fetch("http://localhost:8080/api/v1/user/",{
+          const infoResponse = await fetch(`${API_BASE_URL}/api/v1/user/`,{
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
