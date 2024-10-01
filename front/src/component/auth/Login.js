@@ -18,7 +18,7 @@ function Login() {
 
     // 카카오 로그인 처리
     const handleKakaoLogin = () => {
-        window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`; // 카카오 OAuth URL
+        window.location.href = `/oauth2/authorization/kakao`; // 카카오 OAuth URL
     };
 
     // 네이버 로그인 처리
@@ -40,5 +40,4 @@ function Login() {
         </div>
     );
 }
-
 export default Login;
