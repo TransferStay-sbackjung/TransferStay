@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/auction")
+@RequestMapping("/api/v1/auction")
 @Tag(name = "Auction", description = "경매 API")
 public class AuctionController {
 
