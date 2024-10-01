@@ -6,6 +6,7 @@ import com.sbackjung.transferstay.jwt.JwtUtils;
 import com.sbackjung.transferstay.jwt.LoginFilter;
 import com.sbackjung.transferstay.service.EmailLoginService;
 import com.sbackjung.transferstay.service.SocialLoginService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class SecurityConfig {
                     "/auth/**","/api/test").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/assignment-posts/{postId}", "/api/v1/assignment-posts", "/api/v1/search").permitAll()
-            .requestMatchers("/email-login", "/api/v1/user/join", "/api/v1/email/**").permitAll()
+            .requestMatchers(HttpMethod.POST,"/email-login", "/api/v1/user/join", "/api/v1/email/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
         )
@@ -78,10 +79,24 @@ public class SecurityConfig {
   @Bean
   public AuthenticationEntryPoint authenticationEntryPoint() {
     return (HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException authException) -> {
+      String errorMessage;
+
+      // 예외 메시지를 기반으로 구체적인 에러 메시지 설정
+      if (authException.getCause() instanceof ExpiredJwtException) {
+        errorMessage = "토큰이 만료되었습니다. 다시 로그인하세요.";
+      } else if (authException.getMessage().contains("JWT")) {
+        errorMessage = "잘못된 JWT 토큰입니다.";
+      } else {
+        String error = String.valueOf(authException.getCause());
+        String message = authException.getMessage();
+        errorMessage = "인증에 실패했습니다. 로그인 정보를 확인하세요.:"+error+" : "+message;
+      }
+
       response.setContentType("application/json;charset=UTF-8");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write("{\"error\": \"Unauthorized\", " +
-          "\"message\": \"" + "잘못된 토큰입니다. 혹은 예외처리를 추가해주세요." + "\"}");
+
+      // 에러 응답 JSON 생성
+      response.getWriter().write(String.format("{\"error\": \"Unauthorized\", \"message\": \"%s\"}", errorMessage));
     };
   }
 

@@ -15,7 +15,7 @@ function SignUp() {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-
+            // 왜 /api 로 프록시로 보내면 에러가 뜰까
         try {
             const response = await axios.post('http://localhost:8080/api/v1/user/join', {
                 email, // name 대신 email 사용

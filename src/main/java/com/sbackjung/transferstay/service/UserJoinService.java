@@ -8,11 +8,13 @@ import com.sbackjung.transferstay.dto.UserJoinResponse;
 import com.sbackjung.transferstay.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserJoinService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -21,7 +23,7 @@ public class UserJoinService {
     public UserJoinResponse userJoin(UserJoinForm request) {
         // 이메일 중복 및 비밀번호 화인
         checkEmailAndPassword(request);
-        
+        log.info("[API] userJoin");
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         UserDomain user =  new UserDomain();
         user.setEmail(request.getEmail());

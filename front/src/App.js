@@ -25,7 +25,7 @@ import UserPostPage from './component/user/UserPostPage';
 import UserAuctionPage from "./component/user/UserAuctionPage";
 
 // auction
-import AuctionPosts from './component/AuctionPosts'; // 전체 경매글 조회 컴포넌트
+import AuctionPosts from './component/auction/AuctionPosts'; // 전체 경매글 조회 컴포넌트
 
 const App = () => {
   return (

@@ -20,7 +20,9 @@ const MyPage = () => {
     const checkLoginStatus = async () => {
       const token = localStorage.getItem('token');
       if(!token){
+        alert("로그인하세요.")
         navigate("/login");
+        return;
       }else {
         try {
           const infoResponse = await fetch("http://localhost:8080/api/v1/user/",{
