@@ -1,0 +1,128 @@
+.auction-detail {
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auction-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.auction-info h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.auction-info p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #555;
+}
+
+.auction-info p span {
+    font-weight: bold;
+    color: #000;
+}
+
+.auction-info .price {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.auction-info .status {
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #27ae60;
+    color: white;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.auction-info .status.bid-fail {
+    background-color: #e74c3c;
+}
+
+.auction-info .status.completed {
+    background-color: #2ecc71;
+}
+
+.auction-info .auction-status {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2980b9;
+}
+
+.bidder-info {
+    text-align: left;
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.bidder-info p {
+    font-size: 16px;
+    color: #333;
+    margin: 5px 0;
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.bid-button,
+.buy-button {
+    padding: 10px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bid-button {
+    background-color: #2980b9;
+    color: #fff;
+    border: none;
+}
+
+.bid-button:hover {
+    background-color: #1c6ea4;
+}
+
+.buy-button {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+.buy-button:hover {
+    background-color: #f1f1f1;
+}
+
+.product-info {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.product-info h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.description {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}

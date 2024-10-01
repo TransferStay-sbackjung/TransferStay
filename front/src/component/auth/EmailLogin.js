@@ -17,7 +17,6 @@ function EmailLogin() {
             if (token) {
                 localStorage.setItem('token', token); // 토큰을 로컬 스토리지에 저장
                 console.log("email-Login Token:", token);
-                alert('Login successful!');
                 navigate('/'); // 로그인 성공 시 메인 페이지로 리다이렉트
             } else {
                 console.error('Token not found in response.');
