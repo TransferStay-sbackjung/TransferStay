@@ -5,7 +5,6 @@ import {API_BASE_URL} from "../App"; // 스타일 파일을 import
 
 
 
-// test 주석
 function App() {
     const [hello, setHello] = useState('');
 
