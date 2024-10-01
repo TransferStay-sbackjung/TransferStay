@@ -54,7 +54,6 @@ jobs:
             sudo chown -R ubuntu:ubuntu /var/www/html
             sudo chmod -R 755 /var/www/html
 
-      # React 빌드 파일을 EC2로 복사
       - name: React 빌드 파일을 EC2로 복사
         uses: appleboy/scp-action@v0.1.0
         with:
@@ -94,7 +93,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Gradle 빌드 (테스트 제외)
-        run: ./gradlew build -x test
+        run: ./gradlew build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
