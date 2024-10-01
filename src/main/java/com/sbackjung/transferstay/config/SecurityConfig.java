@@ -95,6 +95,7 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.addAllowedOrigin("http://localhost:3000");  // 허용할 도메인
+    configuration.addAllowedOrigin("http://transferstay.p-e.kr/:3000");  // 허용할 도메인
     configuration.addAllowedMethod("*");  // 모든 HTTP 메소드 허용
     configuration.addAllowedHeader("*");  // 모든 헤더 허용
     configuration.setAllowCredentials(true);  // 인증 정보 허용 (쿠키, 헤더 등)
