@@ -17,7 +17,7 @@ function SignUp() {
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/user/join', {
+            const response = await axios.post(`${API_BASE_URL}/api/v1/user/join`, {
                 email, // name 대신 email 사용
                 password,
                 passwordCheck, // 서버가 받는 passwordCheck도 함께 보내기

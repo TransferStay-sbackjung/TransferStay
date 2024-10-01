@@ -55,7 +55,7 @@ const WritePost = () => {
     const token = localStorage.getItem('token'); // 저장된 토큰 가져오기
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/assignment-posts', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/assignment-posts`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
         },

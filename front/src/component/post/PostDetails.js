@@ -38,12 +38,12 @@ const PostDetails = () => {
     const fetchPostAndLikeStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const postResponse = await axios.get(`http://localhost:8080/api/v1/assignment-posts/${postId}`);
+        const postResponse = await axios.get(`{API_BASE_URL}/api/v1/assignment-posts/${postId}`);
         setPost(postResponse.data.data);
         setIsLoading(false);
 
         if (token) {
-          const likeResponse = await axios.get(`http://localhost:8080/api/v1/assignment-posts/${postId}/likes`, {
+          const likeResponse = await axios.get(`{API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -72,7 +72,7 @@ const PostDetails = () => {
       let response;
       if (isLiked) {
         response = await axios.delete(
-          `http://localhost:8080/api/v1/assignment-posts/${postId}/likes`,
+          `{API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -81,7 +81,7 @@ const PostDetails = () => {
         );
       } else {
         response = await axios.post(
-          `http://localhost:8080/api/v1/assignment-posts/${postId}/likes`,
+          `${API_BASE_URL}/api/v1/assignment-posts/${postId}/likes`,
           {},
           {
             headers: {

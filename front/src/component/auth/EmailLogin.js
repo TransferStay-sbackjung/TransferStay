@@ -10,7 +10,7 @@ function EmailLogin() {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/email-login', { email, password });
+            const response = await axios.post(`${API_BASE_URL}/email-login`, { email, password });
 
             const token = response.headers['authorization']?.split(' ')[1]; // 'Bearer [token]'에서 토큰 부분만 추출
             if (token) {
