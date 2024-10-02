@@ -1,23 +1,5 @@
 spring:
   datasource:
-#    url: jdbc:h2:mem:testdb
-#    driver-class-name: org.h2.Driver
-#    username: sa
-#    password: password
-#    h2:
-#      console:
-#        enabled: true
-#    jpa:
-#      defer-datasource-initialization: true
-#      database-platform: H2
-#      hibernate:
-#        ddl-auto: create-drop
-#      open-in-view: false
-#      properties:
-#        hibernate:
-#          format_sql: true
-#          show_sql: false
-
     url: ${DATABASE_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -77,27 +59,23 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
-  springdoc:
-    swagger-ui:
-      path: /swagger-ui.html
-      operations-sorter: alpha  # Swagger UI에서 알파벳 순으로 정렬
-      tags-sorter: alpha  # 태그 알파벳 순 정렬
-      disable-swagger-default-url: true
-      display-query-params-without-oauth2: true
-      doc-expansion: none
-
-    api-docs:
-      path: /api-docs  # OpenAPI JSON 문서 확인 경로
-
-    default-consumes-media-type: application/json  # 기본 요청 컨텐츠 타입 설정
-    default-produces-media-type: application/json  # 기본 응답 컨텐츠 타입 설정
   jwt:
     secret: ${JWT_SECRET_KEY}
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+    doc-expansion: none
+  api-docs:
+    path: /api-docs
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
 
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:default}
-  main:
-    allow-bean-definition-overriding: true
-
+profiles:
+  active: ${SPRING_PROFILES_ACTIVE:default}
+main:
+  allow-bean-definition-overriding: true
