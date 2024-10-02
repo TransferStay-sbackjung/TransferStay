@@ -15,12 +15,12 @@ public class TransferStayApplication {
 
   public static void main(String[] args) {
     // 어플리케이션 구동 전 환경변수 로드
-    Dotenv dotenv = Dotenv.load();
+    Dotenv dotenv = Dotenv.configure().directory("/home/ubuntu/build/libs").load();
     dotenv.entries().forEach(entry ->
         System.setProperty(entry.getKey(), entry.getValue()));
 
     dotenv.entries().forEach(entry ->
-            log.info(entry.getValue()));
+            log.info(entry.getKey()+" : "+entry.getValue()));
     log.info("RDS : {}",System.getenv("DATABASE_URL"));
     SpringApplication.run(TransferStayApplication.class, args);
   }
