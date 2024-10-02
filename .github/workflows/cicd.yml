@@ -3,25 +3,37 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop  # main으로 변경 가능
+      - develop
+    paths:
+      - 'front/**'    # 프론트엔드 파일이 변경된 경우
+      - 'build.gradle' # 백엔드의 Gradle 파일이 변경된 경우
+      - 'src/**'       # 백엔드 소스 코드가 변경된 경우
 
 jobs:
-  build:
+  # 프론트엔드 빌드 작업 (변경 사항 있을 때만 실행)
+  build_frontend:
+    if: contains(github.event.head_commit.message, 'frontend') || github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
-      # 1. GitHub Repository에서 코드 체크아웃
-      - name: Checkout code
+      - name: 코드 체크아웃
         uses: actions/checkout@v3
 
-      # 2. Node.js 설치
-      - name: Install Node.js
+      # Node.js 설치 및 의존성 캐시 적용
+      - name: node_modules 캐싱
+        uses: actions/cache@v2
+        with:
+          path: front/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+
+      - name: Node.js 설치
         uses: actions/setup-node@v3
         with:
           node-version: '22'
 
-      # 3. React 앱 의존성 설치 및 빌드 (시크릿을 사용하여 환경 변수 설정)
-      - name: Install dependencies and build
+      - name: 의존성 설치 및 빌드
         run: |
           cd front
           npm install
@@ -30,7 +42,7 @@ jobs:
           REACT_APP_API_ROOT: ${{ secrets.REACT_APP_API_ROOT }}
           REACT_APP_HOME_URL: ${{ secrets.REACT_APP_HOME_URL }}
 
-      - name: Prepare target directory
+      - name: 타겟 디렉터리 준비
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -42,26 +54,28 @@ jobs:
             sudo chown -R ubuntu:ubuntu /var/www/html
             sudo chmod -R 755 /var/www/html
 
-      # 4. React 빌드 파일을 EC2 서버로 복사
-      - name: Copy React build files to EC2
-        uses: appleboy/scp-action@v0.1.0  # scp : secure copy protocol
+      - name: React 빌드 파일을 EC2로 복사
+        uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          source: front/build/  # React 빌드 파일 경로
+          source: front/build/
           target: /var/www/html
+          overwrite: true
 
-      # 5. JDK 17 설치 (백엔드 빌드를 위한 Java 설치)
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  # 백엔드 빌드 작업 (테스트 환경에서 실행)
+  test_backend:
+    if: github.ref == 'refs/heads/develop'  # develop 브랜치에서만 실행 ? todo main으로 변경하기?
+    runs-on: ubuntu-latest
 
-      # 6. Gradle 캐시 사용하여 빌드 속도 향상
-      - name: Gradle 패키지 캐싱
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      # Gradle 캐시 적용
+      - name: Gradle 캐시 적용
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
@@ -69,16 +83,73 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 7. Gradle 파일 실행 권한 부여 (Linux에서 실행 권한 필요)
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: gradlew 파일 실행 권한 부여
         run: chmod +x ./gradlew
 
-      # 8. Gradle 빌드 (테스트는 제외하고 빌드)
-      - name: Gradle 빌드
-        run: ./gradlew build -x test  # 테스트 제외하고 빌드
+      - name: Gradle 테스트 빌드 (application-test.yml 사용)
+        run: ./gradlew test
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_SECRET_KEY: ${{ secrets.NAVER_SECRET_KEY }}
+          NAVER_REDIRECT_URL: ${{ secrets.NAVER_REDIRECT_URL }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
 
-      # 9. 빌드한 JAR 파일을 EC2 서버로 전송
-      - name: JAR 파일 서버 전송
+  # 백엔드 빌드 작업 (배포 환경에서 실행)
+  build_backend:
+    if: github.ref == 'refs/heads/develop'  # todo main 으로 변경하기
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      # Gradle 캐시 적용
+      - name: Gradle 캐시 적용
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: gradlew 파일 실행 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle 빌드 (테스트 제외, application-prod.yml 사용)
+        run: ./gradlew build -x test  # 테스트를 제외하고 빌드
+        env:
+          SPRING_PROFILES_ACTIVE: prod  # 프로덕션 프로파일 활성화
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_SECRET_KEY: ${{ secrets.NAVER_SECRET_KEY }}
+          NAVER_REDIRECT_URL: ${{ secrets.NAVER_REDIRECT_URL }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: JAR 파일을 서버로 전송
         uses: appleboy/scp-action@v0.1.0
         with:
           host: ${{ secrets.HOST }}
@@ -88,12 +159,12 @@ jobs:
           source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu
 
+  # 배포 작업 (프론트엔드와 백엔드 빌드 완료 시 실행)
   deploy:
-    needs: build
+    needs: [build_frontend, build_backend]
     runs-on: ubuntu-latest
 
     steps:
-      # 10. 이전 JAR 프로세스 종료
       - name: 이전 JAR 프로세스 종료
         uses: appleboy/ssh-action@v0.1.0
         with:
@@ -102,53 +173,15 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/ubuntu/build/libs/ 
+            cd /home/ubuntu/build/libs/
             JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
             
-            # JAR 파일을 사용하는 프로세스의 PID 찾기
             PID=$(pgrep -f "$JAR_PATH")
             
             if [ -n "$PID" ] && [ "$PID" -gt 1 ]; then
               echo "이전 프로세스($PID)가 실행 중입니다. 종료합니다."
               kill "$PID"
-              sleep 20  # 프로세스가 종료될 시간을 확보
+              sleep 20
             else
               echo "실행 중인 프로세스가 없습니다."
-            fi
-            
-            # 프로세스가 종료되었는지 확인
-            PID=$(pgrep -f "$JAR_PATH")
-            
-            if [ -n "$PID" ] && [ "$PID" -gt 1 ]; then
-              echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료합니다."
-              kill -9 "$PID"
-              sleep 10  # 강제 종료 후 잠시 대기
-            else
-              echo "이전 프로세스 종료가 완료되었습니다."
-            fi
-
-      # 11. 새로운 JAR 파일 실행
-      - name: 새로운 JAR 파일 실행
-        uses: appleboy/ssh-action@v0.1.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd /home/ubuntu/build/libs/ 
-            echo "현재 작업 디렉토리 확인: $(pwd)"
-            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
-            LOG_FILE=/home/ubuntu/app.log  
-            
-            if [ -f "$JAR_PATH" ]; then
-              echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
-            
-              # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
-              nohup sudo java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
-            
-              echo "애플리케이션이 백그라운드에서 실행 중입니다."
-            else
-              echo "JAR 파일을 찾을 수 없습니다!"
-              exit 1
             fi
