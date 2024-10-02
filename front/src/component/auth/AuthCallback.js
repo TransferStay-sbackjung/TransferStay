@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import React, { useEffect } from 'react';
 
 function AuthCallback() {
     const { token } = useParams();
