@@ -174,23 +174,21 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/build/libs/
-            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
-            PID=$(pgrep -f "$JAR_PATH")
-            
+            JAR_NAME="TransferStay-0.0.1-SNAPSHOT.jar"
+            PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}')
+
             if [ -n "$PID" ]; then
-              echo "이전 프로세스($PID)가 실행 중입니다. 종료합니다."
-              kill "$PID"
-              sleep 20  # 프로세스가 종료될 시간을 확보
-              PID=$(pgrep -f "$JAR_PATH")
-              if [ -n "$PID" ]; then
-                echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료합니다."
-                kill -9 "$PID"
-                sleep 10  # 강제 종료 후 잠시 대기
-              else
-                echo "이전 프로세스 종료가 완료되었습니다."
+              echo "이전 프로세스($PID)가 실행 중입니다. 종료를 시도합니다."
+              kill $PID
+              sleep 10
+              if ps -p $PID > /dev/null; then
+                echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료를 시도합니다."
+                kill -9 $PID
+                sleep 5
               fi
+              echo "프로세스 종료 완료"
             else
-              echo "실행 중인 프로세스가 없습니다."
+              echo "실행 중인 $JAR_NAME 프로세스가 없습니다."
             fi
 
       #  새로운 JAR 파일 실행
@@ -218,3 +216,4 @@ jobs:
               echo "JAR 파일을 찾을 수 없습니다!"
               exit 1
             fi
+
