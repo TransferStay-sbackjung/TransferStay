@@ -1,13 +1,12 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: ${DATABASE_URL:jdbc:h2:mem:testdb}
     driver-class-name: org.h2.Driver
-    username: sa
-    password: password
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: create-drop
-    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
