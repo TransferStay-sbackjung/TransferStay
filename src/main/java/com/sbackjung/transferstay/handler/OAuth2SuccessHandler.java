@@ -46,11 +46,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtils.createJwtToken(userId,oAuthId,"user",expiredMs);
         user.get().setAccessToken(token);
         userRepository.save(user.get());
-        log.info(token);
+        log.info("success!"+ token);
 
         //헤더에 추가 todo : 토큰 보여주도록 , Access-Control-Expose-Headers 추가 안하면 헤더에 안보임
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Authorization","Bearer "+token);
-        response.sendRedirect("http://transferstay.p-e.kr:3000/auth/"+token);
+        response.sendRedirect("http://transferstay.p-e.kr/auth/"+token);
     }
 }
