@@ -21,7 +21,7 @@ public class TransferStayApplication {
 
     dotenv.entries().forEach(entry ->
             log.info(entry.getValue()));
-
+    log.info("RDS : {}",System.getenv("DATABASE_URL"));
     SpringApplication.run(TransferStayApplication.class, args);
   }
 }
