@@ -15,7 +15,7 @@ public class TransferStayApplication {
 
   public static void main(String[] args) {
     // 어플리케이션 구동 전 환경변수 로드
-    Dotenv dotenv = Dotenv.configure().directory("/home/ubuntu/build/libs").load();
+    Dotenv dotenv = Dotenv.configure().directory("./.env").load();
     dotenv.entries().forEach(entry ->
         System.setProperty(entry.getKey(), entry.getValue()));
 
