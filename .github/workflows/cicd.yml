@@ -67,7 +67,7 @@ jobs:
 
   # 백엔드 빌드 작업 (테스트 환경에서 실행)
   test_backend:
-    if: github.ref == 'refs/heads/develop'  # develop 브랜치에서만 실행 ? todo main으로 변경하기?
+    if: github.ref == 'refs/heads/develop'  # develop 브랜치에서만 실행
     runs-on: ubuntu-latest
 
     steps:
@@ -109,7 +109,7 @@ jobs:
 
   # 백엔드 빌드 작업 (배포 환경에서 실행)
   build_backend:
-    if: github.ref == 'refs/heads/develop'  # todo main 으로 변경하기
+    if: github.ref == 'refs/heads/develop'  # todo main으로 변경하기
     runs-on: ubuntu-latest
 
     steps:
@@ -174,14 +174,46 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ubuntu/build/libs/
-            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
-            
-            PID=$(pgrep -f "$JAR_PATH")
-            
-            if [ -n "$PID" ] && [ "$PID" -gt 1 ]; then
-              echo "이전 프로세스($PID)가 실행 중입니다. 종료합니다."
-              kill "$PID"
-              sleep 20
+            JAR_NAME="TransferStay-0.0.1-SNAPSHOT.jar"
+            PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}')
+
+            if [ -n "$PID" ]; then
+              echo "이전 프로세스($PID)가 실행 중입니다. 종료를 시도합니다."
+              kill $PID
+              sleep 10
+              if ps -p $PID > /dev/null; then
+                echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료를 시도합니다."
+                kill -9 $PID
+                sleep 5
+              fi
+              echo "프로세스 종료 완료"
             else
-              echo "실행 중인 프로세스가 없습니다."
+              echo "실행 중인 $JAR_NAME 프로세스가 없습니다."
             fi
+
+      #  새로운 JAR 파일 실행
+      - name: 새로운 JAR 파일 실행
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/build/libs/ 
+            echo "현재 작업 디렉토리 확인: $(pwd)"
+            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
+            LOG_FILE=/home/ubuntu/app.log  
+            
+            if [ -f "$JAR_PATH" ]; then
+              echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
+            
+              # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
+              nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+            
+              echo "애플리케이션이 백그라운드에서 실행 중입니다."
+            else
+              echo "JAR 파일을 찾을 수 없습니다!"
+              exit 1
+            fi
+

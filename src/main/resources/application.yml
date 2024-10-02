@@ -75,6 +75,7 @@ springdoc:
     default-consumes-media-type: application/json
     default-produces-media-type: application/json
 
+
 profiles:
   active: ${SPRING_PROFILES_ACTIVE:default}
 main:
