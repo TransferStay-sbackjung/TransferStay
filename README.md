@@ -1,39 +1,69 @@
-# TransferStay
-zb 팀프로젝트 숙박 양도 서비스 어플리케이션
+# TransferStay :: 숙박 양도 서비스
+zb 팀프로젝트 숙박 양도 서비스
 
-### Branch
+> 프로젝트에 대해 자세히 알고 싶다면?
+[TransferStay의 노션 페이지 바로 가기](https://cypress-dentist-91c.notion.site/TransferStay-11417ad35d3e8045997ae3c135c097c1?pvs=4)
 
-- `main(master)`, `develop`, `feat/기능명` 으로 구분해서 진행
-    - main : 배포될 내용의 최종본 코드
-    - develop : 완성된 기능이 적용된 후, 테스트 진행 → 이상 없을 시 main으로 rebase
-    - feat/기능명 : 각자 수행할 기능 별로 브랜치 생성 후 작업 → develop에 PR 보내기
+<br/>
 
-### Commit
+## 🚀 Demo
 
-- 최대한 작은 단위로 수행하기
-- 컨벤션을 지켜서 메시지 작성하기
-    1. 관련 이슈 번호 남기기
-    2. 어떤걸 수행했는지 알 수 있도록 명시적으로 남기기
-    
-    > **ex) [#1] Feat: connection openbaking api auth**
-    > 
-    
-    | Feat | 새로운 기능 추가 |
-    | --- | --- |
-    | Fix | 버그/기능에 따른 코드 변경 시 |
-    | Refactor | 코드의 가독성, 효율성을 위한 코드 변경 시 (기능의 문제 X) |
-    | Docs | 문서 추가/수정/삭제 |
-    | Chore | 설정 추가/변경 |
-    | Test | 테스트 코드 추가/수정 |
+|                   소셜로그인(카카오)                  |                   소셜로그인(네이버)                 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![카카오로그인](https://github.com/user-attachments/assets/a718a656-b0d0-4bf9-8f12-c1476bc7714a)| ![네이버](https://github.com/user-attachments/assets/9d3f7441-2030-4f3d-903f-400e4aefe004)|
 
-### Issue
+|                  검색하기                  |                   게시글 작성하기                 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|![검색하기](https://github.com/user-attachments/assets/75be246b-09dd-4d09-9c1e-e98da6f4cc08)|![게시글조회](https://github.com/user-attachments/assets/c6628c4f-af3b-4241-bf79-8017cd3be012)|
 
-- 최소한의 기능단위와, 버그단위로 생성하기
+|                   예치금 충전/환불                  |                   게시글 조회                 |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![예치금](https://github.com/user-attachments/assets/26e2a39f-697c-4698-ae75-2ae8d8268c11)| ![게시글조회](https://github.com/user-attachments/assets/35aaa37e-36f8-4c68-8140-11859db80c4c)|
+
+<br/>
+<br/>
+
+## 📚 ERD
+[TransferStay ERD Cloud](https://www.erdcloud.com/d/gyvsj7JXoqqXekcwk)
+
+<br/>
+
+<img width="1237" alt="스크린샷 2024-10-03 오후 9 03 23" src="https://github.com/user-attachments/assets/d5d582c3-1720-417d-83b9-b2d9bf75a635">
+
+<br/>
+<br/>
+
+## 🏢 Wireframe
+<img width="8022" alt="Slide 4_3 - 1" src="https://github.com/user-attachments/assets/0807e53e-5d07-4f63-96a1-7efbf7171878">
+
+<br/>
+<br/>
+
+## 👷 Skills & Tools
+### Server
+<img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white"/> <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white"/>
+
+### DB
+<img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white"/> 
+
+### Security
+<img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white"/>
+
+### CI/CD
+<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white"/>
+
+### Deploy
+<img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon%20RDS-527FFF?style=for-the-badge&logo=amazon-rds&logoColor=white"/>
+
+### Front
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/> <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
 
 
-### Pull Request
+<br/>
+<br/>
 
-- 반드시 feat/기능 → develop으로 pull-request 생성하기
-- 최대한 작은 단위로 생성하기! → 코드리뷰를 위해서
-    - 리뷰어를 위해 꼭 어떤 기능을 수행했고, 어떤걸 주로 확인하면 되는지 작성 필요
-- 꼭 1명 이상 리뷰 후 머지 수행
+## 🔥 팀원 소개
+|Back-End|Back-End|Back-End|Back-End|
+| :-----: | :-----: | :-----: | :-----: |
+| [심규원](https://github.com/KYUWON1) | [유문희](https://github.com/muunioi) | [이건우](https://github.com/geonuu09) | [이은우](https://github.com/lew663) |
+
