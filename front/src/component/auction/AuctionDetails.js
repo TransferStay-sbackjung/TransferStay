@@ -33,9 +33,9 @@ const AuctionDetails = () => {
         fetchAuctionDetails();
     }, [auctionId]);
 
+    // 응찰하기 버튼 클릭 시, 경매 응찰 화면으로 이동
     const handleBid = () => {
-        // 응찰 로직 구현
-        alert("응찰 기능을 여기에 구현하세요.");
+        navigate(`/auction/${auctionId}/bidding`); // 경매 응찰 화면으로 리다이렉트
     };
 
     const handlePurchase = () => {

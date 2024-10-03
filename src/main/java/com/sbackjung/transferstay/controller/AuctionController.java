@@ -95,12 +95,13 @@ public class AuctionController {
 
   // 응찰하기
   @Operation(summary = "응찰하기", description = "경매에 응찰합니다.")
-  @PostMapping("/{postId}/bidding")
-  public ResponseEntity<JsonResponse> bidding(@PathVariable("postId") Long postId,
+  @PostMapping("/{auctionId}/bidding")
+  public ResponseEntity<JsonResponse> bidding(@PathVariable("auctionId") Long auctionId,
       @RequestBody PlaceBidRequestDto requestDto) {
+    log.info("[API] Bidding");
 
     // 경매 유효성 체크
-    Auction auction = auctionRepository.findByPostId(postId)
+    Auction auction = auctionRepository.findByAuctionId(auctionId)
         .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "해당 경매를 찾을 수 없습니다."));
 
     if (auction.getStatus() != AuctionStatus.IN_PROGRESS) {

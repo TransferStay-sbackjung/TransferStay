@@ -27,6 +27,7 @@ import UserAuctionPage from "./component/user/UserAuctionPage";
 // auction
 import AuctionPosts from './component/auction/AuctionPosts'; // 전체 경매글 조회 컴포넌트
 import AuctionDetails from "./component/auction/AuctionDetails";
+import BiddingForm from "./component/auction/BiddingForm";
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/userPostPage" element={<UserPostPage />} />
         <Route path="/userAuctionPostPage" element={<UserAuctionPage />} />
         <Route path="/posts/:postId" element={<PostDetails  />} />
+        <Route path="/auction/:postId/bidding" element={<BiddingForm />} />
       </Routes>
     </Router>
   );

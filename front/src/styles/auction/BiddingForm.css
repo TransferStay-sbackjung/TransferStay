@@ -1,0 +1,81 @@
+.bidding-form {
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.bidding-form h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.bidding-form label {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.bidding-form input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.bidding-form .button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.bidding-form button {
+    padding: 10px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bidding-form .submit-button {
+    background-color: #2980b9;
+    color: #fff;
+    border: none;
+}
+
+.bidding-form .submit-button:hover {
+    background-color: #1c6ea4;
+}
+
+.bidding-form .cancel-button {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+.bidding-form .cancel-button:hover {
+    background-color: #f1f1f1;
+}
+
+.bidding-form .error-message {
+    color: #e74c3c;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.bidding-form .success-message {
+    color: #27ae60;
+    font-size: 16px;
+    margin-top: 10px;
+}
