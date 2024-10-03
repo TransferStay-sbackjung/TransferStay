@@ -1,0 +1,45 @@
+/* 전체 페이지 스타일 */
+.main-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+    padding: 0 20px;
+}
+
+/* 경매 리스트 스타일 */
+.auctions-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개의 경매 아이템 */
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px 0;
+}
+
+/* 경매 아이템 카드 스타일 */
+.auction-item {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease; /* hover 시 부드럽게 애니메이션 */
+}
+
+.auction-item:hover {
+    transform: translateY(-5px); /* hover 시 위로 살짝 이동 */
+}
+
+.auction-info h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.auction-info p {
+    margin: 5px 0;
+    color: #666;
+}

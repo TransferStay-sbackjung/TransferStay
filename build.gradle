@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
     // 스프링 웹
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // 스프링 시큐리티
@@ -32,14 +33,22 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-client'
     // 스프링 데이터 JPA 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // 유효성 검사
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     // mysql
-    implementation 'mysql:mysql-connector-java:8.0.29'
+    implementation 'com.mysql:mysql-connector-j'
     // dotenv
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     // JWT 의존성
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    // Valid 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Mail 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
     // 롬복
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -53,4 +62,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.sbackjung.transferstay.TransferStayApplication' // 메인 클래스를 명시
+        )
+    }
 }

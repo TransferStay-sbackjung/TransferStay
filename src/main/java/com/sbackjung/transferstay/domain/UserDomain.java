@@ -9,7 +9,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,26 +24,21 @@ public class UserDomain {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(length = 36)
-    private String userUuid;
-
-    @Column(length = 100)
-    private String userName;
-
     private String email;
+
+    private String password;
+
+    private String userName;
 
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 2083)
-    private String imageUrl;
+    private String nickName;
 
-    private String password;
+    private String oauthId;
 
     @Column(length = 50)
     private String oauthProvider;
-
-    private String oauthId;
 
     @Column(columnDefinition = "TEXT")
     private String accessToken;
@@ -51,14 +47,19 @@ public class UserDomain {
     private String refreshToken;
 
     @CreatedDate
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
-    private Timestamp deletedAt;
+    private LocalDateTime deletedAt;
+
+    private LocalDateTime agreementAt;
 
     @Column(length = 50)
     private String role;
+
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long amount = 0L; // 초기 잔액을 0으로 설정
 
     public UserDomain(String userId, String email, String provider) {
         this.oauthId = userId;

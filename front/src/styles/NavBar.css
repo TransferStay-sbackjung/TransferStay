@@ -1,0 +1,46 @@
+/* 네비게이션 바 스타일 */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #333; /* 어두운 배경색 */
+  color: white; /* 텍스트를 흰색으로 설정 */
+}
+
+.navbar-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff; /* 로고 텍스트 흰색 */
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links span {
+  font-size: 1rem;
+  cursor: pointer;
+  color: #fff; /* 링크 텍스트 흰색 */
+}
+
+.navbar-links span:hover {
+  text-decoration: underline;
+  color: #f0e68c; /* 호버 시 노란색으로 변경 */
+}
+
+/* 로그인 버튼 스타일 */
+.navbar-login {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  margin-left: 20px;
+}
+
+.navbar-login:hover {
+  background-color: #0056b3;
+}

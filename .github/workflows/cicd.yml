@@ -1,0 +1,219 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'front/**'    # 프론트엔드 파일이 변경된 경우
+      - 'build.gradle' # 백엔드의 Gradle 파일이 변경된 경우
+      - 'src/**'       # 백엔드 소스 코드가 변경된 경우
+
+jobs:
+  # 프론트엔드 빌드 작업 (변경 사항 있을 때만 실행)
+  build_frontend:
+    if: contains(github.event.head_commit.message, 'frontend') || github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      # Node.js 설치 및 의존성 캐시 적용
+      - name: node_modules 캐싱
+        uses: actions/cache@v2
+        with:
+          path: front/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: 의존성 설치 및 빌드
+        run: |
+          cd front
+          npm install
+          CI=false npm run build
+        env:
+          REACT_APP_API_ROOT: ${{ secrets.REACT_APP_API_ROOT }}
+          REACT_APP_HOME_URL: ${{ secrets.REACT_APP_HOME_URL }}
+
+      - name: 타겟 디렉터리 준비
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo mkdir -p /var/www/html
+            sudo chown -R ubuntu:ubuntu /var/www/html
+            sudo chmod -R 755 /var/www/html
+
+      - name: React 빌드 파일을 EC2로 복사
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: front/build/
+          target: /var/www/html
+          overwrite: true
+
+  # 백엔드 빌드 작업 (테스트 환경에서 실행)
+  test_backend:
+    if: github.ref == 'refs/heads/develop'  # develop 브랜치에서만 실행
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      # Gradle 캐시 적용
+      - name: Gradle 캐시 적용
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: gradlew 파일 실행 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle 테스트 빌드 (application-test.yml 사용)
+        run: ./gradlew test
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_SECRET_KEY: ${{ secrets.NAVER_SECRET_KEY }}
+          NAVER_REDIRECT_URL: ${{ secrets.NAVER_REDIRECT_URL }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+
+  # 백엔드 빌드 작업 (배포 환경에서 실행)
+  build_backend:
+    if: github.ref == 'refs/heads/develop'  # todo main으로 변경하기
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      # Gradle 캐시 적용
+      - name: Gradle 캐시 적용
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: JDK 17 설치
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: gradlew 파일 실행 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle 빌드 (테스트 제외, application-prod.yml 사용)
+        run: ./gradlew build -x test  # 테스트를 제외하고 빌드
+        env:
+          SPRING_PROFILES_ACTIVE: prod  # 프로덕션 프로파일 활성화
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_SECRET_KEY: ${{ secrets.NAVER_SECRET_KEY }}
+          NAVER_REDIRECT_URL: ${{ secrets.NAVER_REDIRECT_URL }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: JAR 파일을 서버로 전송
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: build/libs/TransferStay-0.0.1-SNAPSHOT.jar
+          target: /home/ubuntu
+
+  # 배포 작업 (프론트엔드와 백엔드 빌드 완료 시 실행)
+  deploy:
+    needs: [build_frontend, build_backend]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 이전 JAR 프로세스 종료
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/build/libs/
+            JAR_NAME="TransferStay-0.0.1-SNAPSHOT.jar"
+            PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}')
+
+            if [ -n "$PID" ]; then
+              echo "이전 프로세스($PID)가 실행 중입니다. 종료를 시도합니다."
+              kill $PID
+              sleep 10
+              if ps -p $PID > /dev/null; then
+                echo "프로세스($PID)가 아직 종료되지 않았습니다. 강제 종료를 시도합니다."
+                kill -9 $PID
+                sleep 5
+              fi
+              echo "프로세스 종료 완료"
+            else
+              echo "실행 중인 $JAR_NAME 프로세스가 없습니다."
+            fi
+
+      #  새로운 JAR 파일 실행
+      - name: 새로운 JAR 파일 실행
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/build/libs/ 
+            echo "현재 작업 디렉토리 확인: $(pwd)"
+            JAR_PATH=TransferStay-0.0.1-SNAPSHOT.jar
+            LOG_FILE=/home/ubuntu/app.log  
+            
+            if [ -f "$JAR_PATH" ]; then
+              echo "JAR 파일을 찾았습니다. 애플리케이션을 시작합니다."
+            
+              # nohup을 통해 백그라운드에서 실행하고 로그를 절대 경로에 저장
+              nohup java -jar "$JAR_PATH" > "$LOG_FILE" 2>&1 &
+            
+              echo "애플리케이션이 백그라운드에서 실행 중입니다."
+            else
+              echo "JAR 파일을 찾을 수 없습니다!"
+              exit 1
+            fi
+

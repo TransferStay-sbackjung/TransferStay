@@ -1,0 +1,35 @@
+/* src/App.css */
+
+/* 전체 애플리케이션에 적용되는 글로벌 스타일 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+  padding: 0;
+}
+
+/* 공통적인 링크 스타일 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* 유연한 레이아웃을 위한 기본적인 Flex 스타일 */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* 추가적인 기본 스타일링 */

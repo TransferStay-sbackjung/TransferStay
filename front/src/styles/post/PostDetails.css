@@ -1,0 +1,127 @@
+.post-detail {
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post-info {
+  text-align: center;
+  padding: 20px;
+}
+
+.post-info h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.post-info p {
+  font-size: 18px;
+  margin: 10px 0;
+  color: #555;
+}
+
+.post-info p span {
+  font-weight: bold;
+  color: #000;
+}
+
+.post-info .price {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.post-info .status {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #27ae60;
+  color: white;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.post-info .status.payment-in-progress {
+  background-color: #f39c12;
+}
+
+.post-info .status.completed {
+  background-color: #2ecc71;
+}
+
+.post-info .auction-status {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2980b9;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.wish-button,
+.buy-button {
+  padding: 10px 30px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.wish-button {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.wish-button:hover {
+  background-color: #444;
+}
+
+.buy-button {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.buy-button:hover {
+  background-color: #f1f1f1;
+}
+
+.like-success {
+  color: #27ae60;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.product-info {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.product-info h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.description {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+}

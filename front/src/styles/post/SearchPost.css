@@ -1,0 +1,100 @@
+/* SearchPosts 페이지 전체 레이아웃 */
+.search-results-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    height: 100%;
+}
+
+#wrap{
+    min-height: calc(80vh - 5rem); /* footer 높이를 빼준다. */
+}
+footer{
+    height: 5rem; /* footer 높이 */
+}
+
+.search-results-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    padding: 30px;
+}
+
+.search-data {
+    background-color: #aaaaaa;
+    border-radius: 26px;
+    margin : 8px;
+    padding : 8px 15px;
+    display: inline-block;
+
+}
+
+/* 카드 그리드 레이아웃 */
+.search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.search-result-card {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.search-result-card:hover {
+    transform: translateY(-10px);
+}
+
+/* 이미지 영역 */
+.card-image {
+    background-color: #e0e0e0;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #aaa;
+    font-size: 18px;
+}
+
+/* "Hot Deal" 배지 */
+.hot-deal-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff4757;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 카드 정보 영역 */
+.card-info {
+    padding: 15px;
+}
+
+.card-info h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-info p {
+    font-size: 16px;
+    color: #333;
+}
+
+/* 결과가 없을 때 메시지 */
+.no-results {
+    font-size: 18px;
+    color: #777;
+    margin-top: 20px;
+}
